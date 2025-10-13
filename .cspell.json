@@ -1,0 +1,42 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "Jira",
+    "Supabase",
+    "Snyk",
+    "Ollama",
+    "Puppeteer",
+    "Playwright",
+    "Postgres",
+    "postgres",
+    "github",
+    "codemonkey",
+    "nanocoder",
+    "toknxr",
+    "mcpServers",
+    "baseUrl",
+    "apiKey",
+    "autoDetectModels",
+    "secureMode",
+    "budgetMode",
+    "redact",
+    "scanPatterns",
+    "detectedLeaks",
+    "OpenRouter",
+    "Groq",
+    "vLLM",
+    "Hugging",
+    "Anthropic",
+    "Mistral",
+    "Qodo",
+    "GPT"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    "*.lock",
+    "pnpm-lock.yaml",
+    "package-lock.json"
+  ]
+}
