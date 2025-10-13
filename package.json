@@ -1,7 +1,7 @@
 {
 	"name": "@radix-obsidian/codemonkey",
 	"main": "dist/cli.js",
-	"version": "1.13.4",
+	"version": "1.13.5",
 	"description": "CodeMonkey 🐒 - A local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter",
 	"keywords": [
 		"cli",
