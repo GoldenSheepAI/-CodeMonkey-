@@ -1,0 +1,1 @@
+Secure Mode protects sensitive information, such as API keys and database passwords, by restricting access and implementing additional security measures.

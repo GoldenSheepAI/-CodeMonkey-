@@ -1,6 +1,7 @@
 import {Command} from './types/index.js';
 import React from 'react';
 import ErrorMessage from './components/error-message.js';
+import {getModeManager} from './modes/mode-manager.js';
 
 export class CommandRegistry {
 	private commands = new Map<string, Command>();
@@ -49,6 +50,18 @@ export class CommandRegistry {
 			return React.createElement(ErrorMessage, {
 				key: `error-${Date.now()}`,
 				message: `Unknown command: ${commandName}. Type /help for available commands.`,
+				hideBox: true,
+			});
+		}
+
+		// Check if command is allowed in current mode
+		const modeManager = getModeManager();
+		const validation = modeManager.canExecuteCommand(commandName);
+		
+		if (!validation.allowed) {
+			return React.createElement(ErrorMessage, {
+				key: `error-${Date.now()}`,
+				message: `${validation.reason}\n\n${validation.suggestion || ''}`,
 				hideBox: true,
 			});
 		}
