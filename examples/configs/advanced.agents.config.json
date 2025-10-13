@@ -1,0 +1,47 @@
+{
+  "name": "Advanced CodeMonkey Configuration",
+  "description": "Example configuration with all SheepStack integrations enabled",
+  "agents": [
+    {
+      "name": "primary-agent",
+      "provider": "anthropic",
+      "model": "claude-3-7-sonnet-20250219",
+      "temperature": 0.7,
+      "maxTokens": 8096
+    }
+  ],
+  "integrations": {
+    "toknxr": {
+      "enabled": true,
+      "trackUsage": true,
+      "showCosts": true,
+      "budgetAlerts": true,
+      "monthlyBudget": 100
+    },
+    "noleakai": {
+      "enabled": true,
+      "autoScan": true,
+      "scanOnSave": true,
+      "redactLogs": true,
+      "severity": "high"
+    },
+    "corect": {
+      "enabled": false,
+      "autoFix": false,
+      "confidence": 0.8,
+      "maxAttempts": 3
+    }
+  },
+  "features": {
+    "contextWindow": 200000,
+    "streaming": true,
+    "codeExecution": true,
+    "fileOperations": true
+  },
+  "ui": {
+    "theme": "dark",
+    "showTokenCount": true,
+    "showCosts": true,
+    "compactMode": false
+  }
+}

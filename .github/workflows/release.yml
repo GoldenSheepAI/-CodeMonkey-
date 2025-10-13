@@ -1,157 +1,71 @@
-name: Release to NPM and GitHub
+name: Release
 
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v*'
 
 permissions:
   contents: write
   packages: write
+  id-token: write
 
 jobs:
-  check-version:
+  release:
     runs-on: ubuntu-latest
-    outputs:
-      should-publish: ${{ steps.version-check.outputs.should-publish }}
-      package-version: ${{ steps.version-check.outputs.package-version }}
-      npm-version: ${{ steps.version-check.outputs.npm-version }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-
-      - name: Check version difference
-        id: version-check
-        run: |
-          # Get current package.json version
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          echo "package-version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
-
-          # Get latest NPM version (handle case where package doesn't exist yet)
-          NPM_VERSION=$(npm view @nanocollective/nanocoder version 2>/dev/null || echo "0.0.0")
-          echo "npm-version=$NPM_VERSION" >> $GITHUB_OUTPUT
-
-          # Compare versions
-          if [ "$PACKAGE_VERSION" != "$NPM_VERSION" ]; then
-            echo "✅ New version detected: $PACKAGE_VERSION (current NPM: $NPM_VERSION)"
-            echo "should-publish=true" >> $GITHUB_OUTPUT
-          else
-            echo "ℹ️ No version change detected: $PACKAGE_VERSION"
-            echo "should-publish=false" >> $GITHUB_OUTPUT
-          fi
-
-  publish:
-    needs: check-version
-    if: needs.check-version.outputs.should-publish == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
+          node-version: 20
+          cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: latest
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Run tests
+        run: pnpm run test
+
       - name: Build project
         run: pnpm run build
 
-      - name: Verify build output
-        run: |
-          if [ ! -f "dist/cli.js" ]; then
-            echo "❌ Build failed: dist/cli.js not found"
-            exit 1
-          fi
-          echo "✅ Build successful: dist/cli.js exists"
-
-      - name: Publish to NPM
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create GitHub Release
+      - name: Create release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ needs.check-version.outputs.package-version }}
-          release_name: nanocoder v${{ needs.check-version.outputs.package-version }}
-          body: |
-            ## What's Changed
-
-            Auto-generated release for nanocoder v${{ needs.check-version.outputs.package-version }}.
-
-            ### Installation
-            ```bash
-            npm install -g @nanocollective/nanocoder
-            ```
-
-            ### Usage
-            ```bash
-            nanocoder
-            ```
-
-            **Full Changelog**: https://github.com/Nano-Collective/nanocoder/compare/v${{ needs.check-version.outputs.npm-version }}...v${{ needs.check-version.outputs.package-version }}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
 
-      - name: Send Discord Notification
-        if: success()
-        run: |
-          curl -H "Content-Type: application/json" \
-            -d '{
-              "embeds": [{
-                "title": "🎉 New Release: Nanocoder v${{ needs.check-version.outputs.package-version }}",
-                "description": "A new version of Nanocoder has been released!",
-                "color": 5763719,
-                "fields": [
-                  {
-                    "name": "Version",
-                    "value": "v${{ needs.check-version.outputs.package-version }}",
-                    "inline": true
-                  },
-                  {
-                    "name": "Installation",
-                    "value": "`npm install -g @nanocollective/nanocoder`",
-                    "inline": false
-                  }
-                ],
-                "footer": {
-                  "text": "GitHub Actions"
-                },
-                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
-                "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ needs.check-version.outputs.package-version }}"
-              }]
-            }' \
-            ${{ secrets.DISCORD_WEBHOOK_URL }}
+      - name: Publish to NPM
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  notify:
-    needs: [check-version, publish]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Notify result
-        run: |
-          if [ "${{ needs.check-version.outputs.should-publish }}" == "true" ]; then
-            if [ "${{ needs.publish.result }}" == "success" ]; then
-              echo "🎉 Successfully published @nanocollective/nanocoder v${{ needs.check-version.outputs.package-version }} to NPM and created GitHub release!"
-            else
-              echo "❌ Failed to publish @nanocollective/nanocoder v${{ needs.check-version.outputs.package-version }}"
-              exit 1
-            fi
-          else
-            echo "ℹ️ No new version to publish (current: ${{ needs.check-version.outputs.package-version }})"
-          fi
+      - name: Generate changelog
+        uses: tj-actions/git-cliff@v1
+        id: git-cliff
+        with:
+          configuration: cliff.toml
+          args: --verbose --latest --strip header
+        env:
+          OUTPUT: CHANGELOG.md
+
+      - name: Upload release assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/cli.js
+          asset_name: nanocoder-linux-x64
+          asset_content_type: application/octet-stream

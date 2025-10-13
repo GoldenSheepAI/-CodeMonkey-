@@ -1,0 +1,26 @@
+# Global code owners
+* @Nano-Collective/maintainers
+
+# Core application code
+/source/ @Nano-Collective/core-team
+
+# Integrations
+/source/integrations/ @Nano-Collective/integrations-team
+
+# CLI and commands
+/source/commands/ @Nano-Collective/cli-team
+
+# Tests
+/tests/ @Nano-Collective/qa-team
+
+# Documentation
+/docs/ @Nano-Collective/docs-team
+
+# CI/CD and workflows
+/.github/ @Nano-Collective/devops-team
+
+# Build and configuration
+/package.json @Nano-Collective/devops-team
+/tsconfig.json @Nano-Collective/devops-team
+/tsup.config.ts @Nano-Collective/devops-team
+/vitest.config.ts @Nano-Collective/devops-team
