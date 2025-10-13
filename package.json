@@ -35,6 +35,8 @@
 		"build:bundle": "tsup && chmod +x dist/cli.js",
 		"dev": "tsc --watch",
 		"start": "node --no-warnings dist/cli.js",
+		"codemonkey": "node --no-warnings dist/cli.js",
+		"como": "node --no-warnings dist/cli.js",
 		"test": "prettier --check . && xo && ava",
 		"test:modes": "tsx scripts/test-modes.ts",
 		"prepublishOnly": "npm run build"

@@ -87,7 +87,12 @@ npm run build
 3. Run locally:
 
 ```bash
+# Standard start
 npm run start
+
+# Or use branded commands 🐒
+pnpm codemonkey
+pnpm como
 ```
 
 **For Auto-Restart on `/restart` command:**
