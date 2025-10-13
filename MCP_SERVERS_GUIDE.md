@@ -6,6 +6,99 @@ Model Context Protocol (MCP) servers extend CodeMonkey's capabilities by connect
 
 MCP servers are **disabled by default** to avoid connection errors. Enable them in `agents.config.json` as needed.
 
+---
+
+## 🚀 Coming Soon: 15 Best MCP Servers for CodeMonkey
+
+These powerful MCP servers will be integrated into CodeMonkey to supercharge your development workflow:
+
+### Developer Workflow
+
+#### 1. **GitHub MCP** 🐙
+Full GitHub automation with OAuth-scoped APIs.
+- **Tools:** `createIssue`, `commentOnPR`, `getRepoInfo`, `createBranch`, `updateFile`
+- **Use cases:** Automated PR management, issue tracking, repository operations
+
+#### 2. **Jira MCP** 📋
+Comprehensive Jira ticket management.
+- **Tools:** `createTicket`, `addComment`, `listAssignedIssues`, `transitionIssue`
+- **Use cases:** Sprint planning, ticket automation, workflow management
+
+#### 3. **GPT Pilot MCP** 🚁
+Full-stack AI workflow orchestration from code to deployment.
+- **Tools:** `generateCode`, `runTests`, `triggerDeploy`
+- **Use cases:** Autonomous development, CI/CD automation, multi-step workflows
+
+### Memory & Planning
+
+#### 4. **Memory Bank MCP** 🧠
+Persistent memory across sessions.
+- **Tools:** `storeEntry`, `queryEntries`, `deleteEntry`
+- **Use cases:** Context retention, session memory, structured data storage
+
+#### 5. **Knowledge Graph MCP** 🕸️
+Internal graph for reasoning and entity linking.
+- **Tools:** `addNode`, `addEdge`, `queryGraph`
+- **Use cases:** Dependency management, entity relationships, graph traversal
+
+#### 6. **Sequential Planner MCP** 📝
+Break complex tasks into sequenced steps.
+- **Tools:** `createPlan`, `getNextTask`, `markTaskDone`
+- **Use cases:** Task decomposition, hierarchical planning, execution tracking
+
+### Automation & Testing
+
+#### 7. **Playwright MCP** 🎭
+Browser automation with Playwright.
+- **Tools:** `openPage`, `click`, `type`, `assertVisible`, `screenshot`
+- **Use cases:** UI testing, regression suites, frontend validation
+
+#### 8. **Puppeteer MCP** 🎪
+Fast browser control with Puppeteer.
+- **Tools:** `navigate`, `clickElement`, `extractText`, `screenshot`
+- **Use cases:** Web scraping, UI checks, DOM interactions
+
+#### 9. **Selenium MCP** 🌐
+Classic browser automation with real browsers.
+- **Tools:** `navigate`, `findElement`, `click`, `sendKeys`, `getPageSource`
+- **Use cases:** Cross-browser testing, headless automation
+
+### Execution & Workflow Control
+
+#### 10. **Desktop Commander MCP** 💻
+Local system command and file manager.
+- **Tools:** `execCommand`, `readFile`, `writeFile`, `listDirectory`
+- **Use cases:** File operations, shell scripting, local automation
+
+#### 11. **OpenAgents MCP** 🤖
+Multi-agent coordination and task delegation.
+- **Tools:** `registerAgent`, `sendTask`, `getStatus`, `listAgents`
+- **Use cases:** Agent orchestration, distributed workflows
+
+#### 12. **Continue MCP** ⏸️
+Checkpointing for long-running workflows.
+- **Tools:** `saveCheckpoint`, `resumeCheckpoint`, `listCheckpoints`
+- **Use cases:** Crash recovery, state management, session persistence
+
+### Data & Security
+
+#### 13. **Fetch Service MCP** 🌐
+Web content ingestion and parsing.
+- **Tools:** `fetchHTML`, `fetchMarkdown`, `fetchJSON`
+- **Use cases:** Content scraping, API consumption, data ingestion
+
+#### 14. **Supabase MCP** 🗄️
+Structured database access with Supabase.
+- **Tools:** `select`, `insert`, `update`, `delete`
+- **Use cases:** Database operations, schema introspection, data management
+
+#### 15. **Snyk MCP** 🔒
+Security scanning and vulnerability detection.
+- **Tools:** `runScan`, `getIssues`, `generateFixPR`
+- **Use cases:** Security audits, CVE detection, automated fixes
+
+---
+
 ## Popular MCP Servers
 
 ### 1. **Filesystem Server** 📁
