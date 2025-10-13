@@ -4,6 +4,7 @@ import {loadPreferences} from './config/preferences.js';
 import type {LLMClient, LangChainProviderConfig} from './types/index.js';
 import {existsSync} from 'fs';
 import {join} from 'path';
+import {detectOllamaModels} from './utils/ollama-detector.js';
 
 export async function createLLMClient(
 	provider?: string,
@@ -21,7 +22,7 @@ async function createLangGraphClient(
 	hasConfigFile = true,
 ): Promise<{client: LLMClient; actualProvider: string}> {
 	// Load provider configs
-	const providers = loadProviderConfigs();
+	const providers = await loadProviderConfigs();
 
 	if (providers.length === 0) {
 		if (!hasConfigFile) {
@@ -86,7 +87,7 @@ async function createLangGraphClient(
 	}
 }
 
-function loadProviderConfigs(): LangChainProviderConfig[] {
+async function loadProviderConfigs(): Promise<LangChainProviderConfig[]> {
 	const providers: LangChainProviderConfig[] = [];
 	const preferences = loadPreferences();
 	const budgetMode = preferences.budgetMode;
@@ -101,10 +102,19 @@ function loadProviderConfigs(): LangChainProviderConfig[] {
 				baseURL = budgetMode.toknxrProxyUrl;
 			}
 
+			// Auto-detect Ollama models if enabled
+			let models = provider.models || [];
+			if (provider.autoDetectModels && provider.name === 'Local Ollama') {
+				const detectedModels = await detectOllamaModels();
+				if (detectedModels.length > 0) {
+					models = detectedModels;
+				}
+			}
+
 			providers.push({
 				name: provider.name,
 				type: 'openai',
-				models: provider.models || [],
+				models,
 				requestTimeout: provider.requestTimeout,
 				socketTimeout: provider.socketTimeout,
 				connectionPool: provider.connectionPool,

@@ -2,13 +2,13 @@
 	"codemonkey": {
 		"providers": [
 			{
-				"name": "OpenRouter",
-				"enabled": true,
-				"baseUrl": "https://openrouter.ai/api/v1",
-				"apiKey": "YOUR_OPENROUTER_API_KEY_HERE",
-				"models": ["openai/gpt-4o", "anthropic/claude-3.5-sonnet", "anthropic/claude-3-haiku"],
-				"description": "Access multiple AI models through one API (recommended)"
-			},
+			"name": "OpenRouter",
+			"enabled": false,
+			"baseUrl": "https://openrouter.ai/api/v1",
+			"apiKey": "YOUR_OPENROUTER_API_KEY_HERE",
+			"models": ["openai/gpt-4o", "anthropic/claude-3.5-sonnet", "anthropic/claude-3-haiku"],
+			"description": "Access multiple AI models through one API"
+		},
 			{
 				"name": "OpenAI",
 				"enabled": false,
@@ -27,10 +27,24 @@
 			},
 			{
 				"name": "Local Ollama",
-				"enabled": false,
+				"enabled": true,
 				"baseUrl": "http://localhost:11434/v1",
-				"models": ["llama3.2", "qwen2.5-coder", "deepseek-coder"],
-				"description": "Run models locally (free, private, no API key needed)"
+				"models": [],
+				"autoDetectModels": true,
+				"description": "Run models locally (free, private, no API key needed) - Auto-detects installed models"
+			},
+			{
+				"name": "Hugging Face",
+				"enabled": false,
+				"baseUrl": "https://api-inference.huggingface.co/v1",
+				"apiKey": "YOUR_HUGGINGFACE_API_KEY_HERE",
+				"models": [
+					"meta-llama/Meta-Llama-3.1-70B-Instruct",
+					"Qwen/Qwen2.5-Coder-32B-Instruct",
+					"mistralai/Mixtral-8x7B-Instruct-v0.1",
+					"microsoft/Phi-3-medium-4k-instruct"
+				],
+				"description": "Access 1000s of models via Hugging Face Inference API"
 			},
 			{
 				"name": "Groq",

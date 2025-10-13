@@ -21,6 +21,7 @@ export interface AppConfig {
 		baseUrl?: string;
 		apiKey?: string;
 		models: string[];
+		autoDetectModels?: boolean; // For Ollama - auto-detect installed models
 		requestTimeout?: number;
 		socketTimeout?: number;
 		connectionPool?: {
