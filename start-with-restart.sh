@@ -10,8 +10,8 @@ while true; do
     
     EXIT_CODE=$?
     
-    # If exit code is 0 (from /restart), restart automatically
-    if [ $EXIT_CODE -eq 0 ]; then
+    # If exit code is 42 (from /restart), restart automatically
+    if [ $EXIT_CODE -eq 42 ]; then
         echo ""
         echo "🔄 Restarting CodeMonkey..."
         sleep 1

@@ -13,9 +13,9 @@ export const restartCommand: Command = {
 			hideBox: true,
 		});
 
-		// Exit and restart
+		// Exit with code 42 to signal auto-restart
 		setTimeout(() => {
-			process.exit(0);
+			process.exit(42);
 		}, 500);
 
 		return message;
