@@ -36,7 +36,8 @@
     "frontmatter",
     "Intelli",
     "npm",
-    "goldensheepai"
+    "goldensheepai",
+    "js"
   ],
   "ignorePaths": [
     "node_modules/**",
