@@ -2,13 +2,21 @@
 	"codemonkey": {
 		"providers": [
 			{
-			"name": "OpenRouter",
-			"enabled": false,
-			"baseUrl": "https://openrouter.ai/api/v1",
-			"apiKey": "YOUR_OPENROUTER_API_KEY_HERE",
-			"models": ["openai/gpt-4o", "anthropic/claude-3.5-sonnet", "anthropic/claude-3-haiku"],
-			"description": "Access multiple AI models through one API"
-		},
+				"name": "Local Ollama",
+				"enabled": true,
+				"baseUrl": "http://localhost:11434/v1",
+				"models": [],
+				"autoDetectModels": true,
+				"description": "Run models locally (free, private, no API key needed) - Auto-detects installed models"
+			},
+			{
+				"name": "OpenRouter",
+				"enabled": false,
+				"baseUrl": "https://openrouter.ai/api/v1",
+				"apiKey": "YOUR_OPENROUTER_API_KEY_HERE",
+				"models": ["openai/gpt-4o", "anthropic/claude-3.5-sonnet", "anthropic/claude-3-haiku"],
+				"description": "Access multiple AI models through one API"
+			},
 			{
 				"name": "OpenAI",
 				"enabled": false,
@@ -24,14 +32,6 @@
 				"apiKey": "YOUR_ANTHROPIC_API_KEY_HERE",
 				"models": ["claude-3-5-sonnet-20241022", "claude-3-opus-20240229", "claude-3-haiku-20240307"],
 				"description": "Direct Anthropic Claude API access"
-			},
-			{
-				"name": "Local Ollama",
-				"enabled": true,
-				"baseUrl": "http://localhost:11434/v1",
-				"models": [],
-				"autoDetectModels": true,
-				"description": "Run models locally (free, private, no API key needed) - Auto-detects installed models"
 			},
 			{
 				"name": "Hugging Face",
