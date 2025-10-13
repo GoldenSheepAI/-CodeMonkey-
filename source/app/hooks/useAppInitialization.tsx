@@ -18,6 +18,7 @@ import {commandRegistry} from '@/commands.js';
 import {shouldLog} from '@/config/logging.js';
 import {appConfig} from '@/config/index.js';
 import {
+	budgetCommand,
 	clearCommand,
 	commandsCommand,
 	debugCommand,
@@ -249,6 +250,7 @@ export function useAppInitialization({
 				clearCommand,
 				modelCommand,
 				providerCommand,
+				budgetCommand,
 				commandsCommand,
 				debugCommand,
 				mcpCommand,
