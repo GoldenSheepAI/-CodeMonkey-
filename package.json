@@ -43,6 +43,8 @@
 		"source/app/prompts/main-prompt.md"
 	],
 	"dependencies": {
+		"@goldensheepai/noleakai": "^1.0.0",
+		"@goldensheepai/toknxr-cli": "^0.4.3",
 		"@langchain/core": "^0.3.72",
 		"@langchain/langgraph": "^0.4.9",
 		"@langchain/openai": "^0.6.15",

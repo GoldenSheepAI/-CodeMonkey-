@@ -47,6 +47,13 @@ export interface UserPreferences {
 	lastUpdateCheck?: number;
 	selectedTheme?: ThemePreset;
 	trustedDirectories?: string[];
+	budgetMode?: {
+		enabled: boolean;
+		toknxrProxyUrl?: string;
+		showCosts?: boolean;
+		budgetLimit?: number;
+		currentSpend?: number;
+	};
 }
 
 export type LogLevel = 'silent' | 'normal' | 'verbose';
