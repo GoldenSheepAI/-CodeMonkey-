@@ -34,6 +34,7 @@ import {
 	secureCommand,
 	statusCommand,
 	themeCommand,
+	tipsCommand,
 	updateCommand,
 } from '@/commands/index.js';
 import SuccessMessage from '@/components/success-message.js';
@@ -273,6 +274,7 @@ export function useAppInitialization({
 
 			commandRegistry.register([
 				helpCommand,
+				tipsCommand,
 				exitCommand,
 				restartCommand,
 				clearCommand,
