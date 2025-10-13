@@ -57,6 +57,8 @@ Then run in any directory:
 
 ```bash
 codemonkey
+# or use the shorter alias
+como
 ```
 
 ### For Development

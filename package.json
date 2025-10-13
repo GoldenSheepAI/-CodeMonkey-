@@ -27,7 +27,8 @@
 		"url": "https://github.com/Radix-Obsidian/-CodeMonkey-/issues"
 	},
 	"bin": {
-		"codemonkey": "dist/cli.js"
+		"codemonkey": "dist/cli.js",
+		"como": "dist/cli.js"
 	},
 	"type": "module",
 	"engines": {

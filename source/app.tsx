@@ -368,10 +368,23 @@ export default function App() {
 									developmentMode={appState.developmentMode}
 								/>
 							) : appState.mcpInitialized && !appState.client ? (
-								<Text color={themeContextValue.colors.secondary}>
-									⚠️ No LLM provider available. Chat is disabled. Please fix
-									your provider configuration and restart.
-								</Text>
+								<>
+									<Text color={themeContextValue.colors.secondary}>
+										⚠️ No LLM provider available. Chat is disabled. Please fix
+										your provider configuration and restart.
+									</Text>
+									<UserInput
+										customCommands={Array.from(
+											appState.customCommandCache.keys(),
+										)}
+										onSubmit={handleMessageSubmit}
+										disabled={false}
+										onCancel={handleCancel}
+										onToggleMode={handleToggleDevelopmentMode}
+										developmentMode={appState.developmentMode}
+										placeholder="Commands available: /init, /help, /exit (AI chat disabled until provider configured)"
+									/>
+								</>
 							) : (
 								<Text color={themeContextValue.colors.secondary}>
 									<Spinner type="dots2" /> Loading...
