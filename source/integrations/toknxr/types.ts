@@ -3,9 +3,12 @@
  */
 
 export interface TokenUsage {
+  model: string;
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
+  timestamp: Date;
+  sessionId?: string;
 }
 
 export interface CostEstimate {

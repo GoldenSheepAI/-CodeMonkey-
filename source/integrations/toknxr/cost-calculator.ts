@@ -4,7 +4,7 @@
  * Provides accurate cost calculations for different AI models and usage patterns.
  */
 
-import type { TokenUsage, CostBreakdown, ToknxrConfig } from './index.ts';
+import type { TokenUsage, CostBreakdown, ToknxrConfig } from './types.js';
 
 export class CostCalculator {
 	private config: ToknxrConfig;

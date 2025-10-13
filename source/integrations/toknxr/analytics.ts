@@ -5,7 +5,7 @@
  * and cost optimization recommendations.
  */
 
-import type { TokenUsage, UsageStats, ToknxrConfig } from './index.ts';
+import type { TokenUsage, UsageStats, ToknxrConfig } from './types.js';
 
 export class AnalyticsEngine {
 	private config: ToknxrConfig;

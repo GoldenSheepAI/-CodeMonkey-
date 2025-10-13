@@ -7,7 +7,7 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
-import type { TokenUsage, ToknxrConfig } from './index.ts';
+import type { TokenUsage, ToknxrConfig } from './types.js';
 
 interface DatabaseRecord extends TokenUsage {
 	id: string;
