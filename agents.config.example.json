@@ -63,27 +63,6 @@
 				"description": "LM Studio, vLLM, or any OpenAI-compatible server"
 			}
 		],
-		"mcpServers": [
-			{
-				"name": "filesystem",
-				"enabled": false,
-				"command": "npx",
-				"args": [
-					"@modelcontextprotocol/server-filesystem",
-					"/path/to/allowed/directory"
-				],
-				"description": "Access local filesystem"
-			},
-			{
-				"name": "github",
-				"enabled": false,
-				"command": "npx",
-				"args": ["@modelcontextprotocol/server-github"],
-				"env": {
-					"GITHUB_TOKEN": "your-github-token"
-				},
-				"description": "GitHub repository access"
-			}
-		]
+		"mcpServers": []
 	}
 }
