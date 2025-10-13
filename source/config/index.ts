@@ -33,10 +33,13 @@ function loadAppConfig(): AppConfig {
 			// Apply environment variable substitution
 			const processedData = substituteEnvVars(agentsData);
 
-			if (processedData.nanocoder) {
+			// Support both 'codemonkey' (new) and 'nanocoder' (legacy) keys
+			const configData = processedData.codemonkey || processedData.nanocoder;
+		
+			if (configData) {
 				return {
-					providers: processedData.nanocoder.providers,
-					mcpServers: processedData.nanocoder.mcpServers,
+					providers: configData.providers,
+					mcpServers: configData.mcpServers,
 				};
 			}
 		} catch (error) {
