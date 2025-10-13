@@ -37,6 +37,7 @@ jobs:
         run: pnpm run build
 
       - name: Create release
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -55,7 +56,7 @@ jobs:
         uses: tj-actions/git-cliff@v1
         id: git-cliff
         with:
-          configuration: cliff.toml
+          config-file: cliff.toml
           args: --verbose --latest --strip header
         env:
           OUTPUT: CHANGELOG.md
