@@ -1,6 +1,6 @@
-# Nanocoder
+# CodeMonkey 🐒
 
-A local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter. Built with privacy and control in mind, Nanocoder supports multiple AI providers with tool support for file operations and command execution.
+A local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter. Built with privacy and control in mind, CodeMonkey supports multiple AI providers with tool support for file operations and command execution.
 
 ![Example](./.github/assets/example.gif)
 
@@ -27,13 +27,13 @@ A local-first CLI coding agent that brings the power of agentic coding tools lik
 
 ## FAQs
 
-### What is Nanocoder?
+### What is CodeMonkey?
 
-Nanocoder is a local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter. Built with privacy and control in mind, Nanocoder supports any AI provider that has an OpenAI compatible end-point, tool and non-tool calling models.
+CodeMonkey is a local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter. Built with privacy and control in mind, CodeMonkey supports any AI provider that has an OpenAI compatible end-point, tool and non-tool calling models.
 
 ### How is this different to OpenCode?
 
-This comes down to philosophy. OpenCode is a great tool, but it's owned and managed by a venture-backed company that restricts community and open-source involvement to the outskirts. With Nanocoder, the focus is on building a true community-led project where anyone can contribute openly and directly. We believe AI is too powerful to be in the hands of big corporations and everyone should have access to it.
+This comes down to philosophy. OpenCode is a great tool, but it's owned and managed by a venture-backed company that restricts community and open-source involvement to the outskirts. With CodeMonkey, the focus is on building a true community-led project where anyone can contribute openly and directly. We believe AI is too powerful to be in the hands of big corporations and everyone should have access to it.
 
 We also strongly believe in the "local-first" approach, where your data, models, and processing stay on your machine whenever possible to ensure maximum privacy and user control. Beyond that, we're actively pushing to develop advancements and frameworks for small, local models to be effective at coding locally.
 
@@ -41,7 +41,7 @@ Not everyone will agree with this philosophy, and that's okay. We believe in fos
 
 ### I want to be involved, how do I start?
 
-Firstly, we would love for you to be involved. You can get started contributing to Nanocoder in several ways, check out the [Community](#community) section of this README.
+Firstly, we would love for you to be involved. You can get started contributing to CodeMonkey in several ways, check out the [Community](#community) section of this README.
 
 ## Installation
 
@@ -50,13 +50,13 @@ Firstly, we would love for you to be involved. You can get started contributing 
 Install globally and use anywhere:
 
 ```bash
-npm install -g @nanocollective/nanocoder
+npm install -g @radix-obsidian/codemonkey
 ```
 
 Then run in any directory:
 
 ```bash
-nanocoder
+codemonkey
 ```
 
 ### For Development
