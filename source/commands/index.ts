@@ -13,3 +13,4 @@ export * from './update.js';
 export * from './recommendations.js';
 export * from './status.js';
 export * from './budget.js';
+export * from './secure.js';

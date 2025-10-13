@@ -263,10 +263,10 @@ export default function UserInput({
 		<Box flexDirection="column" paddingY={1} width="100%" marginTop={1}>
 			<Box
 				flexDirection="column"
-				borderStyle={isBashMode ? 'round' : undefined}
-				borderColor={isBashMode ? colors.tool : undefined}
-				paddingX={isBashMode ? 1 : 0}
-				width={isBashMode ? boxWidth : undefined}
+				borderStyle="round"
+				borderColor={isBashMode ? colors.tool : disabled ? colors.secondary : colors.primary}
+				paddingX={1}
+				width={boxWidth}
 			>
 				{!isBashMode && (
 					<>

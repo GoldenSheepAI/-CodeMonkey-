@@ -54,6 +54,13 @@ export interface UserPreferences {
 		budgetLimit?: number;
 		currentSpend?: number;
 	};
+	secureMode?: {
+		enabled: boolean;
+		autoRedact?: boolean;
+		warnOnly?: boolean;
+		scanPatterns?: string[];
+		detectedLeaks?: number;
+	};
 }
 
 export type LogLevel = 'silent' | 'normal' | 'verbose';
