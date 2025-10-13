@@ -1,4 +1,4 @@
-import {Text} from 'ink';
+import {Text, Box} from 'ink';
 import {memo} from 'react';
 import {existsSync} from 'fs';
 
@@ -6,6 +6,8 @@ import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {themes, getThemeColors} from '@/config/themes.js';
 import type {ThemePreset} from '@/types/ui.js';
+import {loadPreferences} from '@/config/preferences.js';
+import {getSecurityStatus} from '@/utils/security-scanner.js';
 
 // Get CWD once at module load time
 const cwd = process.cwd();
@@ -32,6 +34,9 @@ export default memo(function Status({
 }) {
 	const boxWidth = useTerminalWidth();
 	const colors = getThemeColors(theme);
+	const preferences = loadPreferences();
+	const budgetMode = preferences.budgetMode;
+	const secureMode = preferences.secureMode;
 
 	// Check for AGENTS.md synchronously if not provided
 	const hasAgentsMd = agentsMdLoaded ?? existsSync(`${cwd}/AGENTS.md`);
@@ -62,6 +67,26 @@ export default memo(function Status({
 				<Text bold={true}>Theme: </Text>
 				{themes[theme].displayName}
 			</Text>
+			{budgetMode?.enabled && (
+				<Box>
+					<Text color={colors.warning}>
+						<Text bold={true}>🎯 Budget Mode: </Text>
+						ACTIVE - Cost tracking enabled
+					</Text>
+					{budgetMode.currentSpend !== undefined && (
+						<Text color={colors.secondary}>
+							{' '}
+							↳ Session: ${budgetMode.currentSpend.toFixed(4)} / $
+							{budgetMode.budgetLimit?.toFixed(2)}
+						</Text>
+					)}
+				</Box>
+			)}
+			{secureMode?.enabled && (
+				<Text color={colors.success}>
+					<Text bold={true}>{getSecurityStatus()}</Text>
+				</Text>
+			)}
 			{hasAgentsMd ? (
 				<Text color={colors.secondary} italic>
 					<Text>↳ Using AGENTS.md. Project initialized</Text>

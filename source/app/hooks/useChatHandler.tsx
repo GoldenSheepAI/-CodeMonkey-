@@ -12,6 +12,8 @@ import AssistantMessage from '@/components/assistant-message.js';
 import ErrorMessage from '@/components/error-message.js';
 import ToolMessage from '@/components/tool-message.js';
 import {ThinkingStats} from './useAppState.js';
+import {scanForSecrets} from '@/utils/security-scanner.js';
+import {loadPreferences} from '@/config/preferences.js';
 import React from 'react';
 
 // Helper function to filter out invalid tool calls and deduplicate by ID and function
@@ -213,6 +215,26 @@ export function useChatHandler({
 		messages: Message[],
 	) => {
 		if (!client) return;
+
+		// Security scan if Secure Mode is enabled
+		const preferences = loadPreferences();
+		if (preferences.secureMode?.enabled) {
+			const lastMessage = messages[messages.length - 1];
+			if (lastMessage?.role === 'user') {
+				const scanResult = scanForSecrets(lastMessage.content);
+				
+				if (!scanResult.isSafe && !preferences.secureMode.warnOnly) {
+					// Block the request - just return without processing
+					setIsThinking(false);
+					return;
+				}
+				
+				// Auto-redact if enabled
+				if (preferences.secureMode.autoRedact && scanResult.redactedText) {
+					lastMessage.content = scanResult.redactedText;
+				}
+			}
+		}
 
 		// Ensure we have an abort controller for this request
 		let controller = abortController;

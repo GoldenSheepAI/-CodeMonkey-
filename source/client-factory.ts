@@ -88,10 +88,19 @@ async function createLangGraphClient(
 
 function loadProviderConfigs(): LangChainProviderConfig[] {
 	const providers: LangChainProviderConfig[] = [];
+	const preferences = loadPreferences();
+	const budgetMode = preferences.budgetMode;
 
 	// Load providers from the new providers array structure
 	if (appConfig.providers) {
 		for (const provider of appConfig.providers) {
+			// If Budget Mode is enabled, route through ToknXR proxy
+			let baseURL = provider.baseUrl;
+			if (budgetMode?.enabled && budgetMode.toknxrProxyUrl) {
+				// Use ToknXR proxy URL instead of direct provider URL
+				baseURL = budgetMode.toknxrProxyUrl;
+			}
+
 			providers.push({
 				name: provider.name,
 				type: 'openai',
@@ -100,7 +109,7 @@ function loadProviderConfigs(): LangChainProviderConfig[] {
 				socketTimeout: provider.socketTimeout,
 				connectionPool: provider.connectionPool,
 				config: {
-					baseURL: provider.baseUrl,
+					baseURL,
 					apiKey: provider.apiKey || 'dummy-key',
 				},
 			});
