@@ -2,7 +2,7 @@ import {
 	SystemCapabilities,
 	ModelEntry,
 	ModelRecommendation,
-} from '../types/index.js';
+} from '@/types/index.js';
 import {modelDatabase} from './model-database.js';
 
 export class ModelMatchingEngine {
@@ -175,7 +175,9 @@ export class ModelMatchingEngine {
 		if (model.quality.local === 0) {
 			warnings.push('Cannot be run locally - proprietary/closed-source model');
 		} else if (model.quality.local <= 3) {
-			warnings.push('Difficult to run locally - requires significant resources');
+			warnings.push(
+				'Difficult to run locally - requires significant resources',
+			);
 		}
 
 		return warnings;

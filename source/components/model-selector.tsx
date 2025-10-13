@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {Box, Text, useInput} from 'ink';
 import SelectInput from 'ink-select-input';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
-import {useTheme} from '../hooks/useTheme.js';
-import {LLMClient} from '../types/core.js';
-import {useTerminalWidth} from '../hooks/useTerminalWidth.js';
+import {useTheme} from '@/hooks/useTheme.js';
+import {LLMClient} from '@/types/core.js';
+import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 
 interface ModelSelectorProps {
 	client: LLMClient | null;

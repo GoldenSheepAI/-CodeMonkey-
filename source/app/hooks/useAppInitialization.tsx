@@ -1,22 +1,22 @@
 import React, {useEffect} from 'react';
-import {LLMClient} from '../../types/core.js';
-import {ToolManager} from '../../tools/tool-manager.js';
-import {CustomCommandLoader} from '../../custom-commands/loader.js';
-import {CustomCommandExecutor} from '../../custom-commands/executor.js';
-import {createLLMClient} from '../../client-factory.js';
+import {LLMClient} from '@/types/core.js';
+import {ToolManager} from '@/tools/tool-manager.js';
+import {CustomCommandLoader} from '@/custom-commands/loader.js';
+import {CustomCommandExecutor} from '@/custom-commands/executor.js';
+import {createLLMClient} from '@/client-factory.js';
 import {
 	getLastUsedModel,
 	loadPreferences,
 	updateLastUsed,
-} from '../../config/preferences.js';
-import type {MCPInitResult, UserPreferences} from '../../types/index.js';
+} from '@/config/preferences.js';
+import type {MCPInitResult, UserPreferences} from '@/types/index.js';
 import {
 	setToolManagerGetter,
 	setToolRegistryGetter,
-} from '../../message-handler.js';
-import {commandRegistry} from '../../commands.js';
-import {shouldLog} from '../../config/logging.js';
-import {appConfig} from '../../config/index.js';
+} from '@/message-handler.js';
+import {commandRegistry} from '@/commands.js';
+import {shouldLog} from '@/config/logging.js';
+import {appConfig} from '@/config/index.js';
 import {
 	clearCommand,
 	commandsCommand,
@@ -32,12 +32,12 @@ import {
 	statusCommand,
 	themeCommand,
 	updateCommand,
-} from '../../commands/index.js';
-import SuccessMessage from '../../components/success-message.js';
-import ErrorMessage from '../../components/error-message.js';
-import InfoMessage from '../../components/info-message.js';
-import {checkForUpdates} from '../../utils/update-checker.js';
-import type {UpdateInfo} from '../../types/index.js';
+} from '@/commands/index.js';
+import SuccessMessage from '@/components/success-message.js';
+import ErrorMessage from '@/components/error-message.js';
+import InfoMessage from '@/components/info-message.js';
+import {checkForUpdates} from '@/utils/update-checker.js';
+import type {UpdateInfo} from '@/types/index.js';
 
 interface UseAppInitializationProps {
 	setClient: (client: LLMClient | null) => void;

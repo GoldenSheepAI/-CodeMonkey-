@@ -1,16 +1,16 @@
-import {LLMClient, Message, ToolCall, ToolResult} from '../../types/core.js';
-import {ToolManager} from '../../tools/tool-manager.js';
-import {toolDefinitions} from '../../tools/index.js';
-import {processPromptTemplate} from '../../utils/prompt-processor.js';
+import {LLMClient, Message, ToolCall, ToolResult} from '@/types/core.js';
+import {ToolManager} from '@/tools/tool-manager.js';
+import {toolDefinitions} from '@/tools/index.js';
+import {processPromptTemplate} from '@/utils/prompt-processor.js';
 import {
 	parseToolCallsFromContent,
 	cleanContentFromToolCalls,
-} from '../../tool-calling/index.js';
-import {ConversationStateManager} from '../utils/conversationState.js';
-import UserMessage from '../../components/user-message.js';
-import AssistantMessage from '../../components/assistant-message.js';
-import ErrorMessage from '../../components/error-message.js';
-import ToolMessage from '../../components/tool-message.js';
+} from '@/tool-calling/index.js';
+import {ConversationStateManager} from '@/app/utils/conversationState.js';
+import UserMessage from '@/components/user-message.js';
+import AssistantMessage from '@/components/assistant-message.js';
+import ErrorMessage from '@/components/error-message.js';
+import ToolMessage from '@/components/tool-message.js';
 import {ThinkingStats} from './useAppState.js';
 import React from 'react';
 

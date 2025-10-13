@@ -1,7 +1,7 @@
 import {memo} from 'react';
 import {Box, Text} from 'ink';
-import {useTheme} from '../hooks/useTheme.js';
-import type {BashExecutionIndicatorProps} from '../types/index.js';
+import {useTheme} from '@/hooks/useTheme.js';
+import type {BashExecutionIndicatorProps} from '@/types/index.js';
 
 export default memo(function BashExecutionIndicator({
 	command,

@@ -1,7 +1,7 @@
 import {readFileSync, existsSync} from 'fs';
 import {join} from 'path';
-import {promptPath} from '../config/index.js';
-import type {Tool} from '../types/index.js';
+import {promptPath} from '@/config/index.js';
+import type {Tool} from '@/types/index.js';
 
 /**
  * Process the main prompt template by injecting dynamic tool documentation

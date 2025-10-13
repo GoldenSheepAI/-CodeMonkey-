@@ -1,6 +1,6 @@
 import React from 'react';
-import {CustomCommandLoader} from '../custom-commands/loader.js';
-import {CustomCommandExecutor} from '../custom-commands/executor.js';
+import {CustomCommandLoader} from '@/custom-commands/loader.js';
+import {CustomCommandExecutor} from '@/custom-commands/executor.js';
 
 export interface MessageSubmissionOptions {
 	customCommandCache: Map<string, any>;

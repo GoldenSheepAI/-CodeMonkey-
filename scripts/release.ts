@@ -5,15 +5,15 @@
  * Handles version bumping, changelog generation, and publishing
  */
 
-import { execSync } from 'node:child_process';
-import { readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import {execSync} from 'node:child_process';
+import {readFileSync, writeFileSync} from 'node:fs';
+import {join} from 'node:path';
 
 const args = process.argv.slice(2);
 const versionType = args[0] || 'patch'; // major, minor, patch
 
 function exec(command: string): string {
-	return execSync(command, { encoding: 'utf-8' }).trim();
+	return execSync(command, {encoding: 'utf-8'}).trim();
 }
 
 function getCurrentVersion(): string {
@@ -29,11 +29,14 @@ function updateVersion(type: string): string {
 function updateChangelog(newVersion: string) {
 	const date = new Date().toISOString().split('T')[0];
 	const changelogPath = 'CHANGELOG.md';
-	
+
 	try {
 		const changelog = readFileSync(changelogPath, 'utf-8');
 		const newEntry = `\n## [${newVersion}] - ${date}\n\n### Added\n\n### Changed\n\n### Fixed\n\n`;
-		const updated = changelog.replace('# Changelog\n', `# Changelog\n${newEntry}`);
+		const updated = changelog.replace(
+			'# Changelog\n',
+			`# Changelog\n${newEntry}`,
+		);
 		writeFileSync(changelogPath, updated);
 	} catch (error) {
 		console.log('⚠️  No CHANGELOG.md found, skipping...');
@@ -47,7 +50,9 @@ async function main() {
 	// Check git status
 	const status = exec('git status --porcelain');
 	if (status) {
-		console.error('❌ Working directory not clean. Commit or stash changes first.');
+		console.error(
+			'❌ Working directory not clean. Commit or stash changes first.',
+		);
 		process.exit(1);
 	}
 
@@ -82,7 +87,7 @@ async function main() {
 	console.log('  pnpm publish');
 }
 
-main().catch((error) => {
+main().catch(error => {
 	console.error('❌ Release failed:', error);
 	process.exit(1);
 });

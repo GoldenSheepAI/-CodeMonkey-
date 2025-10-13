@@ -1,5 +1,5 @@
-import type {ToolCall} from '../types/index.js';
-import {logError} from '../utils/message-queue.js';
+import type {ToolCall} from '@/types/index.js';
+import {logError} from '@/utils/message-queue.js';
 import {XMLToolCallParser} from './xml-parser.js';
 
 // XML validation functions removed - XMLToolCallParser handles XML parsing

@@ -5,6 +5,7 @@ This directory contains documentation for SheepStack integrations.
 ## Available Integrations
 
 ### Toknxr - Cost Tracking & Analytics
+
 **Status**: ✅ Active
 
 Track token usage, calculate costs, and analyze API consumption patterns.
@@ -14,6 +15,7 @@ Track token usage, calculate costs, and analyze API consumption patterns.
 - Source: `source/integrations/toknxr/`
 
 **Features**:
+
 - Real-time token counting
 - Cost calculation per request
 - Usage analytics and reports
@@ -21,6 +23,7 @@ Track token usage, calculate costs, and analyze API consumption patterns.
 - Historical data storage
 
 ### NoLeakAI - Security Scanning
+
 **Status**: ✅ Active
 
 Detect and redact sensitive information in code and logs.
@@ -30,6 +33,7 @@ Detect and redact sensitive information in code and logs.
 - Source: `source/integrations/noleakai/`
 
 **Features**:
+
 - Automatic secret detection
 - API key and credential scanning
 - Log redaction
@@ -37,6 +41,7 @@ Detect and redact sensitive information in code and logs.
 - Severity-based alerts
 
 ### CoRect - Automated Debugging
+
 **Status**: 🚧 Phase 3
 
 Automated error detection and fix generation.
@@ -46,6 +51,7 @@ Automated error detection and fix generation.
 - Source: `source/integrations/corect/`
 
 **Features** (Planned):
+
 - Error categorization
 - Automated fix suggestions
 - Context-aware debugging
@@ -58,11 +64,11 @@ All integrations follow a consistent pattern:
 
 ```typescript
 interface Integration {
-  name: string;
-  enabled: boolean;
-  configure(options: Record<string, any>): void;
-  initialize(): Promise<void>;
-  shutdown(): Promise<void>;
+	name: string;
+	enabled: boolean;
+	configure(options: Record<string, any>): void;
+	initialize(): Promise<void>;
+	shutdown(): Promise<void>;
 }
 ```
 

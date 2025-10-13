@@ -4,8 +4,8 @@
  * Phase 3 implementation
  */
 
-export { ErrorDetector } from './error-detector.js';
-export { FixGenerator } from './fix-generator.js';
+export {ErrorDetector} from './error-detector.js';
+export {FixGenerator} from './fix-generator.js';
 
 export interface CoRectConfig {
 	autoFix?: boolean;

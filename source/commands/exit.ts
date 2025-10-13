@@ -1,5 +1,5 @@
-import {Command} from '../types/index.js';
-import InfoMessage from '../components/info-message.js';
+import {Command} from '@/types/index.js';
+import InfoMessage from '@/components/info-message.js';
 import React from 'react';
 
 export const exitCommand: Command = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import type {Command} from '../types/index.js';
+import type {Command} from '@/types/index.js';
 
 export const statusCommand: Command = {
 	name: 'status',

@@ -3,7 +3,7 @@
  * Redacts sensitive information from code and logs
  */
 
-import { SECURITY_PATTERNS } from './patterns.js';
+import {SECURITY_PATTERNS} from './patterns.js';
 
 export interface RedactionResult {
 	original: string;
@@ -16,7 +16,7 @@ export class Redactor {
 	private maskChar = '*';
 	private partialReveal = 4; // Show first/last N characters
 
-	redact(text: string, options?: { full?: boolean }): RedactionResult {
+	redact(text: string, options?: {full?: boolean}): RedactionResult {
 		let redacted = text;
 		let redactedCount = 0;
 		const matchedPatterns: string[] = [];
@@ -26,7 +26,10 @@ export class Redactor {
 			if (matches) {
 				for (const match of matches) {
 					if (options?.full) {
-						redacted = redacted.replace(match, this.maskChar.repeat(match.length));
+						redacted = redacted.replace(
+							match,
+							this.maskChar.repeat(match.length),
+						);
 					} else {
 						redacted = redacted.replace(match, this.partialRedact(match));
 					}

@@ -1,6 +1,6 @@
-import type {ToolHandler} from '../types/index.js';
+import type {ToolHandler} from '@/types/index.js';
 import {MCPClient} from './mcp-client.js';
-import {logError} from '../utils/message-queue.js';
+import {logError} from '@/utils/message-queue.js';
 
 /**
  * Creates tool handlers for MCP tools that integrate with the existing tool system

@@ -6,9 +6,9 @@ import type {
 	ToolHandler,
 	ToolDefinition,
 	BashToolResult,
-} from '../types/index.js';
-import {ThemeContext} from '../hooks/useTheme.js';
-import ToolMessage from '../components/tool-message.js';
+} from '@/types/index.js';
+import {ThemeContext} from '@/hooks/useTheme.js';
+import ToolMessage from '@/components/tool-message.js';
 
 const handler: ToolHandler = async (args: {
 	command: string;

@@ -9,7 +9,7 @@ import {webSearchTool} from './web-search.js';
 import {fetchUrlTool} from './fetch-url.js';
 import {searchFilesTool} from './search-files.js';
 import React from 'react';
-import type {ToolHandler, Tool, ToolDefinition} from '../types/index.js';
+import type {ToolHandler, Tool, ToolDefinition} from '@/types/index.js';
 
 export const toolDefinitions: ToolDefinition[] = [
 	readFileTool,

@@ -2,9 +2,9 @@ import {existsSync, readFileSync, writeFileSync} from 'fs';
 import {join} from 'path';
 import {homedir} from 'os';
 import {shouldLog} from './logging.js';
-import {logError} from '../utils/message-queue.js';
+import {logError} from '@/utils/message-queue.js';
 
-import type {UserPreferences} from '../types/index.js';
+import type {UserPreferences} from '@/types/index.js';
 
 const PREFERENCES_PATH = join(homedir(), '.nanocoder-preferences.json');
 

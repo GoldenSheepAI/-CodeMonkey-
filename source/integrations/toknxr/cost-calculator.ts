@@ -4,7 +4,7 @@
  * Provides accurate cost calculations for different AI models and usage patterns.
  */
 
-import type { TokenUsage, CostBreakdown, ToknxrConfig } from './types.js';
+import type {TokenUsage, CostBreakdown, ToknxrConfig} from './types.js';
 
 export class CostCalculator {
 	private config: ToknxrConfig;
@@ -66,7 +66,11 @@ export class CostCalculator {
 	/**
 	 * Update pricing for a model
 	 */
-	updatePricing(model: string, inputPerToken: number, outputPerToken: number): void {
+	updatePricing(
+		model: string,
+		inputPerToken: number,
+		outputPerToken: number,
+	): void {
 		this.config.modelPricing[model] = {
 			inputPerToken,
 			outputPerToken,
@@ -76,7 +80,11 @@ export class CostCalculator {
 	/**
 	 * Estimate cost for a conversation before it happens
 	 */
-	estimateCost(inputTokens: number, expectedOutputTokens: number, model: string): CostBreakdown {
+	estimateCost(
+		inputTokens: number,
+		expectedOutputTokens: number,
+		model: string,
+	): CostBreakdown {
 		const pricing = this.config.modelPricing[model];
 
 		if (!pricing) {

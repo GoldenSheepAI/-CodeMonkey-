@@ -5,9 +5,9 @@
  * with efficient querying and aggregation capabilities.
  */
 
-import { promises as fs } from 'fs';
+import {promises as fs} from 'fs';
 import path from 'path';
-import type { TokenUsage, ToknxrConfig } from './types.js';
+import type {TokenUsage, ToknxrConfig} from './types.js';
 
 interface DatabaseRecord extends TokenUsage {
 	id: string;
@@ -20,7 +20,8 @@ export class UsageDatabase {
 
 	constructor(config: ToknxrConfig) {
 		this.config = config;
-		this.dbPath = config.databasePath || path.join(process.cwd(), 'usage.db.json');
+		this.dbPath =
+			config.databasePath || path.join(process.cwd(), 'usage.db.json');
 	}
 
 	/**
@@ -57,10 +58,10 @@ export class UsageDatabase {
 	 */
 	async getUsageInRange(startDate: Date, endDate: Date): Promise<TokenUsage[]> {
 		const records = Array.from(this.cache.values())
-			.filter(record =>
-				record.timestamp >= startDate && record.timestamp <= endDate
+			.filter(
+				record => record.timestamp >= startDate && record.timestamp <= endDate,
 			)
-			.map(({ id, ...usage }) => usage); // Remove internal id
+			.map(({id, ...usage}) => usage); // Remove internal id
 
 		return records;
 	}
@@ -73,7 +74,7 @@ export class UsageDatabase {
 		startDate.setDate(startDate.getDate() - days);
 
 		return this.getUsageInRange(startDate, new Date()).then(usages =>
-			usages.filter(usage => usage.model === model)
+			usages.filter(usage => usage.model === model),
 		);
 	}
 
@@ -90,14 +91,18 @@ export class UsageDatabase {
 		startDate.setDate(startDate.getDate() - days);
 
 		const usages = await this.getUsageInRange(startDate, new Date());
-		const totalTokens = usages.reduce((sum, usage) => sum + usage.totalTokens, 0);
+		const totalTokens = usages.reduce(
+			(sum, usage) => sum + usage.totalTokens,
+			0,
+		);
 		const modelsUsed = [...new Set(usages.map(usage => usage.model))];
 
 		return {
 			totalTokens,
 			totalRecords: usages.length,
 			modelsUsed,
-			averageTokensPerRequest: usages.length > 0 ? totalTokens / usages.length : 0,
+			averageTokensPerRequest:
+				usages.length > 0 ? totalTokens / usages.length : 0,
 		};
 	}
 

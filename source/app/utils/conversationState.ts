@@ -1,4 +1,4 @@
-import type {Message, ToolCall} from '../../types/core.js';
+import type {Message, ToolCall} from '@/types/core.js';
 
 export interface ConversationProgress {
 	originalTask: string;

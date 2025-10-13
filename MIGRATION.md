@@ -126,6 +126,7 @@ pnpm test
 The ToknXR integration is now production-ready with tiktoken support.
 
 **Files:**
+
 - ✅ `source/integrations/toknxr/index.ts` - Main exports
 - ✅ `source/integrations/toknxr/types.ts` - Type definitions
 - ✅ `source/integrations/toknxr/token-counter.ts` - Token counting with tiktoken
@@ -136,7 +137,7 @@ The ToknXR integration is now production-ready with tiktoken support.
 **Integration:**
 
 ```typescript
-import { TokenCounter } from '@/integrations/toknxr';
+import {TokenCounter} from '@/integrations/toknxr';
 
 const counter = new TokenCounter();
 
@@ -158,6 +159,7 @@ counter.dispose();
 Security scanning with pattern detection and redaction.
 
 **Files:**
+
 - ✅ `source/integrations/noleakai/index.ts` - Main exports
 - ✅ `source/integrations/noleakai/scanner.ts` - File/directory scanning
 - ✅ `source/integrations/noleakai/patterns.ts` - Security patterns (API keys, credentials)
@@ -166,7 +168,11 @@ Security scanning with pattern detection and redaction.
 **Integration:**
 
 ```typescript
-import { SecurityScanner, Redactor, SECURITY_PATTERNS } from '@/integrations/noleakai';
+import {
+	SecurityScanner,
+	Redactor,
+	SECURITY_PATTERNS,
+} from '@/integrations/noleakai';
 
 const scanner = new SecurityScanner();
 const redactor = new Redactor();
@@ -175,7 +181,7 @@ const redactor = new Redactor();
 const results = await scanner.scanFile(filePath, content);
 
 // Redact sensitive data
-const { redacted, redactedCount } = redactor.redact(text);
+const {redacted, redactedCount} = redactor.redact(text);
 ```
 
 ### CoRect Integration (Automated Debugging - Phase 3)
@@ -183,6 +189,7 @@ const { redacted, redactedCount } = redactor.redact(text);
 Automated error detection and fix generation (future implementation).
 
 **Files:**
+
 - ✅ `source/integrations/corect/index.ts` - Main exports
 - ✅ `source/integrations/corect/error-detector.ts` - Error categorization
 - ✅ `source/integrations/corect/fix-generator.ts` - Fix suggestions
@@ -194,15 +201,15 @@ Automated error detection and fix generation (future implementation).
 ### Before (Relative Imports)
 
 ```typescript
-import { something } from '../../../system/file-system';
-import { Config } from '../../config/index';
+import {something} from '../../../system/file-system';
+import {Config} from '../../config/index';
 ```
 
 ### After (Absolute Imports with Path Aliases)
 
 ```typescript
-import { something } from '@/system/file-system';
-import { Config } from '@/config';
+import {something} from '@/system/file-system';
+import {Config} from '@/config';
 ```
 
 **Note:** If path aliases are configured in tsconfig.json, update imports accordingly. Otherwise, continue using relative imports with `.js` extensions.
@@ -228,16 +235,16 @@ Create tests for new integrations:
 
 ```typescript
 // tests/unit/integrations/toknxr/token-counter.test.ts
-import { describe, it, expect } from 'vitest';
-import { TokenCounter } from '@/integrations/toknxr';
+import {describe, it, expect} from 'vitest';
+import {TokenCounter} from '@/integrations/toknxr';
 
 describe('TokenCounter', () => {
-  it('should count tokens accurately', async () => {
-    const counter = new TokenCounter();
-    const tokens = await counter.countTokens('Hello world', 'gpt-4');
-    expect(tokens).toBeGreaterThan(0);
-    counter.dispose();
-  });
+	it('should count tokens accurately', async () => {
+		const counter = new TokenCounter();
+		const tokens = await counter.countTokens('Hello world', 'gpt-4');
+		expect(tokens).toBeGreaterThan(0);
+		counter.dispose();
+	});
 });
 ```
 
@@ -303,6 +310,7 @@ git push origin main --tags
 ### "Cannot find module 'tiktoken'"
 
 **Solution:**
+
 ```bash
 pnpm install
 ```
@@ -310,6 +318,7 @@ pnpm install
 ### "pnpm: command not found"
 
 **Solution:**
+
 ```bash
 npm install -g pnpm
 ```
@@ -317,14 +326,16 @@ npm install -g pnpm
 ### Import path errors
 
 **Solution:** Ensure all imports use `.js` extensions for ES modules:
+
 ```typescript
-import { something } from './file.js'; // ✅ Correct
-import { something } from './file';    // ❌ Wrong
+import {something} from './file.js'; // ✅ Correct
+import {something} from './file'; // ❌ Wrong
 ```
 
 ### TypeScript errors after migration
 
 **Solution:**
+
 ```bash
 # Clean and rebuild
 rm -rf dist/ node_modules/
@@ -335,6 +346,7 @@ pnpm build
 ### Tests failing
 
 **Solution:**
+
 ```bash
 # Update test setup
 # Ensure vitest.config.ts is properly configured
@@ -398,7 +410,7 @@ Migration is complete when:
 ✅ Application builds successfully  
 ✅ All integrations are functional  
 ✅ Documentation is up to date  
-✅ Team is trained on new structure  
+✅ Team is trained on new structure
 
 ## Next Steps After Migration
 

@@ -1,6 +1,6 @@
 import {useContext, createContext} from 'react';
-import {getThemeColors, themes} from '../config/themes.js';
-import type {Colors, ThemePreset} from '../types/ui.js';
+import {getThemeColors, themes} from '@/config/themes.js';
+import type {Colors, ThemePreset} from '@/types/ui.js';
 
 export interface ThemeContextType {
 	currentTheme: ThemePreset;

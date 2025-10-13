@@ -1,6 +1,6 @@
-import {Command} from '../types/index.js';
+import {Command} from '@/types/index.js';
 import React from 'react';
-import SuccessMessage from '../components/success-message.js';
+import SuccessMessage from '@/components/success-message.js';
 
 function Clear() {
 	return (

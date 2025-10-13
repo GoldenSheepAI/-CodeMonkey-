@@ -5,9 +5,9 @@
  * Handles data migrations and updates between versions
  */
 
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { join } from 'node:path';
-import { homedir } from 'node:os';
+import {existsSync, readFileSync, writeFileSync, mkdirSync} from 'node:fs';
+import {join} from 'node:path';
+import {homedir} from 'node:os';
 
 interface Migration {
 	version: string;
@@ -23,7 +23,7 @@ const migrations: Migration[] = [
 		async up() {
 			const configDir = join(homedir(), '.codemonkey');
 			if (!existsSync(configDir)) {
-				mkdirSync(configDir, { recursive: true });
+				mkdirSync(configDir, {recursive: true});
 				console.log('✅ Created configuration directory');
 			}
 		},
@@ -49,18 +49,21 @@ async function getMigrationState(): Promise<string> {
 async function setMigrationState(version: string) {
 	const stateFile = join(homedir(), '.codemonkey', 'migration.json');
 	const stateDir = join(homedir(), '.codemonkey');
-	
+
 	if (!existsSync(stateDir)) {
-		mkdirSync(stateDir, { recursive: true });
+		mkdirSync(stateDir, {recursive: true});
 	}
-	
-	writeFileSync(stateFile, JSON.stringify({ version, timestamp: new Date().toISOString() }, null, 2));
+
+	writeFileSync(
+		stateFile,
+		JSON.stringify({version, timestamp: new Date().toISOString()}, null, 2),
+	);
 }
 
 function compareVersions(v1: string, v2: string): number {
 	const parts1 = v1.split('.').map(Number);
 	const parts2 = v2.split('.').map(Number);
-	
+
 	for (let i = 0; i < 3; i++) {
 		if (parts1[i] > parts2[i]) return 1;
 		if (parts1[i] < parts2[i]) return -1;
@@ -71,20 +74,24 @@ function compareVersions(v1: string, v2: string): number {
 async function runMigrations(targetVersion?: string) {
 	const currentVersion = await getMigrationState();
 	console.log(`📦 Current migration version: ${currentVersion}`);
-	
-	let pendingMigrations = migrations.filter(m => compareVersions(m.version, currentVersion) > 0);
-	
+
+	let pendingMigrations = migrations.filter(
+		m => compareVersions(m.version, currentVersion) > 0,
+	);
+
 	if (targetVersion) {
-		pendingMigrations = pendingMigrations.filter(m => compareVersions(m.version, targetVersion) <= 0);
+		pendingMigrations = pendingMigrations.filter(
+			m => compareVersions(m.version, targetVersion) <= 0,
+		);
 	}
-	
+
 	if (pendingMigrations.length === 0) {
 		console.log('✅ No pending migrations');
 		return;
 	}
-	
+
 	console.log(`\n🔄 Running ${pendingMigrations.length} migration(s)...\n`);
-	
+
 	for (const migration of pendingMigrations) {
 		console.log(`⏳ ${migration.version}: ${migration.description}`);
 		try {
@@ -96,26 +103,28 @@ async function runMigrations(targetVersion?: string) {
 			process.exit(1);
 		}
 	}
-	
+
 	console.log('✅ All migrations completed successfully!');
 }
 
 async function main() {
 	console.log('🐒 CodeMonkey Migration Script');
 	console.log('==============================\n');
-	
+
 	const command = process.argv[2];
 	const targetVersion = process.argv[3];
-	
+
 	if (command === 'status') {
 		const currentVersion = await getMigrationState();
 		console.log(`Current version: ${currentVersion}`);
-		const pending = migrations.filter(m => compareVersions(m.version, currentVersion) > 0);
+		const pending = migrations.filter(
+			m => compareVersions(m.version, currentVersion) > 0,
+		);
 		console.log(`Pending migrations: ${pending.length}`);
 		pending.forEach(m => console.log(`  - ${m.version}: ${m.description}`));
 		return;
 	}
-	
+
 	if (command === 'up' || !command) {
 		await runMigrations(targetVersion);
 	} else {
@@ -124,7 +133,7 @@ async function main() {
 	}
 }
 
-main().catch((error) => {
+main().catch(error => {
 	console.error('❌ Migration failed:', error);
 	process.exit(1);
 });

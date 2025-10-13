@@ -1,9 +1,9 @@
 import {readFileSync} from 'fs';
-import {logError} from '../utils/message-queue.js';
+import {logError} from '@/utils/message-queue.js';
 import type {
 	CustomCommandMetadata,
 	ParsedCustomCommand,
-} from '../types/index.js';
+} from '@/types/index.js';
 
 /**
  * Enhanced YAML frontmatter parser with support for multi-line strings and nested objects

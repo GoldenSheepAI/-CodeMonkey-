@@ -1,6 +1,6 @@
-import {Command} from '../types/index.js';
+import {Command} from '@/types/index.js';
 import React from 'react';
-import UpdateMessage from '../components/update-message.js';
+import UpdateMessage from '@/components/update-message.js';
 
 export const updateCommand: Command = {
 	name: 'update',

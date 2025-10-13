@@ -1,11 +1,11 @@
 import React from 'react';
-import {commandRegistry} from '../../commands.js';
-import {parseInput} from '../../command-parser.js';
-import {toolRegistry} from '../../tools/index.js';
-import InfoMessage from '../../components/info-message.js';
-import ToolMessage from '../../components/tool-message.js';
-import ErrorMessage from '../../components/error-message.js';
-import type {MessageSubmissionOptions} from '../../types/index.js';
+import {commandRegistry} from '@/commands.js';
+import {parseInput} from '@/command-parser.js';
+import {toolRegistry} from '@/tools/index.js';
+import InfoMessage from '@/components/info-message.js';
+import ToolMessage from '@/components/tool-message.js';
+import ErrorMessage from '@/components/error-message.js';
+import type {MessageSubmissionOptions} from '@/types/index.js';
 
 export async function handleMessageSubmission(
 	message: string,

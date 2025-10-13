@@ -1,4 +1,4 @@
-import {ModelEntry} from '../types/index.js';
+import {ModelEntry} from '@/types/index.js';
 
 export const MODEL_DATABASE: ModelEntry[] = [
 	{

@@ -1,5 +1,5 @@
 import {shouldLog} from './logging.js';
-import {logError} from '../utils/message-queue.js';
+import {logError} from '@/utils/message-queue.js';
 
 // Check if a string contains environment variable references
 export function isEnvVarReference(str: string): boolean {

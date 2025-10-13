@@ -5,9 +5,9 @@
  * in AI conversations and outputs.
  */
 
-export { SecurityScanner } from './scanner.js';
-export { SECURITY_PATTERNS } from './patterns.js';
-export { Redactor } from './redactor.js';
+export {SecurityScanner} from './scanner.js';
+export {SECURITY_PATTERNS} from './patterns.js';
+export {Redactor} from './redactor.js';
 
 export interface SecurityScan {
 	id: string;

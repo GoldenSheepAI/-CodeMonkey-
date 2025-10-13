@@ -1,4 +1,4 @@
-import type {Theme, ThemePreset} from '../types/ui.js';
+import type {Theme, ThemePreset} from '@/types/ui.js';
 
 export const themes: Record<ThemePreset, Theme> = {
 	'tokyo-night': {

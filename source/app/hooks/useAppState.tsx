@@ -1,12 +1,12 @@
 import {useState, useCallback} from 'react';
-import {LLMClient, Message, DevelopmentMode} from '../../types/core.js';
-import {ToolManager} from '../../tools/tool-manager.js';
-import {CustomCommandLoader} from '../../custom-commands/loader.js';
-import {CustomCommandExecutor} from '../../custom-commands/executor.js';
-import {loadPreferences} from '../../config/preferences.js';
-import {defaultTheme} from '../../config/themes.js';
-import type {ThemePreset} from '../../types/ui.js';
-import type {UpdateInfo} from '../../types/index.js';
+import {LLMClient, Message, DevelopmentMode} from '@/types/core.js';
+import {ToolManager} from '@/tools/tool-manager.js';
+import {CustomCommandLoader} from '@/custom-commands/loader.js';
+import {CustomCommandExecutor} from '@/custom-commands/executor.js';
+import {loadPreferences} from '@/config/preferences.js';
+import {defaultTheme} from '@/config/themes.js';
+import type {ThemePreset} from '@/types/ui.js';
+import type {UpdateInfo} from '@/types/index.js';
 import React from 'react';
 
 export interface ThinkingStats {

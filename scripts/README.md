@@ -11,6 +11,7 @@ Automation scripts for managing the CodeMonkey project.
 This script automates the entire setup process from Nanocoder to CodeMonkey structure.
 
 **Features:**
+
 - ✅ Checks and installs pnpm if needed
 - ✅ Cleans old dependencies (npm/yarn)
 - ✅ Backs up existing configuration files
@@ -22,12 +23,14 @@ This script automates the entire setup process from Nanocoder to CodeMonkey stru
 - ✅ Provides step-by-step progress with colored output
 
 **Usage:**
+
 ```bash
 cd /path/to/CodeMonkey
 ./scripts/setup.sh
 ```
 
 **What it creates:**
+
 - `source/integrations/*/types.ts` - Type definitions for each integration
 - `tests/setup.ts` - Vitest global setup
 - `tests/unit/integrations/toknxr/token-counter.test.ts` - Sample test
@@ -45,17 +48,20 @@ cd /path/to/CodeMonkey
 Handles version bumping, changelog generation, and release preparation.
 
 **Features:**
+
 - Version bumping (major/minor/patch)
 - Changelog updates
 - Git tagging
 - Pre-release validation (tests, build)
 
 **Usage:**
+
 ```bash
 ./scripts/release.ts [patch|minor|major]
 ```
 
 **Example:**
+
 ```bash
 # Bump patch version (1.0.0 -> 1.0.1)
 ./scripts/release.ts patch
@@ -76,12 +82,14 @@ Handles version bumping, changelog generation, and release preparation.
 Handles data migrations and updates between CodeMonkey versions.
 
 **Features:**
+
 - Track migration state
 - Run pending migrations
 - Rollback support
 - Migration status reporting
 
 **Usage:**
+
 ```bash
 # Run all pending migrations
 ./scripts/migrate.ts up
@@ -98,6 +106,7 @@ Handles data migrations and updates between CodeMonkey versions.
 ## Development Workflow
 
 ### Initial Setup
+
 ```bash
 # 1. Run setup script
 ./scripts/setup.sh
@@ -113,6 +122,7 @@ pnpm dev
 ```
 
 ### Before Releasing
+
 ```bash
 # 1. Run tests
 pnpm test
@@ -128,6 +138,7 @@ git push origin main --tags
 ```
 
 ### After Upgrading
+
 ```bash
 # Check for pending migrations
 ./scripts/migrate.ts status
@@ -147,19 +158,25 @@ chmod +x scripts/*.sh scripts/*.ts
 ## Troubleshooting
 
 ### "command not found: pnpm"
+
 Run the setup script - it will install pnpm automatically:
+
 ```bash
 ./scripts/setup.sh
 ```
 
 ### "permission denied"
+
 Make scripts executable:
+
 ```bash
 chmod +x scripts/setup.sh
 ```
 
 ### "node_modules conflicts"
+
 The setup script cleans old dependencies automatically. If issues persist:
+
 ```bash
 rm -rf node_modules pnpm-lock.yaml
 pnpm install
@@ -168,6 +185,7 @@ pnpm install
 ## Contributing
 
 When adding new scripts:
+
 1. Make them executable: `chmod +x scripts/your-script.sh`
 2. Add usage documentation to this README
 3. Include error handling and user feedback

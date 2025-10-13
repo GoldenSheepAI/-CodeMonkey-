@@ -1,7 +1,7 @@
 import {loadPreferences, savePreferences} from './preferences.js';
-import {logInfo, logError} from '../utils/message-queue.js';
+import {logInfo, logError} from '@/utils/message-queue.js';
 
-import type {LogLevel} from '../types/index.js';
+import type {LogLevel} from '@/types/index.js';
 
 export type {LogLevel};
 

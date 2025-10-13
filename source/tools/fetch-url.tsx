@@ -1,9 +1,9 @@
 import {fetch} from 'undici';
 import React from 'react';
 import {Text, Box} from 'ink';
-import type {ToolHandler, ToolDefinition} from '../types/index.js';
-import {ThemeContext} from '../hooks/useTheme.js';
-import ToolMessage from '../components/tool-message.js';
+import type {ToolHandler, ToolDefinition} from '@/types/index.js';
+import {ThemeContext} from '@/hooks/useTheme.js';
+import ToolMessage from '@/components/tool-message.js';
 
 interface FetchArgs {
 	url: string;
