@@ -86,24 +86,24 @@ npm run build
 
 3. Run locally:
 
+**🐒 Recommended (with auto-restart):**
 ```bash
-# Standard start
-npm run start
+./como.sh
+```
+This enables the `/restart` command to automatically reload CodeMonkey.
 
-# Or use branded commands 🐒
+**Standard (no auto-restart):**
+```bash
+# These work but /restart won't auto-reload
+npm run start
 pnpm codemonkey
 pnpm como
 ```
 
-**For Auto-Restart on `/restart` command:**
-
-Use the wrapper script instead of `npm start`:
-
-```bash
-./start-with-restart.sh
-```
-
-This enables the `/restart` command to automatically reload CodeMonkey without manual intervention.
+**Why use `./como.sh`?**
+- ✅ `/restart` command works (auto-reloads config)
+- ✅ No need to manually restart
+- ✅ Seamless development experience
 
 Or build and run in one command:
 
