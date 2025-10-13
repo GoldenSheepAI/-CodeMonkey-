@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 
 while true; do
     echo "Starting CodeMonkey..."
-    pnpm start
+    node --no-warnings dist/cli.js
     
     EXIT_CODE=$?
     

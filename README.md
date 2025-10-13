@@ -90,6 +90,16 @@ npm run build
 npm run start
 ```
 
+**For Auto-Restart on `/restart` command:**
+
+Use the wrapper script instead of `npm start`:
+
+```bash
+./start-with-restart.sh
+```
+
+This enables the `/restart` command to automatically reload CodeMonkey without manual intervention.
+
 Or build and run in one command:
 
 ```bash

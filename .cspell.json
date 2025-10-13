@@ -13,6 +13,7 @@
     "github",
     "codemonkey",
     "nanocoder",
+    "Nanocoder",
     "toknxr",
     "mcpServers",
     "baseUrl",
@@ -30,7 +31,10 @@
     "Anthropic",
     "Mistral",
     "Qodo",
-    "GPT"
+    "GPT",
+    "agentic",
+    "frontmatter",
+    "Intelli"
   ],
   "ignorePaths": [
     "node_modules/**",
