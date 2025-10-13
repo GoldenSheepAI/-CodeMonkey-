@@ -60,13 +60,19 @@ async function createLangGraphClient(
 				continue;
 			}
 
+			console.log(`[DEBUG] Trying provider: ${providerType}`);
+			console.log(`[DEBUG] Base URL: ${providerConfig.config.baseURL}`);
+			console.log(`[DEBUG] Models: ${providerConfig.models.join(', ')}`);
+
 			// Test provider connection
 			await testProviderConnection(providerConfig);
 
 			const client = await LangGraphClient.create(providerConfig);
 
+			console.log(`[DEBUG] Successfully connected to: ${providerType}`);
 			return {client, actualProvider: providerType};
 		} catch (error: any) {
+			console.log(`[DEBUG] Failed ${providerType}: ${error.message}`);
 			errors.push(`${providerType}: ${error.message}`);
 		}
 	}
