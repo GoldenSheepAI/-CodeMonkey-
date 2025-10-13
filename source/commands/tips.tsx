@@ -70,6 +70,10 @@ function TipsComponent() {
 							• <Text bold color={colors.success}>/provider</Text> - Switch AI
 							provider (Ollama, OpenRouter, etc.)
 						</Text>
+						<Text color={colors.white}>
+							• <Text bold color={colors.success}>/mcp manage</Text> - Enable/disable
+							MCP servers interactively
+						</Text>
 					</Box>
 
 					{/* Special Modes */}

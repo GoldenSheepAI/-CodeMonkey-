@@ -1,5 +1,5 @@
 import type {AppConfig, Colors} from '@/types/index.js';
-import {existsSync, readFileSync} from 'fs';
+import {existsSync, readFileSync, writeFileSync} from 'fs';
 import {join, dirname} from 'path';
 import {fileURLToPath} from 'url';
 import {config as loadEnv} from 'dotenv';
@@ -51,6 +51,33 @@ function loadAppConfig(): AppConfig {
 }
 
 export const appConfig = loadAppConfig();
+
+// Function to load the full config (including codemonkey/nanocoder wrapper)
+export function loadConfig(): any {
+	const agentsJsonPath = join(process.cwd(), 'agents.config.json');
+	
+	if (existsSync(agentsJsonPath)) {
+		try {
+			const rawData = readFileSync(agentsJsonPath, 'utf-8');
+			return JSON.parse(rawData);
+		} catch (error) {
+			logError(`Failed to parse agents.config.json: ${error}`);
+		}
+	}
+	
+	return {};
+}
+
+// Function to save the config
+export function saveConfig(config: any): void {
+	const agentsJsonPath = join(process.cwd(), 'agents.config.json');
+	
+	try {
+		writeFileSync(agentsJsonPath, JSON.stringify(config, null, 2), 'utf-8');
+	} catch (error) {
+		throw new Error(`Failed to save agents.config.json: ${error}`);
+	}
+}
 
 // Legacy config for backwards compatibility (no longer specific to any provider)
 export const legacyConfig = {

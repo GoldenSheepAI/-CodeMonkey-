@@ -96,10 +96,20 @@ export function MCP({toolManager}: MCPProps) {
 
 export const mcpCommand: Command = {
 	name: 'mcp',
-	description: 'Show connected MCP servers and their tools',
-	handler: async (_args: string[], _messages, _metadata) => {
+	description: 'Manage MCP servers (enable/disable) or view connected servers',
+	handler: async (args: string[], _messages, metadata) => {
 		const toolManager = getToolManager();
 
+		// If 'manage' argument is provided, show the manager
+		if (args.includes('manage') || args.includes('config')) {
+			const MCPManager = (await import('@/components/mcp-manager.js')).default;
+			return React.createElement(MCPManager, {
+				key: `mcp-manager-${Date.now()}`,
+				onComplete: metadata.onComplete || (() => {}),
+			});
+		}
+
+		// Otherwise, show connected servers (default behavior)
 		return React.createElement(MCP, {
 			key: `mcp-${Date.now()}`,
 			toolManager: toolManager,
