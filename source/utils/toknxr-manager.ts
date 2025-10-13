@@ -5,13 +5,14 @@
 
 import {spawn, ChildProcess} from 'child_process';
 import {join} from 'path';
+import {existsSync} from 'fs';
 import {logInfo, logError} from '@/utils/message-queue.js';
 
 class ToknXRManager {
 	private process: ChildProcess | null = null;
 	private isRunning = false;
 	private port = 8788;
-	private startupTimeout = 10000; // 10 seconds
+	private startupTimeout = 3000; // reduce to 3s to avoid slow startup
 
 	/**
 	 * Start ToknXR proxy server
@@ -25,13 +26,36 @@ class ToknXRManager {
 		try {
 			logInfo('Starting ToknXR proxy server...');
 
-			// Path to ToknXR CLI
-			const toknxrPath = join(
-				process.cwd(),
-				'node_modules',
-				'.bin',
-				'toknxr',
-			);
+			// Try multiple possible ToknXR paths
+			const possiblePaths = [
+				join(process.cwd(), 'node_modules', '.bin', 'toknxr'),
+				'toknxr', // Global installation
+				'/usr/local/bin/toknxr',
+			];
+
+			let toknxrPath = possiblePaths[0];
+			
+			// Check if ToknXR is installed
+			const pathExists = possiblePaths.some(p => {
+				if (existsSync(p)) {
+					toknxrPath = p;
+					return true;
+				}
+				return false;
+			});
+
+			if (!pathExists) {
+				logError('ToknXR not found. Install with: npm install -g toknxr');
+				logInfo('Budget Mode will work without ToknXR, but cost tracking will be disabled');
+				return false;
+			}
+
+			// Verify config exists; fail fast if missing
+			const configPath = join(process.cwd(), 'toknxr.config.json');
+			if (!existsSync(configPath)) {
+				logError("ToknXR config 'toknxr.config.json' not found in current directory.");
+				return false;
+			}
 
 			// Spawn ToknXR process
 			this.process = spawn(toknxrPath, ['start'], {
@@ -119,7 +143,7 @@ class ToknXRManager {
 		const startTime = Date.now();
 
 		while (!this.isRunning && Date.now() - startTime < this.startupTimeout) {
-			await new Promise(resolve => setTimeout(resolve, 500));
+			await new Promise(resolve => setTimeout(resolve, 200));
 		}
 
 		if (!this.isRunning) {

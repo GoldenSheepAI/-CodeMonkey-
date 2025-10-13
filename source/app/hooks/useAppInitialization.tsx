@@ -7,6 +7,7 @@ import {createLLMClient} from '@/client-factory.js';
 import {
 	getLastUsedModel,
 	loadPreferences,
+	savePreferences,
 	updateLastUsed,
 } from '@/config/preferences.js';
 import type {MCPInitResult, UserPreferences} from '@/types/index.js';
@@ -234,28 +235,45 @@ export function useAppInitialization({
 			// Load preferences - we'll pass them directly to avoid state timing issues
 			const preferences = loadPreferences();
 
-			// Auto-start ToknXR if Budget Mode is enabled
+			// Auto-start ToknXR if Budget Mode is enabled - non-blocking
 			if (preferences.budgetMode?.enabled) {
-				try {
-					const started = await toknxrManager.start();
-					if (started) {
+				(async () => {
+					try {
+						const started = await toknxrManager.start();
+						if (started) {
+							addToChatQueue(
+								<SuccessMessage
+									key="toknxr-started"
+									message="🎯 Budget Mode active - ToknXR proxy started automatically"
+									hideBox={true}
+								/>,
+							);
+						} else {
+							// Disable budget mode if proxy did not start
+							const p = loadPreferences();
+							p.budgetMode = {enabled: false};
+							savePreferences(p);
+							addToChatQueue(
+								<ErrorMessage
+									key="toknxr-disabled"
+									message={"⚠️  ToknXR not available - Budget Mode disabled (direct AI connections)."}
+									hideBox={true}
+								/>,
+							);
+						}
+					} catch (error) {
+						const p = loadPreferences();
+						p.budgetMode = {enabled: false};
+						savePreferences(p);
 						addToChatQueue(
-							<SuccessMessage
-								key="toknxr-started"
-								message="🎯 Budget Mode active - ToknXR proxy started automatically"
+							<ErrorMessage
+								key="toknxr-error"
+								message={`⚠️  ToknXR failed to start. Budget Mode disabled. ${error}`}
 								hideBox={true}
 							/>,
 						);
 					}
-				} catch (error) {
-					addToChatQueue(
-						<ErrorMessage
-							key="toknxr-error"
-							message={`⚠️  Budget Mode enabled but ToknXR failed to start: ${error}`}
-							hideBox={true}
-						/>,
-					);
-				}
+				})();
 			}
 
 			// Add info message to chat queue when preferences are loaded

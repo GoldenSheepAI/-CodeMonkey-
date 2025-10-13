@@ -165,7 +165,7 @@ export default function App() {
 	}, [appState.abortController, appState.setIsCancelling]);
 
 	const handleToggleDevelopmentMode = React.useCallback(() => {
-		appState.setDevelopmentMode(currentMode => {
+		appState.setDevelopmentMode((currentMode: 'normal' | 'auto-accept' | 'plan') => {
 			const modes: Array<'normal' | 'auto-accept' | 'plan'> = [
 				'normal',
 				'auto-accept',

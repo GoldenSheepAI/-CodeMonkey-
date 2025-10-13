@@ -28,13 +28,29 @@ export default function ProviderSelector({
 	const getProviderOptions = (): ProviderOption[] => {
 		const options: ProviderOption[] = [];
 
-		if (appConfig.providers) {
+		if (appConfig.providers && appConfig.providers.length > 0) {
 			for (const provider of appConfig.providers) {
 				options.push({
 					label: `${provider.name}${
 						currentProvider === provider.name ? ' (current)' : ''
 					}`,
 					value: provider.name,
+				});
+			}
+		} else {
+			// Add default providers if none configured
+			const defaultProviders = [
+				'openai',
+				'anthropic',
+				'openrouter',
+				'ollama',
+				'groq',
+				'openai-compatible',
+			];
+			for (const provider of defaultProviders) {
+				options.push({
+					label: `${provider}${currentProvider === provider ? ' (current)' : ''}`,
+					value: provider,
 				});
 			}
 		}

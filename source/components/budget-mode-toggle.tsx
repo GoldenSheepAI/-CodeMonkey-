@@ -47,6 +47,15 @@ export default function BudgetModeToggle({onComplete}: BudgetModeToggleProps) {
 		if (item.value === 'enable') {
 			// Start ToknXR automatically
 			const started = await toknxrManager.start();
+			if (!started) {
+				console.error(
+					"[Budget] ToknXR failed to start or config missing. Budget Mode remains disabled.",
+				);
+				prefs.budgetMode = {enabled: false};
+				savePreferences(prefs);
+				setStatus('selecting');
+				return;
+			}
 			
 			prefs.budgetMode = {
 				enabled: true,
@@ -59,7 +68,7 @@ export default function BudgetModeToggle({onComplete}: BudgetModeToggleProps) {
 			setStatus('success');
 			setTimeout(() => {
 				if (onComplete) onComplete();
-			}, started ? 3000 : 2000);
+			}, 1500);
 		} else if (item.value === 'disable') {
 			// Stop ToknXR
 			toknxrManager.stop();
