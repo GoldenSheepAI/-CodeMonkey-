@@ -34,7 +34,9 @@
     "GPT",
     "agentic",
     "frontmatter",
-    "Intelli"
+    "Intelli",
+    "npm",
+    "goldensheepai"
   ],
   "ignorePaths": [
     "node_modules/**",
