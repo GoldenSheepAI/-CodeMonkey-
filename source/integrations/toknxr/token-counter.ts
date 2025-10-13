@@ -75,10 +75,6 @@ export class TokenCounter {
       'gpt-4-turbo': 'gpt-4',
       'gpt-4o': 'gpt-4o',
       'gpt-3.5-turbo': 'gpt-3.5-turbo',
-      'claude-3-opus': 'cl100k_base',
-      'claude-3-sonnet': 'cl100k_base',
-      'claude-3-haiku': 'cl100k_base',
-      'claude-3-5-sonnet': 'cl100k_base',
     };
 
     // Get appropriate encoder
@@ -86,7 +82,7 @@ export class TokenCounter {
     if (tiktokenModel) {
       encoder = encoding_for_model(tiktokenModel);
     } else {
-      // Default to cl100k_base for unknown models
+      // Default to cl100k_base for unknown models (Claude, etc.)
       encoder = get_encoding('cl100k_base');
     }
 
@@ -124,32 +120,40 @@ export class TokenCounter {
   /**
    * Calculate token usage from API response
    */
-  parseUsageFromResponse(response: any): TokenUsage {
+  parseUsageFromResponse(response: any, model: string): TokenUsage {
+    const timestamp = new Date();
+    
     // Handle different provider response formats
     if (response.usage) {
       // OpenAI/Anthropic format
       return {
+        model,
         inputTokens: response.usage.prompt_tokens || 0,
         outputTokens: response.usage.completion_tokens || 0,
         totalTokens: response.usage.total_tokens || 0,
+        timestamp,
       };
     }
 
     // Handle streaming responses
     if (response.token_count) {
       return {
+        model,
         inputTokens: response.token_count.input || 0,
         outputTokens: response.token_count.output || 0,
         totalTokens:
           (response.token_count.input || 0) + (response.token_count.output || 0),
+        timestamp,
       };
     }
 
     // Return zeros if no usage data
     return {
+      model,
       inputTokens: 0,
       outputTokens: 0,
       totalTokens: 0,
+      timestamp,
     };
   }
 
