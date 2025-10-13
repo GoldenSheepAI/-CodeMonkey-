@@ -30,6 +30,7 @@ import {
 	modelCommand,
 	providerCommand,
 	recommendationsCommand,
+	restartCommand,
 	secureCommand,
 	statusCommand,
 	themeCommand,
@@ -273,6 +274,7 @@ export function useAppInitialization({
 			commandRegistry.register([
 				helpCommand,
 				exitCommand,
+				restartCommand,
 				clearCommand,
 				modelCommand,
 				providerCommand,
