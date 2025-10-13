@@ -9,6 +9,7 @@ import ChatQueue from './components/chat-queue.js';
 import ModelSelector from './components/model-selector.js';
 import ProviderSelector from './components/provider-selector.js';
 import ThemeSelector from './components/theme-selector.js';
+import ModeSelector from './components/mode-selector.js';
 import ThinkingIndicator from './components/thinking-indicator.js';
 import CancellingIndicator from './components/cancelling-indicator.js';
 import ToolConfirmation from './components/tool-confirmation.js';
@@ -18,6 +19,7 @@ import {setGlobalMessageQueue} from './utils/message-queue.js';
 import Spinner from 'ink-spinner';
 import SecurityDisclaimer from './components/security-disclaimer.js';
 import {RecommendationsDisplay} from './commands/recommendations.js';
+import {getModeManager} from './modes/mode-manager.js';
 
 // Import extracted hooks and utilities
 import {useAppState} from './app/hooks/useAppState.js';
@@ -126,6 +128,7 @@ export default function App() {
 		setIsModelSelectionMode: appState.setIsModelSelectionMode,
 		setIsProviderSelectionMode: appState.setIsProviderSelectionMode,
 		setIsThemeSelectionMode: appState.setIsThemeSelectionMode,
+		setIsModeSelectionMode: appState.setIsModeSelectionMode,
 		setIsRecommendationsMode: appState.setIsRecommendationsMode,
 		addToChatQueue: appState.addToChatQueue,
 		componentKeyCounter: appState.componentKeyCounter,
@@ -203,6 +206,7 @@ export default function App() {
 				onEnterModelSelectionMode: modeHandlers.enterModelSelectionMode,
 				onEnterProviderSelectionMode: modeHandlers.enterProviderSelectionMode,
 				onEnterThemeSelectionMode: modeHandlers.enterThemeSelectionMode,
+				onEnterModeSelectionMode: modeHandlers.enterModeSelectionMode,
 				onEnterRecommendationsMode: modeHandlers.enterRecommendationsMode,
 				onShowStatus: handleShowStatus,
 				onHandleChatMessage: chatHandler.handleChatMessage,
@@ -326,6 +330,12 @@ export default function App() {
 								<ThemeSelector
 									onThemeSelect={modeHandlers.handleThemeSelect}
 									onCancel={modeHandlers.handleThemeSelectionCancel}
+								/>
+							) : appState.isModeSelectionMode ? (
+								<ModeSelector
+									currentMode={getModeManager().getCurrentMode()}
+									onSelect={modeHandlers.handleModeSelect}
+									onCancel={modeHandlers.handleModeSelectionCancel}
 								/>
 							) : appState.isRecommendationsMode ? (
 								<RecommendationsDisplay

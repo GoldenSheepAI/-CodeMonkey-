@@ -9,6 +9,8 @@ import SuccessMessage from '@/components/success-message.js';
 import ErrorMessage from '@/components/error-message.js';
 import React from 'react';
 import type {ThemePreset} from '@/types/ui.js';
+import {WorkflowMode} from '@/types/modes.js';
+import {getModeManager} from '@/modes/mode-manager.js';
 
 interface UseModeHandlersProps {
 	client: LLMClient | null;
@@ -23,6 +25,7 @@ interface UseModeHandlersProps {
 	setIsModelSelectionMode: (mode: boolean) => void;
 	setIsProviderSelectionMode: (mode: boolean) => void;
 	setIsThemeSelectionMode: (mode: boolean) => void;
+	setIsModeSelectionMode: (mode: boolean) => void;
 	setIsRecommendationsMode: (mode: boolean) => void;
 	addToChatQueue: (component: React.ReactNode) => void;
 	componentKeyCounter: number;
@@ -41,6 +44,7 @@ export function useModeHandlers({
 	setIsModelSelectionMode,
 	setIsProviderSelectionMode,
 	setIsThemeSelectionMode,
+	setIsModeSelectionMode,
 	setIsRecommendationsMode,
 	addToChatQueue,
 	componentKeyCounter,
@@ -53,6 +57,11 @@ export function useModeHandlers({
 	// Helper function to enter provider selection mode
 	const enterProviderSelectionMode = () => {
 		setIsProviderSelectionMode(true);
+	};
+
+	// Helper function to enter mode selection mode
+	const enterModeSelectionMode = () => {
+		setIsModeSelectionMode(true);
 	};
 
 	// Handle model selection
@@ -189,15 +198,60 @@ export function useModeHandlers({
 		setIsRecommendationsMode(false);
 	};
 
+	// Handle mode selection
+	const handleModeSelect = async (selectedMode: WorkflowMode) => {
+		const modeManager = getModeManager();
+		const result = modeManager.setMode(selectedMode);
+
+		if (result.success) {
+			// Save to preferences
+			try {
+				const prefs = loadPreferences();
+				(prefs as any).workflowMode = selectedMode;
+				savePreferences(prefs);
+			} catch (error) {
+				console.error('Failed to save mode preference:', error);
+			}
+
+			// Show success message
+			addToChatQueue(
+				<SuccessMessage
+					key={`mode-changed-${componentKeyCounter}`}
+					message={`Mode changed to: ${selectedMode}`}
+					hideBox={true}
+				/>,
+			);
+		} else {
+			// Show error message
+			addToChatQueue(
+				<ErrorMessage
+					key={`mode-error-${componentKeyCounter}`}
+					message={result.error || 'Failed to change mode'}
+					hideBox={true}
+				/>,
+			);
+		}
+
+		setIsModeSelectionMode(false);
+	};
+
+	// Handle mode selection cancel
+	const handleModeSelectionCancel = () => {
+		setIsModeSelectionMode(false);
+	};
+
 	return {
 		enterModelSelectionMode,
 		enterProviderSelectionMode,
 		enterThemeSelectionMode,
+		enterModeSelectionMode,
 		enterRecommendationsMode,
 		handleModelSelect,
 		handleModelSelectionCancel,
 		handleProviderSelect,
 		handleProviderSelectionCancel,
+		handleModeSelect,
+		handleModeSelectionCancel,
 		handleThemeSelect,
 		handleThemeSelectionCancel,
 		handleRecommendationsCancel,

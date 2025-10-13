@@ -146,6 +146,9 @@ ${result.fullOutput || '(No output)'}`;
 			} else if (commandName === 'theme') {
 				onEnterThemeSelectionMode();
 				return;
+			} else if (commandName === 'mode') {
+				options.onEnterModeSelectionMode?.();
+				return;
 			} else if (commandName === 'recommendations') {
 				onEnterRecommendationsMode();
 				return;
