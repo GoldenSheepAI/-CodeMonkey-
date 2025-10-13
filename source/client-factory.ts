@@ -101,6 +101,12 @@ async function loadProviderConfigs(): Promise<LangChainProviderConfig[]> {
 	// Load providers from the new providers array structure
 	if (appConfig.providers) {
 		for (const provider of appConfig.providers) {
+			// Skip disabled providers
+			if (provider.enabled === false) {
+				console.log(`[DEBUG] Skipping disabled provider: ${provider.name}`);
+				continue;
+			}
+
 			// If Budget Mode is enabled, route through ToknXR proxy
 			let baseURL = provider.baseUrl;
 			if (budgetMode?.enabled && budgetMode.toknxrProxyUrl) {
