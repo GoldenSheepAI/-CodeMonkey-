@@ -1,5 +1,5 @@
 {
-	"name": "@radix-obsidian/codemonkey",
+	"name": "@goldensheepai/codemonkey",
 	"main": "dist/cli.js",
 	"version": "1.13.5",
 	"description": "CodeMonkey 🐒 - A local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter",
@@ -11,9 +11,12 @@
 		"ollama",
 		"openrouter",
 		"local",
-		"typescript"
+		"typescript",
+		"codemonkey",
+		"groq",
+		"mcp"
 	],
-	"author": "Radix Obsidian",
+	"author": "Golden Sheep AI",
 	"license": "MIT",
 	"repository": {
 		"type": "git",

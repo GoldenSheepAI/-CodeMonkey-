@@ -50,7 +50,7 @@ Firstly, we would love for you to be involved. You can get started contributing 
 Install globally and use anywhere:
 
 ```bash
-npm install -g @radix-obsidian/codemonkey
+npm install -g @goldensheepai/codemonkey
 ```
 
 Then run in any directory:
