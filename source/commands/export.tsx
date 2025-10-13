@@ -63,7 +63,7 @@ model: ${model}
 total_tokens: ${tokens}
 ---
 
-# Nanocoder Chat Export
+# CodeMonkey 🐒 Chat Export
 
 `;
 

@@ -1,52 +1,74 @@
 {
-	"nanocoder": {
+	"codemonkey": {
 		"providers": [
 			{
 				"name": "OpenRouter",
+				"enabled": true,
 				"baseUrl": "https://openrouter.ai/api/v1",
-				"apiKey": "your-openrouter-api-key-here",
-				"models": ["openai/gpt-4o-mini", "anthropic/claude-3-haiku"]
+				"apiKey": "YOUR_OPENROUTER_API_KEY_HERE",
+				"models": ["openai/gpt-4o", "anthropic/claude-3.5-sonnet", "anthropic/claude-3-haiku"],
+				"description": "Access multiple AI models through one API (recommended)"
+			},
+			{
+				"name": "OpenAI",
+				"enabled": false,
+				"baseUrl": "https://api.openai.com/v1",
+				"apiKey": "YOUR_OPENAI_API_KEY_HERE",
+				"models": ["gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"],
+				"description": "Direct OpenAI API access"
+			},
+			{
+				"name": "Anthropic",
+				"enabled": false,
+				"baseUrl": "https://api.anthropic.com/v1",
+				"apiKey": "YOUR_ANTHROPIC_API_KEY_HERE",
+				"models": ["claude-3-5-sonnet-20241022", "claude-3-opus-20240229", "claude-3-haiku-20240307"],
+				"description": "Direct Anthropic Claude API access"
 			},
 			{
 				"name": "Local Ollama",
+				"enabled": false,
 				"baseUrl": "http://localhost:11434/v1",
-				"models": ["llama3.2", "qwen2.5-coder"]
+				"models": ["llama3.2", "qwen2.5-coder", "deepseek-coder"],
+				"description": "Run models locally (free, private, no API key needed)"
+			},
+			{
+				"name": "Groq",
+				"enabled": false,
+				"baseUrl": "https://api.groq.com/openai/v1",
+				"apiKey": "YOUR_GROQ_API_KEY_HERE",
+				"models": ["llama-3.1-70b-versatile", "mixtral-8x7b-32768"],
+				"description": "Ultra-fast inference with Groq LPU"
 			},
 			{
 				"name": "OpenAI Compatible",
+				"enabled": false,
 				"baseUrl": "http://localhost:1234/v1",
 				"apiKey": "optional-api-key-if-needed",
-				"models": ["local-model-1", "local-model-2"]
-			},
-			{
-				"name": "Z.ai",
-				"baseUrl": "https://api.z.ai/api/paas/v4/",
-				"apiKey": "your-z.ai-api-key",
-				"models": ["glm-4.6", "glm-4.5", "glm-4.5-air"]
-			},
-			{
-				"name": "Z.ai Coding Subscription",
-				"baseUrl": "https://api.z.ai/api/coding/paas/v4/",
-				"apiKey": "your-z.ai-coding-api-key",
-				"models": ["glm-4.6", "glm-4.5", "glm-4.5-air"]
+				"models": ["local-model-1", "local-model-2"],
+				"description": "LM Studio, vLLM, or any OpenAI-compatible server"
 			}
 		],
 		"mcpServers": [
 			{
 				"name": "filesystem",
+				"enabled": false,
 				"command": "npx",
 				"args": [
 					"@modelcontextprotocol/server-filesystem",
 					"/path/to/allowed/directory"
-				]
+				],
+				"description": "Access local filesystem"
 			},
 			{
 				"name": "github",
+				"enabled": false,
 				"command": "npx",
 				"args": ["@modelcontextprotocol/server-github"],
 				"env": {
 					"GITHUB_TOKEN": "your-github-token"
-				}
+				},
+				"description": "GitHub repository access"
 			}
 		]
 	}

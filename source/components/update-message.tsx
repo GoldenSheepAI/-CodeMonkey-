@@ -71,14 +71,14 @@ export default function UpdateMessage() {
 
 	if (status === Status.Updating) {
 		return React.createElement(InfoMessage, {
-			message: 'Downloading and installing the latest Nanocoder update...',
+			message: 'Downloading and installing the latest CodeMonkey update...',
 			hideBox: true,
 		});
 	}
 
 	if (status === Status.NoUpdate) {
 		return React.createElement(SuccessMessage, {
-			message: 'Nanocoder is already up to date.',
+			message: 'CodeMonkey is already up to date.',
 			hideBox: true,
 		});
 	}
@@ -86,14 +86,14 @@ export default function UpdateMessage() {
 	if (status === Status.Success) {
 		return React.createElement(SuccessMessage, {
 			message:
-				'Nanocoder has been updated to the latest version. Please restart your session to apply the update.',
+				'CodeMonkey has been updated to the latest version. Please restart your session to apply the update.',
 			hideBox: true,
 		});
 	}
 
 	if (status === Status.Error) {
 		return React.createElement(ErrorMessage, {
-			message: `Failed to update Nanocoder: ${error?.message}`,
+			message: `Failed to update CodeMonkey: ${error?.message}`,
 			hideBox: true,
 		});
 	}

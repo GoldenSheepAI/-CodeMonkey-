@@ -4,7 +4,7 @@ import UpdateMessage from '@/components/update-message.js';
 
 export const updateCommand: Command = {
 	name: 'update',
-	description: 'Update Nanocoder to the latest version',
+	description: 'Update CodeMonkey to the latest version',
 	handler: async (_args: string[]) => {
 		return React.createElement(UpdateMessage);
 	},

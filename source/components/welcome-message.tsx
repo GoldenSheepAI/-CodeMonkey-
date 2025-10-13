@@ -26,13 +26,13 @@ export default memo(function WelcomeMessage() {
 	return (
 		<>
 			<Gradient colors={[colors.primary, colors.tool]}>
-				<BigText text="Nanocoder" font="tiny" />
+				<BigText text="CodeMonkey" font="tiny" />
 			</Gradient>
 
 			<TitledBox
 				key={colors.primary}
 				borderStyle="round"
-				titles={[`✻ Welcome to Nanocoder ${packageJson.version}`]}
+				titles={[`✻ Welcome to CodeMonkey 🐒 ${packageJson.version}`]}
 				titleStyles={titleStyles.pill}
 				width={boxWidth}
 				borderColor={colors.primary}

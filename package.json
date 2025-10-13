@@ -1,8 +1,8 @@
 {
-	"name": "@nanocollective/nanocoder",
+	"name": "@radix-obsidian/codemonkey",
 	"main": "dist/cli.js",
 	"version": "1.13.4",
-	"description": "A local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter",
+	"description": "CodeMonkey 🐒 - A local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter",
 	"keywords": [
 		"cli",
 		"ai",
@@ -13,27 +13,28 @@
 		"local",
 		"typescript"
 	],
-	"author": "Nano Collective",
+	"author": "Radix Obsidian",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Nano-Collective/nanocoder.git"
+		"url": "https://github.com/Radix-Obsidian/-CodeMonkey-.git"
 	},
-	"homepage": "https://github.com/Nano-Collective/nanocoder#readme",
+	"homepage": "https://github.com/Radix-Obsidian/-CodeMonkey-#readme",
 	"bugs": {
-		"url": "https://github.com/Nano-Collective/nanocoder/issues"
+		"url": "https://github.com/Radix-Obsidian/-CodeMonkey-/issues"
 	},
 	"bin": {
-		"nanocoder": "dist/cli.js"
+		"codemonkey": "dist/cli.js"
 	},
 	"type": "module",
 	"engines": {
 		"node": ">=16"
 	},
 	"scripts": {
-		"build": "tsc && chmod +x dist/cli.js",
+		"build": "tsc && tsc-alias && chmod +x dist/cli.js",
+		"build:bundle": "tsup && chmod +x dist/cli.js",
 		"dev": "tsc --watch",
-		"start": "node dist/cli.js",
+		"start": "node --no-warnings dist/cli.js",
 		"test": "prettier --check . && xo && ava",
 		"prepublishOnly": "npm run build"
 	},
@@ -83,6 +84,8 @@
 		"ink-testing-library": "^3.0.0",
 		"prettier": "^2.8.7",
 		"ts-node": "^10.9.1",
+		"tsc-alias": "^1.8.16",
+		"tsup": "^8.5.0",
 		"typescript": "^5.0.3",
 		"xo": "^0.53.1"
 	},

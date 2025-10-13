@@ -39,7 +39,7 @@ function Help({
 		>
 			<Box marginBottom={1}>
 				<Text color={colors.primary} bold>
-					Nanocoder – {version}
+					CodeMonkey 🐒 – {version}
 				</Text>
 			</Box>
 

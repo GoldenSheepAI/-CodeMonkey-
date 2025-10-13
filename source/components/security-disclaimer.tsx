@@ -64,7 +64,7 @@ export default function SecurityDisclaimer({
 				<Text>{process.cwd()}</Text>
 				<Box marginTop={1}>
 					<Text>
-						Nanocoder may read, write, or execute files contained in this
+						CodeMonkey may read, write, or execute files contained in this
 						directory. This can pose security risks, so only use files from
 						trusted sources.
 					</Text>

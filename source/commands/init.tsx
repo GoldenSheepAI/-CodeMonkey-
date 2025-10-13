@@ -38,7 +38,7 @@ function InitSuccess({
 		>
 			<Box marginBottom={1}>
 				<Text color={colors.primary} bold>
-					✓ Nanocoder project initialized successfully!
+					✓ CodeMonkey 🐒 project initialized successfully!
 				</Text>
 			</Box>
 

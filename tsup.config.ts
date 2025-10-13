@@ -8,14 +8,19 @@ export default defineConfig({
 	splitting: false,
 	sourcemap: true,
 	minify: false,
+	bundle: true,
+	shims: true,
 	external: ['react', 'ink', 'ink-*'],
-	banner: {
-		js: '#!/usr/bin/env node',
-	},
 	loader: {
 		'.md': 'text',
 	},
 	define: {
 		__DEV__: 'false',
+	},
+	tsconfig: 'tsconfig.json',
+	esbuildOptions(options) {
+		options.alias = {
+			'@': './source',
+		};
 	},
 });
