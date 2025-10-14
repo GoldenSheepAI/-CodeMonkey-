@@ -41,8 +41,17 @@ export default function UpdateMessage() {
 
 		const update = async () => {
 			try {
+				// Get the current package name from package.json
+				const {readFileSync} = await import('fs');
+				const {join, dirname} = await import('path');
+				const {fileURLToPath} = await import('url');
+				const __dirname = dirname(fileURLToPath(import.meta.url));
+				const packageJsonPath = join(__dirname, '../../package.json');
+				const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+				const packageName = packageJson.name || '@goldensheepai/codemonkey';
+
 				await toolRegistry.execute_bash({
-					command: 'npm update -g @nanocollective/nanocoder',
+					command: `npm update -g ${packageName}`,
 				});
 				if (isMounted) {
 					setStatus(Status.Success);

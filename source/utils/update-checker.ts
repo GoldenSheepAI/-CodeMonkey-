@@ -39,38 +39,36 @@ function isNewerVersion(current: string, latest: string): boolean {
 }
 
 /**
- * Get the current package version from package.json
+ * Get the current package info from package.json
  */
-function getCurrentVersion(): string {
+function getCurrentPackage(): { name: string; version: string } {
 	try {
 		const packageJsonPath = join(__dirname, '../../package.json');
 		const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-		return packageJson.version;
+		return { name: packageJson.name, version: packageJson.version };
 	} catch (error) {
 		if (shouldLog('warn')) {
-			logError(`Failed to read current version: ${error}`);
+			logError(`Failed to read current package info: ${error}`);
 		}
-		return '0.0.0';
+		return { name: '@goldensheepai/codemonkey', version: '0.0.0' };
 	}
 }
 
 /**
  * Fetch the latest version from npm registry
  */
-async function fetchLatestVersion(): Promise<string | null> {
+async function fetchLatestVersion(packageName: string): Promise<string | null> {
 	try {
-		const response = await fetch(
-			'https://registry.npmjs.org/@nanocollective/nanocoder/latest',
-			{
-				method: 'GET',
-				headers: {
-					Accept: 'application/json',
-					'User-Agent': 'nanocoder-update-checker',
-				},
-				// Add timeout
-				signal: AbortSignal.timeout(10000), // 10 second timeout
+		const registryUrl = `https://registry.npmjs.org/${packageName}/latest`;
+		const response = await fetch(registryUrl, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'User-Agent': 'codemonkey-update-checker',
 			},
-		);
+			// Add timeout
+			signal: AbortSignal.timeout(10000), // 10 second timeout
+		});
 
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -99,10 +97,10 @@ function updateLastCheckTime(): void {
  * Check for package updates
  */
 export async function checkForUpdates(): Promise<UpdateInfo> {
-	const currentVersion = getCurrentVersion();
+	const { name: currentPackageName, version: currentVersion } = getCurrentPackage();
 
 	try {
-		const latestVersion = await fetchLatestVersion();
+		const latestVersion = await fetchLatestVersion(currentPackageName);
 		updateLastCheckTime();
 
 		if (!latestVersion) {
@@ -119,7 +117,7 @@ export async function checkForUpdates(): Promise<UpdateInfo> {
 			currentVersion,
 			latestVersion,
 			updateCommand: hasUpdate
-				? 'npm update -g @nanocollective/nanocoder'
+				? `npm update -g ${currentPackageName}`
 				: undefined,
 		};
 	} catch (error) {
