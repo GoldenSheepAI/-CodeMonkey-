@@ -26,12 +26,14 @@ import {
 	exportCommand,
 	helpCommand,
 	initCommand,
+	keysCommand,
 	mcpCommand,
 	modelCommand,
 	providerCommand,
 	recommendationsCommand,
 	restartCommand,
 	secureCommand,
+	setupCommand,
 	statusCommand,
 	themeCommand,
 	tipsCommand,
@@ -42,7 +44,6 @@ import ErrorMessage from '@/components/error-message.js';
 import InfoMessage from '@/components/info-message.js';
 import {checkForUpdates} from '@/utils/update-checker.js';
 import type {UpdateInfo} from '@/types/index.js';
-import {toknxrManager} from '@/utils/toknxr-manager.js';
 
 interface UseAppInitializationProps {
 	setClient: (client: LLMClient | null) => void;
@@ -233,29 +234,7 @@ export function useAppInitialization({
 			// Load preferences - we'll pass them directly to avoid state timing issues
 			const preferences = loadPreferences();
 
-			// Auto-start ToknXR if Budget Mode is enabled
-			if (preferences.budgetMode?.enabled) {
-				try {
-					const started = await toknxrManager.start();
-					if (started) {
-						addToChatQueue(
-							<SuccessMessage
-								key="toknxr-started"
-								message="🎯 Budget Mode active - ToknXR proxy started automatically"
-								hideBox={true}
-							/>,
-						);
-					}
-				} catch (error) {
-					addToChatQueue(
-						<ErrorMessage
-							key="toknxr-error"
-							message={`⚠️  Budget Mode enabled but ToknXR failed to start: ${error}`}
-							hideBox={true}
-						/>,
-					);
-				}
-			}
+			// Budget Mode is coming soon - no ToknXR integration for now
 
 			// Add info message to chat queue when preferences are loaded
 			addToChatQueue(
@@ -291,6 +270,8 @@ export function useAppInitialization({
 				updateCommand,
 				recommendationsCommand,
 				statusCommand,
+				setupCommand,
+				keysCommand,
 			]);
 
 			// Now start with the properly initialized objects (excluding MCP)

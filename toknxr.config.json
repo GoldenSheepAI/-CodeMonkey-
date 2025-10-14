@@ -1,0 +1,37 @@
+{
+	"proxy": {
+		"port": 8788,
+		"host": "localhost",
+		"enabled": true
+	},
+	"logging": {
+		"level": "info",
+		"file": "toknxr.log"
+	},
+	"providers": {
+		"openai": {
+			"enabled": true,
+			"rateLimiting": {
+				"requestsPerMinute": 60,
+				"burstLimit": 10
+			}
+		},
+		"anthropic": {
+			"enabled": true,
+			"rateLimiting": {
+				"requestsPerMinute": 50,
+				"burstLimit": 5
+			}
+		},
+		"google": {
+			"enabled": true,
+			"rateLimiting": {
+				"requestsPerMinute": 60,
+				"burstLimit": 10
+			}
+		}
+	},
+	"config": {
+		"providerFieldName": "API Providers"
+	}
+}

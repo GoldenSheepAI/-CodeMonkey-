@@ -191,7 +191,7 @@ class CodeMonkeyTester {
 
 			// Check if ToknXR would be used
 			const config = JSON.parse(readFileSync(this.configPath, 'utf-8'));
-			const hasProviders = config.codemonkey?.providers?.length > 0;
+			const hasProviders = config.codemonkey?.["API Providers"]?.length > 0;
 
 			if (hasProviders) {
 				console.log('✓ Providers configured for proxy routing');

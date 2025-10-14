@@ -68,19 +68,10 @@ export default memo(function Status({
 				{themes[theme].displayName}
 			</Text>
 			{budgetMode?.enabled && (
-				<Box>
-					<Text color={colors.warning}>
-						<Text bold={true}>🎯 Budget Mode: </Text>
-						ACTIVE - Cost tracking enabled
-					</Text>
-					{budgetMode.currentSpend !== undefined && (
-						<Text color={colors.secondary}>
-							{' '}
-							↳ Session: ${budgetMode.currentSpend.toFixed(4)} / $
-							{budgetMode.budgetLimit?.toFixed(2)}
-						</Text>
-					)}
-				</Box>
+				<Text color={colors.secondary}>
+					<Text bold={true}>💰 Budget Mode: </Text>
+					Coming Soon
+				</Text>
 			)}
 			{secureMode?.enabled && (
 				<Text color={colors.success}>

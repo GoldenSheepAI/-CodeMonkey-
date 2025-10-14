@@ -28,8 +28,8 @@ export default function ProviderSelector({
 	const getProviderOptions = (): ProviderOption[] => {
 		const options: ProviderOption[] = [];
 
-		if (appConfig.providers) {
-			for (const provider of appConfig.providers) {
+		if (appConfig["API Providers"]) {
+			for (const provider of appConfig["API Providers"]) {
 				options.push({
 					label: `${provider.name}${
 						currentProvider === provider.name ? ' (current)' : ''

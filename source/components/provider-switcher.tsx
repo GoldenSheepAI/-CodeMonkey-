@@ -36,7 +36,7 @@ export default function ProviderSwitcher({
 
 	try {
 		const configData = JSON.parse(readFileSync(configPath, 'utf-8'));
-		providers = configData.codemonkey?.providers || [];
+		providers = configData.codemonkey?.["API Providers"] || [];
 		const active = providers.find(p => p.enabled);
 		if (active) {
 			currentProvider = active.name;
@@ -58,7 +58,7 @@ export default function ProviderSwitcher({
 			try {
 				// Read config
 				const configData = JSON.parse(readFileSync(configPath, 'utf-8'));
-				const providers = configData.codemonkey?.providers || [];
+				const providers = configData.codemonkey?.["API Providers"] || [];
 
 				// Disable all providers
 				providers.forEach((p: Provider) => {
@@ -90,7 +90,7 @@ export default function ProviderSwitcher({
 					}
 
 					// Write config back
-					configData.codemonkey.providers = providers;
+					configData.codemonkey["API Providers"] = providers;
 					writeFileSync(configPath, JSON.stringify(configData, null, '\t'));
 
 					setStatus('success');
@@ -153,7 +153,7 @@ export default function ProviderSwitcher({
 		<Box>
 			<TitledBox
 				borderStyle="round"
-				titles={['🔄 Switch AI Provider']}
+				titles={['🔄 Switch API Provider']}
 				titleStyles={titleStyles.pill}
 				width={boxWidth}
 				borderColor={colors.primary}

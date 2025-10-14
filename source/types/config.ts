@@ -15,8 +15,8 @@ export interface LangChainProviderConfig {
 }
 
 export interface AppConfig {
-	// Providers array structure - all OpenAI compatible
-	providers?: {
+	// API Providers array structure - all OpenAI compatible
+	"API Providers"?: {
 		name: string;
 		baseUrl?: string;
 		apiKey?: string;

@@ -5,6 +5,7 @@ import type {LLMClient, LangChainProviderConfig} from './types/index.js';
 import {existsSync} from 'fs';
 import {join} from 'path';
 import {detectOllamaModels} from './utils/ollama-detector.js';
+import {secureKeyStorage} from './utils/secure-key-storage.js';
 
 export async function createLLMClient(
 	provider?: string,
@@ -92,20 +93,16 @@ async function loadProviderConfigs(): Promise<LangChainProviderConfig[]> {
 	const preferences = loadPreferences();
 	const budgetMode = preferences.budgetMode;
 
-	// Load providers from the new providers array structure
-	if (appConfig.providers) {
-		for (const provider of appConfig.providers) {
+	// Load providers from the new API Providers array structure
+	if (appConfig["API Providers"]) {
+		for (const provider of appConfig["API Providers"]) {
 			// Skip disabled providers
 			if (provider.enabled === false) {
 				continue;
 			}
 
-			// If Budget Mode is enabled, route through ToknXR proxy
+			// Ignore Budget Mode proxying (ToknXR disabled). Always use provider base URL.
 			let baseURL = provider.baseUrl;
-			if (budgetMode?.enabled && budgetMode.toknxrProxyUrl) {
-				// Use ToknXR proxy URL instead of direct provider URL
-				baseURL = budgetMode.toknxrProxyUrl;
-			}
 
 			// Auto-detect Ollama models if enabled
 			let models = provider.models || [];
@@ -113,6 +110,17 @@ async function loadProviderConfigs(): Promise<LangChainProviderConfig[]> {
 				const detectedModels = await detectOllamaModels();
 				if (detectedModels.length > 0) {
 					models = detectedModels;
+				}
+			}
+
+			// Check for stored API key first, then fall back to config
+			let apiKey = provider.apiKey || 'dummy-key';
+
+			// Try to get stored key if the config key looks like a placeholder
+			if (apiKey.includes('YOUR_') || apiKey.includes('${')) {
+				const storedKey = secureKeyStorage.getKey(provider.name);
+				if (storedKey) {
+					apiKey = storedKey;
 				}
 			}
 
@@ -125,7 +133,7 @@ async function loadProviderConfigs(): Promise<LangChainProviderConfig[]> {
 				connectionPool: provider.connectionPool,
 				config: {
 					baseURL,
-					apiKey: provider.apiKey || 'dummy-key',
+					apiKey,
 				},
 			});
 		}

@@ -16,3 +16,5 @@ export * from './budget.js';
 export * from './secure.js';
 export * from './restart.js';
 export * from './tips.js';
+export * from './setup.js';
+export * from './keys.js';

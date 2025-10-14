@@ -38,7 +38,7 @@ function loadAppConfig(): AppConfig {
 		
 			if (configData) {
 				return {
-					providers: configData.providers,
+					"API Providers": configData["API Providers"],
 					mcpServers: configData.mcpServers,
 				};
 			}
