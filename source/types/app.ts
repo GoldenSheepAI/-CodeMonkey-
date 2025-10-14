@@ -10,7 +10,6 @@ export interface MessageSubmissionOptions {
 	onEnterModelSelectionMode: () => void;
 	onEnterProviderSelectionMode: () => void;
 	onEnterThemeSelectionMode: () => void;
-	onEnterModeSelectionMode?: () => void;
 	onEnterRecommendationsMode: () => void;
 	onShowStatus: () => void;
 	onHandleChatMessage: (message: string) => Promise<void>;

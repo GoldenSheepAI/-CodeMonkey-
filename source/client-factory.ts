@@ -5,7 +5,6 @@ import type {LLMClient, LangChainProviderConfig} from './types/index.js';
 import {existsSync} from 'fs';
 import {join} from 'path';
 import {detectOllamaModels} from './utils/ollama-detector.js';
-import {toknxrManager} from './utils/toknxr-manager.js';
 
 export async function createLLMClient(
 	provider?: string,
@@ -101,9 +100,10 @@ async function loadProviderConfigs(): Promise<LangChainProviderConfig[]> {
 				continue;
 			}
 
-			// If Budget Mode is enabled AND ToknXR is running, route through proxy
+			// If Budget Mode is enabled, route through ToknXR proxy
 			let baseURL = provider.baseUrl;
-			if (budgetMode?.enabled && budgetMode.toknxrProxyUrl && toknxrManager.getStatus()) {
+			if (budgetMode?.enabled && budgetMode.toknxrProxyUrl) {
+				// Use ToknXR proxy URL instead of direct provider URL
 				baseURL = budgetMode.toknxrProxyUrl;
 			}
 

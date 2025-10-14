@@ -45,38 +45,16 @@ function Export({filename}: {filename: string}) {
 
 export const exportCommand: Command = {
 	name: 'export',
-	description: 'Export chat history to markdown (usage: /export [path/to/file.md])',
+	description: 'Export the chat history to a markdown file',
 	handler: async (
 		args: string[],
 		messages: Message[],
 		{provider, model, tokens},
 	) => {
-		// Generate default filename with timestamp
-		const defaultFilename = `codemonkey-chat-${new Date().toISOString().replace(/:/g, '-').slice(0, 19)}.md`;
-		
-		// Use provided path or default to current directory
-		const userPath = args[0];
-		let filepath: string;
-		
-		if (userPath) {
-			// User provided a path
-			filepath = path.isAbsolute(userPath) 
-				? userPath 
-				: path.resolve(process.cwd(), userPath);
-			
-			// If path is a directory, append default filename
-			try {
-				const stats = await fs.stat(filepath);
-				if (stats.isDirectory()) {
-					filepath = path.join(filepath, defaultFilename);
-				}
-			} catch {
-				// Path doesn't exist yet, use as-is
-			}
-		} else {
-			// No path provided, use current directory
-			filepath = path.resolve(process.cwd(), defaultFilename);
-		}
+		const filename =
+			args[0] ||
+			`nanocoder-chat-${new Date().toISOString().replace(/:/g, '-')}.md`;
+		const filepath = path.resolve(process.cwd(), filename);
 
 		const frontmatter = `---
 session_date: ${new Date().toISOString()}
@@ -95,7 +73,7 @@ total_tokens: ${tokens}
 
 		return React.createElement(Export, {
 			key: `export-${Date.now()}`,
-			filename: filepath,
+			filename,
 		});
 	},
 };

@@ -106,17 +106,9 @@ export default function ModelSelector({
 			>
 				<Box flexDirection="column">
 					<Text color={colors.error}>{error}</Text>
-					<Box marginTop={1}>
-						<Text color={colors.secondary}>
-							Make sure your provider is properly configured.
-						</Text>
-					</Box>
-					<Box marginTop={1}>
-						<Text color={colors.white}>Quick fixes:</Text>
-						<Text color={colors.secondary}>  1. Run /init to set up configuration</Text>
-						<Text color={colors.secondary}>  2. Check agents.config.json exists</Text>
-						<Text color={colors.secondary}>  3. Try /provider to select a provider first</Text>
-					</Box>
+					<Text color={colors.secondary}>
+						Make sure your provider is properly configured.
+					</Text>
 					<Box marginTop={1}>
 						<Text color={colors.secondary}>Press Escape to cancel</Text>
 					</Box>

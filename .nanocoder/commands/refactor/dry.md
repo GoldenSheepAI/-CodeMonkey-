@@ -4,8 +4,6 @@ aliases: [dedupe]
 parameters: [target]
 ---
 
-# DRY Refactor
-
 Analyze {{target}} for code duplication and apply the DRY (Don't Repeat Yourself) principle.
 
 If {{target}} is provided, focus on that specific file or directory.

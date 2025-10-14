@@ -16,4 +16,3 @@ export * from './budget.js';
 export * from './secure.js';
 export * from './restart.js';
 export * from './tips.js';
-export * from './mode-command.js';

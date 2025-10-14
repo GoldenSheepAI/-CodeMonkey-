@@ -1,8 +1,0 @@
-{
-  "version": "1",
-  "monthlyUSD": 50,
-  "perProviderMonthlyUSD": {
-    "Gemini-Pro": 30
-  },
-  "webhookUrl": ""
-}

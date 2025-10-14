@@ -2,12 +2,12 @@
 # Shows security scanning and sensitive data protection
 
 Output demo-secure-mode.gif
-Set FontSize 24
-Set Width 1600
-Set Height 1000
+Set FontSize 16
+Set Width 1400
+Set Height 900
 Set Theme "tokyonight"
-Set TypingSpeed 80ms
-Set PlaybackSpeed 0.7
+Set TypingSpeed 60ms
+Set PlaybackSpeed 0.6
 
 # Start in the right directory
 Type "cd /Users/saintaugustine/Desktop/CodeMonkey/-CodeMonkey-" Enter

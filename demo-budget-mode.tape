@@ -1,74 +1,62 @@
-# CodeMonkey Budget Mode Demo - The Ultimate Cost Control Tool
-# Shows ToknXR integration and real-time cost tracking
+# CodeMonkey Budget Mode Demo
+# Shows cost tracking and budget management features
 
 Output demo-budget-mode.gif
-Set FontSize 24
-Set Width 1600
-Set Height 1000
+Set FontSize 16
+Set Width 1400
+Set Height 900
 Set Theme "tokyonight"
-Set TypingSpeed 80ms
-Set PlaybackSpeed 0.7
+Set TypingSpeed 60ms
+Set PlaybackSpeed 0.6
 
 # Start in the right directory
 Type "cd /Users/saintaugustine/Desktop/CodeMonkey/-CodeMonkey-" Enter
 Sleep 1s
 
-Type "echo '🐒 CodeMonkey Budget Mode - Ultimate Cost Control'" Enter
+Type "# 🐒 CodeMonkey Budget Mode Demo" Enter
 Sleep 1s
-Type "echo 'Track AI costs in real-time with ToknXR integration! 💰'" Enter
-Sleep 3s
+Type "# Track your AI coding costs in real-time!" Enter
+Sleep 2s
 
 # Start CodeMonkey
 Type "pnpm start" Enter
-Sleep 5s
+Sleep 4s
 
 # Check initial status
 Type "/status" Enter
-Sleep 4s
+Sleep 3s
 
-# Enable Budget Mode with flair
-Type "echo '🚀 Activating Budget Mode...'" Enter
+# Enable Budget Mode
+Type "# Enable Budget Mode for cost tracking" Enter
 Sleep 1s
 Type "/budget" Enter
-Sleep 3s
+Sleep 2s
 Down
 Enter
-Sleep 5s
-
-# Show the budget status
-Type "/status" Enter
 Sleep 4s
 
-# Do some coding work to generate costs
-Type "echo '💻 Let'\''s write some code and see the costs add up!'" Enter
-Sleep 2s
-Type "Create a complete React component for a modern dashboard with charts, metrics, and responsive design" Enter
-Sleep 10s
-
-# Check budget after work
+# Show budget status
 Type "/status" Enter
-Sleep 4s
+Sleep 3s
 
-# More coding work
-Type "Now create the backend API endpoints in Node.js/Express with authentication, validation, and database integration" Enter
-Sleep 12s
+# Test with a coding task
+Type "Write a React component for a user profile card" Enter
+Sleep 6s
 
-# Final budget check
+# Check budget after usage
 Type "/status" Enter
-Sleep 4s
+Sleep 3s
 
-# Show the power
-Type "echo '⚡ Budget Mode gives you complete visibility into:'" Enter
+# Show budget mode benefits
+Type "# 💰 Budget Mode helps you:" Enter
 Sleep 1s
-Type "echo '• Real-time cost tracking'" Enter
+Type "# • Track costs per session" Enter
 Sleep 1s
-Type "echo '• Token usage analytics'" Enter
+Type "# • Monitor token usage" Enter
 Sleep 1s
-Type "echo '• Cost optimization insights'" Enter
-Sleep 1s
-Type "echo '• Session-by-session breakdown'" Enter
+Type "# • Control AI spending" Enter
 Sleep 2s
 
-# Exit with style
+# Exit
 Type "/exit" Enter
 Sleep 2s

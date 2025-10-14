@@ -9,34 +9,13 @@ export const restartCommand: Command = {
 		// Show restart message
 		const message = React.createElement(InfoMessage, {
 			key: 'restart-message',
-			message: '🔄 Restarting CodeMonkey... (auto-relaunching)',
+			message: '🔄 Restarting CodeMonkey...',
 			hideBox: true,
 		});
 
-		// Spawn a new detached instance of the CLI, then exit this one
+		// Exit with code 42 to signal auto-restart
 		setTimeout(() => {
-			try {
-				const {spawn} = require('child_process');
-				// process.execPath is the Node binary. argv[1] should be the CLI entry (dist/cli.js)
-				const nodeBin = process.execPath;
-				const cliEntry = process.argv[1];
-				if (cliEntry) {
-					const child = spawn(nodeBin, [cliEntry], {
-						detached: true,
-						stdio: 'ignore',
-						env: process.env,
-					});
-					child.unref();
-				}
-			} catch {
-				// Swallow spawn errors; worst case user can relaunch manually
-			}
-
-			// Clear any pending timers/intervals and exit
-			if (global.gc) {
-				try { global.gc(); } catch {}
-			}
-			process.exit(0);
+			process.exit(42);
 		}, 500);
 
 		return message;

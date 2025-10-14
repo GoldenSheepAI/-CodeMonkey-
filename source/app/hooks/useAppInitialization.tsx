@@ -7,7 +7,6 @@ import {createLLMClient} from '@/client-factory.js';
 import {
 	getLastUsedModel,
 	loadPreferences,
-	savePreferences,
 	updateLastUsed,
 } from '@/config/preferences.js';
 import type {MCPInitResult, UserPreferences} from '@/types/index.js';
@@ -28,7 +27,6 @@ import {
 	helpCommand,
 	initCommand,
 	mcpCommand,
-	modeCommand,
 	modelCommand,
 	providerCommand,
 	recommendationsCommand,
@@ -235,45 +233,28 @@ export function useAppInitialization({
 			// Load preferences - we'll pass them directly to avoid state timing issues
 			const preferences = loadPreferences();
 
-			// Auto-start ToknXR if Budget Mode is enabled - non-blocking
+			// Auto-start ToknXR if Budget Mode is enabled
 			if (preferences.budgetMode?.enabled) {
-				(async () => {
-					try {
-						const started = await toknxrManager.start();
-						if (started) {
-							addToChatQueue(
-								<SuccessMessage
-									key="toknxr-started"
-									message="🎯 Budget Mode active - ToknXR proxy started automatically"
-									hideBox={true}
-								/>,
-							);
-						} else {
-							// Disable budget mode if proxy did not start
-							const p = loadPreferences();
-							p.budgetMode = {enabled: false};
-							savePreferences(p);
-							addToChatQueue(
-								<ErrorMessage
-									key="toknxr-disabled"
-									message={"⚠️  ToknXR not available - Budget Mode disabled (direct AI connections)."}
-									hideBox={true}
-								/>,
-							);
-						}
-					} catch (error) {
-						const p = loadPreferences();
-						p.budgetMode = {enabled: false};
-						savePreferences(p);
+				try {
+					const started = await toknxrManager.start();
+					if (started) {
 						addToChatQueue(
-							<ErrorMessage
-								key="toknxr-error"
-								message={`⚠️  ToknXR failed to start. Budget Mode disabled. ${error}`}
+							<SuccessMessage
+								key="toknxr-started"
+								message="🎯 Budget Mode active - ToknXR proxy started automatically"
 								hideBox={true}
 							/>,
 						);
 					}
-				})();
+				} catch (error) {
+					addToChatQueue(
+						<ErrorMessage
+							key="toknxr-error"
+							message={`⚠️  Budget Mode enabled but ToknXR failed to start: ${error}`}
+							hideBox={true}
+						/>,
+					);
+				}
 			}
 
 			// Add info message to chat queue when preferences are loaded
@@ -299,7 +280,6 @@ export function useAppInitialization({
 				clearCommand,
 				modelCommand,
 				providerCommand,
-				modeCommand,
 				budgetCommand,
 				secureCommand,
 				commandsCommand,
