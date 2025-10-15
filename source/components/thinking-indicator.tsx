@@ -124,12 +124,15 @@ export default memo(function ThinkingIndicator() {
 
 	const eta = calculateETA(elapsedSeconds);
 
+	// Calculate box width to fit within terminal
+	const boxWidth = Math.min(terminalWidth, 120);
+
 	return (
 		<TitledBox
 			borderStyle="round"
 			titles={['🧠 AI Processing']}
 			titleStyles={titleStyles.pill}
-			width={terminalWidth}
+			width={boxWidth}
 			borderColor={colors.primary}
 			paddingX={2}
 			paddingY={1}

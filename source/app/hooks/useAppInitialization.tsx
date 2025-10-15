@@ -230,15 +230,6 @@ export function useAppInitialization({
 			// Load preferences - we'll pass them directly to avoid state timing issues
 			const preferences = loadPreferences();
 
-			// Add info message to chat queue when preferences are loaded
-			addToChatQueue(
-				<SuccessMessage
-					key="preferences-loaded"
-					message="User preferences loaded..."
-					hideBox={true}
-				/>,
-			);
-
 			// Set up the tool registry getter for the message handler
 			setToolRegistryGetter(() => newToolManager.getToolRegistry());
 

@@ -125,7 +125,9 @@ export default memo(function AssistantMessage({
 	const terminalWidth = useTerminalWidth();
 
 	// Calculate content width (accounting for padding and borders)
-	const contentWidth = Math.max(40, terminalWidth - 6);
+	// Ensure content fits within terminal boundaries
+	const maxWidth = Math.min(terminalWidth - 4, 120); // Cap at 120 chars for readability
+	const contentWidth = Math.max(40, maxWidth);
 
 	// Render markdown to terminal-formatted text with theme colors
 	const renderedMessage = useMemo(() => {
@@ -142,16 +144,19 @@ export default memo(function AssistantMessage({
 		return wrapText(renderedMessage, contentWidth);
 	}, [renderedMessage, contentWidth]);
 
+	// Calculate box width to fit within terminal
+	const boxWidth = Math.min(terminalWidth, 120);
+
 	return (
 		<TitledBox
 			key={`assistant-${model}`}
 			borderStyle="round"
 			titles={[`🤖 ${model}`]}
 			titleStyles={titleStyles.pill}
-			width={terminalWidth}
+			width={boxWidth}
 			borderColor={colors.primary}
-			paddingX={1}
-			paddingY={1}
+			paddingX={3}
+			paddingY={2}
 			flexDirection="column"
 			marginBottom={1}
 		>

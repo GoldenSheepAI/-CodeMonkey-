@@ -14,12 +14,16 @@ export default memo(function ErrorMessage({
 	hideTitle?: boolean;
 	hideBox?: boolean;
 }) {
-	const boxWidth = useTerminalWidth();
+	const boxWidth = Math.min(useTerminalWidth(), 120);
 	const {colors} = useTheme();
 	return (
 		<>
 			{hideBox ? (
-				<Box width={boxWidth} flexDirection="column" marginBottom={1}>
+				<Box
+					width={Math.min(boxWidth + 30, 120)}
+					flexDirection="column"
+					marginBottom={1}
+				>
 					<Text color={colors.error}>{message}</Text>
 				</Box>
 			) : hideTitle ? (

@@ -6,6 +6,7 @@ import {promptHistory} from '@/prompt-history.js';
 import {commandRegistry} from '@/commands.js';
 import {useUIStateContext} from '@/hooks/useUIState.js';
 import {useInputState} from '@/hooks/useInputState.js';
+import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {Completion} from '@/types/index.js';
 import {DevelopmentMode, DEVELOPMENT_MODE_LABELS} from '@/types/core.js';
 
@@ -32,6 +33,7 @@ export default function UserInput({
 	const {colors} = useTheme();
 	const inputState = useInputState();
 	const uiState = useUIStateContext();
+	const terminalWidth = useTerminalWidth();
 	const [textInputKey, setTextInputKey] = useState(0);
 
 	const {
@@ -258,8 +260,11 @@ export default function UserInput({
 	const textColor = disabled || !input ? colors.secondary : colors.white;
 	const borderColor = isBashMode ? colors.tool : colors.primary;
 
+	// Calculate box width to fit within terminal
+	const boxWidth = Math.min(terminalWidth, 120);
+
 	return (
-		<Box flexDirection="column" width="100%">
+		<Box flexDirection="column" width={boxWidth}>
 			{/* Modern single-line input box */}
 			<Box
 				borderStyle="round"

@@ -1,5 +1,6 @@
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {Text, Box} from 'ink';
+import {useEffect, useState} from 'react';
 
 import {useTheme} from '@/hooks/useTheme.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
@@ -8,17 +9,42 @@ export default function SuccessMessage({
 	message,
 	hideTitle = false,
 	hideBox = false,
+	autoHide = false,
+	autoHideDelay = 30000, // 30 seconds
 }: {
 	message: string;
 	hideTitle?: boolean;
 	hideBox?: boolean;
+	autoHide?: boolean;
+	autoHideDelay?: number;
 }) {
-	const boxWidth = useTerminalWidth();
+	const boxWidth = Math.min(useTerminalWidth(), 120);
 	const {colors} = useTheme();
+	const [isVisible, setIsVisible] = useState(true);
+
+	// Auto-hide functionality
+	useEffect(() => {
+		if (autoHide && isVisible) {
+			const timer = setTimeout(() => {
+				setIsVisible(false);
+			}, autoHideDelay);
+
+			return () => clearTimeout(timer);
+		}
+	}, [autoHide, autoHideDelay, isVisible]);
+
+	// Don't render if auto-hidden
+	if (!isVisible) {
+		return null;
+	}
 	return (
 		<>
 			{hideBox ? (
-				<Box width={boxWidth} flexDirection="column" marginBottom={1}>
+				<Box
+					width={Math.min(boxWidth + 30, 120)}
+					flexDirection="column"
+					marginBottom={1}
+				>
 					<Text color={colors.success}>{message}</Text>
 				</Box>
 			) : hideTitle ? (

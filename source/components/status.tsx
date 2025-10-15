@@ -4,6 +4,7 @@ import {existsSync} from 'fs';
 
 import {themes, getThemeColors} from '@/config/themes.js';
 import type {ThemePreset} from '@/types/ui.js';
+import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 
 // Get CWD once at module load time
 const cwd = process.cwd();
@@ -47,6 +48,7 @@ export default memo(function Status({
 	rateLimitInfo,
 }: StatusProps) {
 	const colors = getThemeColors(theme);
+	const terminalWidth = useTerminalWidth();
 
 	// Check for AGENTS.md synchronously if not provided
 	const hasAgentsMd = agentsMdLoaded ?? existsSync(`${cwd}/AGENTS.md`);
@@ -85,12 +87,15 @@ export default memo(function Status({
 			: colors.success
 		: colors.secondary;
 
+	// Calculate box width to fit within terminal
+	const boxWidth = Math.min(terminalWidth, 120);
+
 	return (
 		<Box
 			borderStyle="round"
 			borderColor={colors.secondary}
-			paddingX={1}
-			width="100%"
+			paddingX={3}
+			width={boxWidth}
 			justifyContent="space-between"
 		>
 			<Box>
