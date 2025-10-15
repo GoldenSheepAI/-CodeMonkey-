@@ -1,6 +1,6 @@
-# Contributing to Nanocoder
+# Contributing to CodeMonkey
 
-Thank you for your interest in contributing to Nanocoder! We welcome contributions from developers of all skill levels. This guide will help you get started with contributing to the project.
+Thank you for your interest in contributing to CodeMonkey! We welcome contributions from developers of all skill levels. This guide will help you get started with contributing to the project.
 
 ## Table of Contents
 
@@ -17,8 +17,9 @@ Thank you for your interest in contributing to Nanocoder! We welcome contributio
 
 Before contributing, please:
 
-1. Read our [README](README.md) to understand what Nanocoder does
-2. Check our [issue tracker](https://github.com/Nano-Collective/nanocoder/issues) for existing issues
+1. Read our [README](README.md) to understand what CodeMonkey does
+2. Check our [issue tracker](https://github.com/goldensheepai/codemonkey-beta/issues) for existing issues
+2. Check our [issue tracker](https://github.com/goldensheepai/codemonkey/issues) for existing issues
 3. Look for issues labeled `good first issue` or `help wanted` if you're new to the project
 
 ## Development Setup
@@ -34,8 +35,8 @@ Before contributing, please:
 1. **Fork and clone the repository:**
 
    ```bash
-   git clone https://github.com/YOUR-USERNAME/nanocoder.git
-   cd nanocoder
+   git clone https://github.com/YOUR-USERNAME/codemonkey.git
+   cd codemonkey
    ```
 
 2. **Install dependencies:**
@@ -115,7 +116,7 @@ We follow conventional commits:
 
 ### Manual Testing
 
-Since Nanocoder is a CLI tool, most testing is currently manual:
+Since CodeMonkey is a CLI tool, most testing is currently manual:
 
 1. **Test different AI providers:**
 
@@ -215,7 +216,7 @@ Brief description of what this PR does
 
 When reporting bugs, please include:
 
-- **Environment**: OS, Node.js version, Nanocoder version
+- **Environment**: OS, Node.js version, CodeMonkey version
 - **AI Provider**: Which provider you were using
 - **Configuration**: Relevant config (sanitize API keys)
 - **Steps to Reproduce**: Clear, step-by-step instructions
@@ -245,7 +246,9 @@ For feature requests:
 ### Getting Help
 
 - **GitHub Issues**: For bugs, features, and questions
-- **Discord Server**: Join our community Discord server for real-time discussions, help, and collaboration: [Join our Discord server](https://discord.gg/ktPDV6rekE)
+- **Discord Server**: Join our community Discord server for real-time discussions, help, and collaboration: [Join our Discord server](coming soon)
+- **GitHub Issues**: For bugs, features, and questions.
+- **Discord Server**: Join our community Discord server for real-time discussions, help, and collaboration: Join our Discord server
 
 ### Code of Conduct
 
@@ -292,4 +295,4 @@ All contributors are recognized in the project. We appreciate:
 
 ---
 
-Thank you for contributing to Nanocoder! Your efforts help make local-first AI coding tools more accessible and powerful for everyone.
+Thank you for contributing to CodeMonkey! Your efforts help make local-first AI coding tools more accessible and powerful for everyone.

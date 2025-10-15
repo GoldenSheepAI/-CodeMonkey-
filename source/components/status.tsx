@@ -15,19 +15,37 @@ interface UpdateInfo {
 	updateCommand?: string;
 }
 
+interface StatusProps {
+	provider: string;
+	model: string;
+	theme: ThemePreset;
+	updateInfo?: UpdateInfo | null;
+	agentsMdLoaded?: boolean;
+	contextUsage?: {
+		used: number;
+		max: number;
+		percentage: number;
+	};
+	tokenUsage?: {
+		session: number;
+		estimated: number;
+	};
+	rateLimitInfo?: {
+		remaining: number;
+		max: number;
+	};
+}
+
 export default memo(function Status({
 	provider,
 	model,
 	theme,
 	updateInfo,
 	agentsMdLoaded,
-}: {
-	provider: string;
-	model: string;
-	theme: ThemePreset;
-	updateInfo?: UpdateInfo | null;
-	agentsMdLoaded?: boolean;
-}) {
+	contextUsage,
+	tokenUsage,
+	rateLimitInfo,
+}: StatusProps) {
 	const colors = getThemeColors(theme);
 
 	// Check for AGENTS.md synchronously if not provided
@@ -42,16 +60,67 @@ export default memo(function Status({
 	// Extract directory name from full path
 	const dirName = cwd.split('/').pop() || cwd;
 
+	// Format numbers for display
+	const formatNumber = (num: number) => {
+		if (num > 1000000) return `${(num / 1000000).toFixed(1)}M`;
+		if (num > 1000) return `${(num / 1000).toFixed(1)}K`;
+		return num.toString();
+	};
+
+	// Context usage color
+	const contextColor = contextUsage 
+		? contextUsage.percentage > 90 ? colors.error
+		: contextUsage.percentage > 75 ? colors.warning
+		: colors.success
+		: colors.secondary;
+
+	// Rate limit color
+	const rateLimitColor = rateLimitInfo
+		? rateLimitInfo.remaining === 0 ? colors.error
+		: rateLimitInfo.remaining < rateLimitInfo.max * 0.1 ? colors.warning
+		: colors.success
+		: colors.secondary;
+
 	return (
 		<Box
 			borderStyle="round"
 			borderColor={colors.secondary}
 			paddingX={1}
 			width="100%"
+			justifyContent="space-between"
 		>
-			<Text color={colors.secondary}>
-				~/{dirName} ({provider}*) {sandboxStatus} {model} {updatePercent}
-			</Text>
+			<Box>
+				<Text color={colors.secondary}>
+					~/{dirName} ({provider}*) {sandboxStatus} {model} {updatePercent}
+				</Text>
+			</Box>
+			
+			{/* Token/Context/Rate Limit Info */}
+			{(tokenUsage || contextUsage || rateLimitInfo) && (
+				<Box>
+					{tokenUsage && (
+						<Text color={colors.info}>
+							🪙 {formatNumber(tokenUsage.session)}
+						</Text>
+					)}
+					{tokenUsage && contextUsage && (
+						<Text color={colors.secondary}> • </Text>
+					)}
+					{contextUsage && (
+						<Text color={contextColor}>
+							📄 {contextUsage.percentage.toFixed(0)}%
+						</Text>
+					)}
+					{(tokenUsage || contextUsage) && rateLimitInfo && (
+						<Text color={colors.secondary}> • </Text>
+					)}
+					{rateLimitInfo && (
+						<Text color={rateLimitColor}>
+							🔄 {rateLimitInfo.remaining}
+						</Text>
+					)}
+				</Box>
+			)}
 		</Box>
 	);
 });

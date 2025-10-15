@@ -32,6 +32,7 @@ import {
 	recommendationsCommand,
 	statusCommand,
 	themeCommand,
+	tokensCommand,
 	updateCommand,
 } from '@/commands/index.js';
 import SuccessMessage from '@/components/success-message.js';
@@ -260,6 +261,7 @@ export function useAppInitialization({
 				recommendationsCommand,
 				statusCommand,
 				feedbackCommand,
+				tokensCommand,
 			]);
 
 			// Now start with the properly initialized objects (excluding MCP)

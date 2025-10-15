@@ -150,7 +150,7 @@ export default memo(function AssistantMessage({
 			titleStyles={titleStyles.pill}
 			width={terminalWidth}
 			borderColor={colors.primary}
-			paddingX={2}
+			paddingX={1}
 			paddingY={1}
 			flexDirection="column"
 			marginBottom={1}

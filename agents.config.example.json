@@ -2,16 +2,20 @@
 	"codemonkey": {
 		"providers": [
 			{
-				"name": "OpenRouter",
+				"name": "Local Ollama",
 				"enabled": true,
+				"baseUrl": "http://localhost:11434/v1",
+				"models": [],
+				"autoDetectModels": true,
+				"description": "Run models locally (free, private, no API key needed) - Auto-detects installed models"
+			},
+			{
+				"name": "OpenRouter",
+				"enabled": false,
 				"baseUrl": "https://openrouter.ai/api/v1",
 				"apiKey": "YOUR_OPENROUTER_API_KEY_HERE",
-				"models": [
-					"openai/gpt-4o",
-					"anthropic/claude-3.5-sonnet",
-					"anthropic/claude-3-haiku"
-				],
-				"description": "Access multiple AI models through one API (recommended)"
+				"models": ["openai/gpt-4o", "anthropic/claude-3.5-sonnet", "anthropic/claude-3-haiku"],
+				"description": "Access multiple AI models through one API"
 			},
 			{
 				"name": "OpenAI",
@@ -26,25 +30,27 @@
 				"enabled": false,
 				"baseUrl": "https://api.anthropic.com/v1",
 				"apiKey": "YOUR_ANTHROPIC_API_KEY_HERE",
-				"models": [
-					"claude-3-5-sonnet-20241022",
-					"claude-3-opus-20240229",
-					"claude-3-haiku-20240307"
-				],
+				"models": ["claude-3-5-sonnet-20241022", "claude-3-opus-20240229", "claude-3-haiku-20240307"],
 				"description": "Direct Anthropic Claude API access"
 			},
 			{
-				"name": "Local Ollama",
+				"name": "Hugging Face",
 				"enabled": false,
-				"baseUrl": "http://localhost:11434/v1",
-				"models": ["llama3.2", "qwen2.5-coder", "deepseek-coder"],
-				"description": "Run models locally (free, private, no API key needed)"
+				"baseUrl": "https://api-inference.huggingface.co/v1",
+				"apiKey": "YOUR_HUGGINGFACE_API_KEY_HERE",
+				"models": [
+					"meta-llama/Meta-Llama-3.1-70B-Instruct",
+					"Qwen/Qwen2.5-Coder-32B-Instruct",
+					"mistralai/Mixtral-8x7B-Instruct-v0.1",
+					"microsoft/Phi-3-medium-4k-instruct"
+				],
+				"description": "Access 1000s of models via Hugging Face Inference API"
 			},
 			{
 				"name": "Groq",
 				"enabled": false,
 				"baseUrl": "https://api.groq.com/openai/v1",
-				"apiKey": "YOUR_GROQ_API_KEY_HERE",
+				"apiKey": "$GROQ_API_KEY",
 				"models": ["llama-3.1-70b-versatile", "mixtral-8x7b-32768"],
 				"description": "Ultra-fast inference with Groq LPU"
 			},
@@ -55,29 +61,31 @@
 				"apiKey": "optional-api-key-if-needed",
 				"models": ["local-model-1", "local-model-2"],
 				"description": "LM Studio, vLLM, or any OpenAI-compatible server"
-			}
-		],
-		"mcpServers": [
-			{
-				"name": "filesystem",
-				"enabled": false,
-				"command": "npx",
-				"args": [
-					"@modelcontextprotocol/server-filesystem",
-					"/path/to/allowed/directory"
-				],
-				"description": "Access local filesystem"
 			},
 			{
-				"name": "github",
+				"name": "Ollama Cloud",
 				"enabled": false,
-				"command": "npx",
-				"args": ["@modelcontextprotocol/server-github"],
-				"env": {
-					"GITHUB_TOKEN": "your-github-token"
-				},
-				"description": "GitHub repository access"
+				"baseUrl": "https://ollama.com/v1",
+				"apiKey": "e5663bc643ef4f21936c724972b33e74.XFf2ShF-pP5hssvZiesll-Nx",
+				"models": ["deepseek-v3.1:671b-cloud", "gpt-oss:20b-cloud", "gpt-oss:120b-cloud", "kimi-k2:1t-cloud", "qwen3-coder:480b-cloud"],
+				"description": "Access powerful cloud models via Ollama's cloud service (requires API key from ollama.com)"
+			},
+			{
+				"name": "NVIDIA NIM",
+				"enabled": false,
+				"baseUrl": "http://localhost:8000/v1",
+				"models": ["meta/llama-3.1-8b-instruct", "meta/llama-3.1-70b-instruct", "meta/llama-3.1-405b-instruct"],
+				"description": "NVIDIA NIM optimized inference server for GPU acceleration"
+			},
+			{
+				"name": "LM Studio",
+				"enabled": false,
+				"baseUrl": "http://localhost:1234/v1",
+				"models": ["local-model"],
+				"autoDetectModels": true,
+				"description": "LM Studio local inference server with GPU support"
 			}
-		]
+		],
+		"mcpServers": []
 	}
 }
