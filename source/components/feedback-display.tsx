@@ -41,8 +41,8 @@ const RATING_OPTIONS = [
 
 const COMMON_QUESTIONS = {
 	performance: [
-		'How fast do you find CodeMonkey\'s responses?',
-		'Are there any performance bottlenecks you\'ve noticed?',
+		"How fast do you find CodeMonkey's responses?",
+		"Are there any performance bottlenecks you've noticed?",
 		'How does startup time feel?',
 	],
 	ui_ux: [
@@ -78,7 +78,7 @@ const COMMON_QUESTIONS = {
 	security: [
 		'Any concerns about data privacy?',
 		'Thoughts on local vs cloud processing?',
-		'Security features you\'d like to see?',
+		"Security features you'd like to see?",
 	],
 	installation: [
 		'How was the installation experience?',
@@ -88,13 +88,22 @@ const COMMON_QUESTIONS = {
 	general: [
 		'Overall thoughts on CodeMonkey?',
 		'How does it compare to other tools?',
-		'What\'s your favorite aspect?',
+		"What's your favorite aspect?",
 	],
 };
 
-type FeedbackStep = 'category' | 'rating' | 'message' | 'email' | 'confirm' | 'success';
+type FeedbackStep =
+	| 'category'
+	| 'rating'
+	| 'message'
+	| 'email'
+	| 'confirm'
+	| 'success';
 
-export default memo(function FeedbackDisplay({onSubmit, onCancel}: FeedbackDisplayProps) {
+export default memo(function FeedbackDisplay({
+	onSubmit,
+	onCancel,
+}: FeedbackDisplayProps) {
 	const {colors} = useTheme();
 	const terminalWidth = useTerminalWidth();
 	const [step, setStep] = useState<FeedbackStep>('category');
@@ -141,7 +150,7 @@ export default memo(function FeedbackDisplay({onSubmit, onCancel}: FeedbackDispl
 			message,
 			email: email || undefined,
 		};
-		
+
 		saveFeedback(feedback);
 		onSubmit(feedback);
 		setStep('success');
@@ -152,11 +161,16 @@ export default memo(function FeedbackDisplay({onSubmit, onCancel}: FeedbackDispl
 	};
 
 	const getRatingLabel = (value: number) => {
-		return RATING_OPTIONS.find(rating => rating.value === value)?.label || `${value} stars`;
+		return (
+			RATING_OPTIONS.find(rating => rating.value === value)?.label ||
+			`${value} stars`
+		);
 	};
 
 	const getQuestions = () => {
-		return COMMON_QUESTIONS[selectedCategory as keyof typeof COMMON_QUESTIONS] || [];
+		return (
+			COMMON_QUESTIONS[selectedCategory as keyof typeof COMMON_QUESTIONS] || []
+		);
 	};
 
 	const stats = getFeedbackStats();
@@ -177,12 +191,14 @@ export default memo(function FeedbackDisplay({onSubmit, onCancel}: FeedbackDispl
 				<Box flexDirection="column">
 					<Box marginBottom={1}>
 						<Text color={colors.primary} bold>
-							Help us improve CodeMonkey! What area would you like to provide feedback on?
+							Help us improve CodeMonkey! What area would you like to provide
+							feedback on?
 						</Text>
 					</Box>
 					<Box marginBottom={2}>
 						<Text color={colors.secondary}>
-							Total feedback received: {stats.totalFeedback} | Average rating: {stats.averageRating.toFixed(1)}⭐
+							Total feedback received: {stats.totalFeedback} | Average rating:{' '}
+							{stats.averageRating.toFixed(1)}⭐
 						</Text>
 					</Box>
 					<SelectInput
@@ -239,7 +255,7 @@ export default memo(function FeedbackDisplay({onSubmit, onCancel}: FeedbackDispl
 							Tell us more about your experience:
 						</Text>
 					</Box>
-					
+
 					{/* Show helpful questions */}
 					<Box flexDirection="column" marginBottom={1}>
 						<Text color={colors.secondary} italic>
@@ -258,7 +274,7 @@ export default memo(function FeedbackDisplay({onSubmit, onCancel}: FeedbackDispl
 							value={message}
 							placeholder="Share your thoughts, suggestions, or issues..."
 							onSubmit={handleMessageSubmit}
-							onChange={(value) => setMessage(value)}
+							onChange={value => setMessage(value)}
 						/>
 					</Box>
 
@@ -279,7 +295,8 @@ export default memo(function FeedbackDisplay({onSubmit, onCancel}: FeedbackDispl
 					</Box>
 					<Box marginBottom={1}>
 						<Text color={colors.secondary}>
-							We'll only use this to ask clarifying questions about your feedback.
+							We'll only use this to ask clarifying questions about your
+							feedback.
 						</Text>
 					</Box>
 					<Box flexDirection="column" marginBottom={2}>
@@ -287,7 +304,7 @@ export default memo(function FeedbackDisplay({onSubmit, onCancel}: FeedbackDispl
 							value={email}
 							placeholder="your-email@example.com (optional)"
 							onSubmit={handleEmailSubmit}
-							onChange={(value) => setEmail(value)}
+							onChange={value => setEmail(value)}
 						/>
 					</Box>
 					<Box>
@@ -305,20 +322,38 @@ export default memo(function FeedbackDisplay({onSubmit, onCancel}: FeedbackDispl
 							Review your feedback:
 						</Text>
 					</Box>
-					
-					<Box flexDirection="column" marginBottom={2} paddingX={1} borderStyle="single" borderColor={colors.secondary}>
+
+					<Box
+						flexDirection="column"
+						marginBottom={2}
+						paddingX={1}
+						borderStyle="single"
+						borderColor={colors.secondary}
+					>
 						<Text color={colors.white}>
-							<Text color={colors.primary} bold>Category:</Text> {getCategoryLabel(selectedCategory)}
+							<Text color={colors.primary} bold>
+								Category:
+							</Text>{' '}
+							{getCategoryLabel(selectedCategory)}
 						</Text>
 						<Text color={colors.white}>
-							<Text color={colors.primary} bold>Rating:</Text> {getRatingLabel(selectedRating)}
+							<Text color={colors.primary} bold>
+								Rating:
+							</Text>{' '}
+							{getRatingLabel(selectedRating)}
 						</Text>
 						<Text color={colors.white}>
-							<Text color={colors.primary} bold>Message:</Text> {message || 'No additional message'}
+							<Text color={colors.primary} bold>
+								Message:
+							</Text>{' '}
+							{message || 'No additional message'}
 						</Text>
 						{email && (
 							<Text color={colors.white}>
-								<Text color={colors.primary} bold>Email:</Text> {email}
+								<Text color={colors.primary} bold>
+									Email:
+								</Text>{' '}
+								{email}
 							</Text>
 						)}
 					</Box>
@@ -327,9 +362,7 @@ export default memo(function FeedbackDisplay({onSubmit, onCancel}: FeedbackDispl
 						<Text color={colors.success} bold>
 							Press Enter to submit feedback
 						</Text>
-						<Text color={colors.secondary}>
-							Press Escape to cancel
-						</Text>
+						<Text color={colors.secondary}>Press Escape to cancel</Text>
 					</Box>
 				</Box>
 			)}
@@ -358,7 +391,11 @@ export default memo(function FeedbackDisplay({onSubmit, onCancel}: FeedbackDispl
 });
 
 // Handle inputs for confirm step
-export function useFeedbackConfirmInput(step: FeedbackStep, onSubmit: () => void, onCancel: () => void) {
+export function useFeedbackConfirmInput(
+	step: FeedbackStep,
+	onSubmit: () => void,
+	onCancel: () => void,
+) {
 	useInput((input, key) => {
 		if (step === 'confirm') {
 			if (key.return) {

@@ -11,20 +11,23 @@ function FeedbackComponent({onComplete}: FeedbackComponentProps) {
 	const [isCompleted, setIsCompleted] = useState(false);
 	const [submittedFeedback, setSubmittedFeedback] = useState<any>(null);
 
-	const handleSubmit = useCallback((feedback: {
-		category: string;
-		rating: number;
-		message: string;
-		email?: string;
-	}) => {
-		setSubmittedFeedback(feedback);
-		setIsCompleted(true);
-		
-		// Auto-close after 3 seconds
-		setTimeout(() => {
-			onComplete();
-		}, 3000);
-	}, [onComplete]);
+	const handleSubmit = useCallback(
+		(feedback: {
+			category: string;
+			rating: number;
+			message: string;
+			email?: string;
+		}) => {
+			setSubmittedFeedback(feedback);
+			setIsCompleted(true);
+
+			// Auto-close after 3 seconds
+			setTimeout(() => {
+				onComplete();
+			}, 3000);
+		},
+		[onComplete],
+	);
 
 	const handleCancel = useCallback(() => {
 		onComplete();

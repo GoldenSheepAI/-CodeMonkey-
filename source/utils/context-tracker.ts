@@ -43,12 +43,15 @@ export class ContextTracker {
 	};
 
 	// Model pricing (per 1M tokens)
-	private static readonly MODEL_PRICING: Record<string, {input: number; output: number}> = {
-		'gpt-4o': {input: 2.50, output: 10.00},
-		'gpt-4-turbo': {input: 10.00, output: 30.00},
-		'gpt-4': {input: 30.00, output: 60.00},
-		'gpt-3.5-turbo': {input: 0.50, output: 1.50},
-		'claude-3-5-sonnet-20241022': {input: 3.00, output: 15.00},
+	private static readonly MODEL_PRICING: Record<
+		string,
+		{input: number; output: number}
+	> = {
+		'gpt-4o': {input: 2.5, output: 10.0},
+		'gpt-4-turbo': {input: 10.0, output: 30.0},
+		'gpt-4': {input: 30.0, output: 60.0},
+		'gpt-3.5-turbo': {input: 0.5, output: 1.5},
+		'claude-3-5-sonnet-20241022': {input: 3.0, output: 15.0},
 		'claude-3-haiku-20240307': {input: 0.25, output: 1.25},
 		'llama-3.3-70b-versatile': {input: 0.59, output: 0.79}, // Groq pricing
 		// Local models are free
@@ -62,7 +65,7 @@ export class ContextTracker {
 		this.currentModel = model;
 		this.currentProvider = provider;
 		this.maxContextLength = ContextTracker.CONTEXT_LIMITS[model] || 8192;
-		
+
 		this.sessionMetrics = {
 			totalInputTokens: 0,
 			totalOutputTokens: 0,
@@ -77,9 +80,15 @@ export class ContextTracker {
 	/**
 	 * Add a message to the context and calculate tokens
 	 */
-	async addMessage(role: 'user' | 'assistant' | 'system', content: string): Promise<ContextEntry> {
-		const tokens = await this.tokenCounter.countTokens(content, this.currentModel);
-		
+	async addMessage(
+		role: 'user' | 'assistant' | 'system',
+		content: string,
+	): Promise<ContextEntry> {
+		const tokens = await this.tokenCounter.countTokens(
+			content,
+			this.currentModel,
+		);
+
 		const entry: ContextEntry = {
 			id: `${role}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
 			role,
@@ -115,10 +124,17 @@ export class ContextTracker {
 
 		// Update remaining requests if tracking
 		if (this.sessionMetrics.remainingRequests !== undefined) {
-			this.sessionMetrics.remainingRequests = Math.max(0, this.sessionMetrics.remainingRequests - 1);
+			this.sessionMetrics.remainingRequests = Math.max(
+				0,
+				this.sessionMetrics.remainingRequests - 1,
+			);
 		}
 
-		logInfo(`Token usage recorded: ${usage.totalTokens} tokens, $${this.sessionMetrics.totalCost.toFixed(6)} total cost`);
+		logInfo(
+			`Token usage recorded: ${
+				usage.totalTokens
+			} tokens, $${this.sessionMetrics.totalCost.toFixed(6)} total cost`,
+		);
 	}
 
 	/**
@@ -164,7 +180,8 @@ export class ContextTracker {
 		return {
 			used: this.sessionMetrics.contextLength,
 			max: this.maxContextLength,
-			percentage: (this.sessionMetrics.contextLength / this.maxContextLength) * 100,
+			percentage:
+				(this.sessionMetrics.contextLength / this.maxContextLength) * 100,
 		};
 	}
 
@@ -179,7 +196,9 @@ export class ContextTracker {
 	 * Clear context while preserving system messages
 	 */
 	clearContext(): void {
-		const systemMessages = this.context.filter(entry => entry.role === 'system');
+		const systemMessages = this.context.filter(
+			entry => entry.role === 'system',
+		);
 		this.context = systemMessages;
 		this.recalculateContextLength();
 		logInfo('Context cleared, preserving system messages');
@@ -192,7 +211,7 @@ export class ContextTracker {
 		this.currentModel = model;
 		this.currentProvider = provider;
 		this.maxContextLength = ContextTracker.CONTEXT_LIMITS[model] || 8192;
-		
+
 		// Recalculate context with new model
 		this.recalculateContextLength();
 	}
@@ -242,7 +261,7 @@ export class ContextTracker {
 
 	private updateMetrics(entry: ContextEntry): void {
 		this.sessionMetrics.contextLength += entry.tokens;
-		
+
 		if (entry.role === 'user') {
 			this.sessionMetrics.totalInputTokens += entry.tokens;
 		} else if (entry.role === 'assistant') {
@@ -253,21 +272,27 @@ export class ContextTracker {
 	private async trimContextIfNeeded(): Promise<void> {
 		// Trim if context exceeds 85% of limit
 		const threshold = this.maxContextLength * 0.85;
-		
+
 		if (this.sessionMetrics.contextLength > threshold) {
 			logInfo('Context approaching limit, trimming older messages...');
-			
+
 			// Keep system messages and recent 50% of conversation
-			const systemMessages = this.context.filter(entry => entry.role === 'system');
-			const nonSystemMessages = this.context.filter(entry => entry.role !== 'system');
-			
+			const systemMessages = this.context.filter(
+				entry => entry.role === 'system',
+			);
+			const nonSystemMessages = this.context.filter(
+				entry => entry.role !== 'system',
+			);
+
 			const keepCount = Math.floor(nonSystemMessages.length * 0.5);
 			const recentMessages = nonSystemMessages.slice(-keepCount);
-			
+
 			this.context = [...systemMessages, ...recentMessages];
 			this.recalculateContextLength();
-			
-			logInfo(`Context trimmed to ${this.context.length} messages, ${this.sessionMetrics.contextLength} tokens`);
+
+			logInfo(
+				`Context trimmed to ${this.context.length} messages, ${this.sessionMetrics.contextLength} tokens`,
+			);
 		}
 	}
 

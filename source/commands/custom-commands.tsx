@@ -61,7 +61,7 @@ function CustomCommands({commands}: CustomCommandsProps) {
 					<Text color={colors.white}>To create custom commands:</Text>
 
 					<Text color={colors.secondary}>
-						1. Create a <Text color={colors.primary}>.nanocoder/commands</Text>{' '}
+						1. Create a <Text color={colors.primary}>.codemonkey/commands</Text>{' '}
 						directory in your project
 					</Text>
 
@@ -107,7 +107,7 @@ function CustomCommands({commands}: CustomCommandsProps) {
 
 export const commandsCommand: Command = {
 	name: 'custom-commands',
-	description: 'List all custom commands from .nanocoder/commands',
+	description: 'List all custom commands from .codemonkey/commands',
 	handler: async (_args: string[]) => {
 		// Create a custom command loader to get the commands
 		const loader = new CustomCommandLoader();

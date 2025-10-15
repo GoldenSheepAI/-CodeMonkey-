@@ -39,7 +39,7 @@ function generateId(): string {
 function getVersion(): string {
 	try {
 		const packageJson = JSON.parse(
-			fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8')
+			fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'),
 		);
 		return packageJson.version || 'unknown';
 	} catch {
@@ -69,7 +69,7 @@ export function saveFeedback(feedback: {
 
 	// Append to JSONL file (one JSON object per line)
 	const logLine = JSON.stringify(entry) + '\n';
-	
+
 	try {
 		fs.appendFileSync(FEEDBACK_FILE, logLine, 'utf8');
 		console.log(`Feedback saved: ${entry.id}`);
@@ -88,15 +88,20 @@ export function readAllFeedback(): FeedbackEntry[] {
 
 	try {
 		const content = fs.readFileSync(FEEDBACK_FILE, 'utf8');
-		const lines = content.trim().split('\n').filter(line => line.trim());
-		
-		return lines.map(line => {
-			try {
-				return JSON.parse(line) as FeedbackEntry;
-			} catch {
-				return null;
-			}
-		}).filter((entry): entry is FeedbackEntry => entry !== null);
+		const lines = content
+			.trim()
+			.split('\n')
+			.filter(line => line.trim());
+
+		return lines
+			.map(line => {
+				try {
+					return JSON.parse(line) as FeedbackEntry;
+				} catch {
+					return null;
+				}
+			})
+			.filter((entry): entry is FeedbackEntry => entry !== null);
 	} catch {
 		return [];
 	}
@@ -119,14 +124,22 @@ export function getFeedbackStats(): FeedbackStats {
 	const averageRating = totalRating / allFeedback.length;
 
 	const categoryBreakdown: Record<string, number> = {};
-	const ratingDistribution: Record<number, number> = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+	const ratingDistribution: Record<number, number> = {
+		1: 0,
+		2: 0,
+		3: 0,
+		4: 0,
+		5: 0,
+	};
 
 	for (const entry of allFeedback) {
 		// Category breakdown
-		categoryBreakdown[entry.category] = (categoryBreakdown[entry.category] || 0) + 1;
-		
+		categoryBreakdown[entry.category] =
+			(categoryBreakdown[entry.category] || 0) + 1;
+
 		// Rating distribution
-		ratingDistribution[entry.rating] = (ratingDistribution[entry.rating] || 0) + 1;
+		ratingDistribution[entry.rating] =
+			(ratingDistribution[entry.rating] || 0) + 1;
 	}
 
 	return {
@@ -141,7 +154,10 @@ export function getFeedbackStats(): FeedbackStats {
 export function getRecentFeedback(limit: number = 10): FeedbackEntry[] {
 	const allFeedback = readAllFeedback();
 	return allFeedback
-		.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+		.sort(
+			(a, b) =>
+				new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+		)
 		.slice(0, limit);
 }
 
@@ -152,7 +168,7 @@ export function exportFeedbackSummary(): string {
 
 	let summary = `# CodeMonkey Beta Feedback Summary\n\n`;
 	summary += `Generated: ${new Date().toISOString()}\n\n`;
-	
+
 	summary += `## Overview\n`;
 	summary += `- Total Feedback: ${stats.totalFeedback}\n`;
 	summary += `- Average Rating: ${stats.averageRating.toFixed(2)}/5 ⭐\n\n`;
@@ -160,13 +176,16 @@ export function exportFeedbackSummary(): string {
 	summary += `## Rating Distribution\n`;
 	for (let i = 5; i >= 1; i--) {
 		const count = stats.ratingDistribution[i] || 0;
-		const percentage = stats.totalFeedback > 0 ? ((count / stats.totalFeedback) * 100).toFixed(1) : '0.0';
+		const percentage =
+			stats.totalFeedback > 0
+				? ((count / stats.totalFeedback) * 100).toFixed(1)
+				: '0.0';
 		summary += `- ${i}⭐: ${count} (${percentage}%)\n`;
 	}
 
 	summary += `\n## Category Breakdown\n`;
 	Object.entries(stats.categoryBreakdown)
-		.sort(([,a], [,b]) => b - a)
+		.sort(([, a], [, b]) => b - a)
 		.forEach(([category, count]) => {
 			const percentage = ((count / stats.totalFeedback) * 100).toFixed(1);
 			summary += `- ${category}: ${count} (${percentage}%)\n`;

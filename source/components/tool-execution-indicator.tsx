@@ -29,10 +29,13 @@ export default memo(function ToolExecutionIndicator({
 	}, [toolName, currentIndex]); // Reset timer when tool changes
 
 	// Calculate progress
-	const progressPercentage = Math.floor(((currentIndex + 1) / totalTools) * 100);
+	const progressPercentage = Math.floor(
+		((currentIndex + 1) / totalTools) * 100,
+	);
 	const progressBarWidth = Math.max(20, Math.floor(terminalWidth * 0.5));
 	const filledWidth = Math.floor((progressPercentage / 100) * progressBarWidth);
-	const progressBar = '█'.repeat(filledWidth) + '░'.repeat(progressBarWidth - filledWidth);
+	const progressBar =
+		'█'.repeat(filledWidth) + '░'.repeat(progressBarWidth - filledWidth);
 
 	return (
 		<TitledBox
@@ -50,12 +53,13 @@ export default memo(function ToolExecutionIndicator({
 			<Box justifyContent="space-between" marginBottom={1}>
 				<Box>
 					<Spinner type="dots2" />
-					<Text color={colors.tool} bold> Executing: {toolName}</Text>
+					<Text color={colors.tool} bold>
+						{' '}
+						Executing: {toolName}
+					</Text>
 				</Box>
 				<Box>
-					<Text color={colors.secondary}>
-						{elapsedSeconds}s elapsed
-					</Text>
+					<Text color={colors.secondary}>{elapsedSeconds}s elapsed</Text>
 				</Box>
 			</Box>
 

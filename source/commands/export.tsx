@@ -53,7 +53,7 @@ export const exportCommand: Command = {
 	) => {
 		const filename =
 			args[0] ||
-			`nanocoder-chat-${new Date().toISOString().replace(/:/g, '-')}.md`;
+			`codemonkey-chat-${new Date().toISOString().replace(/:/g, '-')}.md`;
 		const filepath = path.resolve(process.cwd(), filename);
 
 		const frontmatter = `---

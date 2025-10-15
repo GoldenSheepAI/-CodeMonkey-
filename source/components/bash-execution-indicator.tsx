@@ -27,7 +27,8 @@ export default memo(function BashExecutionIndicator({
 	}, [command]); // Reset timer when command changes
 
 	// Truncate long commands for display
-	const displayCommand = command.length > 50 ? `${command.slice(0, 47)}...` : command;
+	const displayCommand =
+		command.length > 50 ? `${command.slice(0, 47)}...` : command;
 
 	return (
 		<TitledBox
@@ -49,21 +50,18 @@ export default memo(function BashExecutionIndicator({
 					<Text color={colors.secondary}>{displayCommand}</Text>
 				</Box>
 				<Box>
-					<Text color={colors.secondary}>
-						{elapsedSeconds}s elapsed
-					</Text>
+					<Text color={colors.secondary}>{elapsedSeconds}s elapsed</Text>
 				</Box>
 			</Box>
 
 			{/* Status info */}
 			<Box justifyContent="space-between">
 				<Text color={colors.info}>
-					{elapsedSeconds < 5 
-						? 'Executing command...' 
-						: elapsedSeconds < 30 
-							? 'Command running...' 
-							: 'Long-running command...'
-					}
+					{elapsedSeconds < 5
+						? 'Executing command...'
+						: elapsedSeconds < 30
+						? 'Command running...'
+						: 'Long-running command...'}
 				</Text>
 				<Text color={colors.secondary}>Press Escape to cancel</Text>
 			</Box>

@@ -68,17 +68,21 @@ export default memo(function Status({
 	};
 
 	// Context usage color
-	const contextColor = contextUsage 
-		? contextUsage.percentage > 90 ? colors.error
-		: contextUsage.percentage > 75 ? colors.warning
-		: colors.success
+	const contextColor = contextUsage
+		? contextUsage.percentage > 90
+			? colors.error
+			: contextUsage.percentage > 75
+			? colors.warning
+			: colors.success
 		: colors.secondary;
 
 	// Rate limit color
 	const rateLimitColor = rateLimitInfo
-		? rateLimitInfo.remaining === 0 ? colors.error
-		: rateLimitInfo.remaining < rateLimitInfo.max * 0.1 ? colors.warning
-		: colors.success
+		? rateLimitInfo.remaining === 0
+			? colors.error
+			: rateLimitInfo.remaining < rateLimitInfo.max * 0.1
+			? colors.warning
+			: colors.success
 		: colors.secondary;
 
 	return (
@@ -94,7 +98,7 @@ export default memo(function Status({
 					~/{dirName} ({provider}*) {sandboxStatus} {model} {updatePercent}
 				</Text>
 			</Box>
-			
+
 			{/* Token/Context/Rate Limit Info */}
 			{(tokenUsage || contextUsage || rateLimitInfo) && (
 				<Box>
@@ -115,9 +119,7 @@ export default memo(function Status({
 						<Text color={colors.secondary}> • </Text>
 					)}
 					{rateLimitInfo && (
-						<Text color={rateLimitColor}>
-							🔄 {rateLimitInfo.remaining}
-						</Text>
+						<Text color={rateLimitColor}>🔄 {rateLimitInfo.remaining}</Text>
 					)}
 				</Box>
 			)}

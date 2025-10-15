@@ -35,27 +35,43 @@ export default memo(function TokenDisplay({
 	const terminalWidth = useTerminalWidth();
 
 	// Calculate percentages
-	const contextPercentage = Math.min(100, (contextLength / maxContextLength) * 100);
-	const requestsPercentage = remainingRequests && maxRequests 
-		? ((maxRequests - remainingRequests) / maxRequests) * 100 
-		: 0;
+	const contextPercentage = Math.min(
+		100,
+		(contextLength / maxContextLength) * 100,
+	);
+	const requestsPercentage =
+		remainingRequests && maxRequests
+			? ((maxRequests - remainingRequests) / maxRequests) * 100
+			: 0;
 
 	// Create visual progress bars
 	const contextBarWidth = Math.max(20, Math.floor(terminalWidth * 0.3));
 	const requestBarWidth = Math.max(20, Math.floor(terminalWidth * 0.3));
-	
+
 	const contextFilled = Math.floor((contextPercentage / 100) * contextBarWidth);
-	const requestFilled = Math.floor((requestsPercentage / 100) * requestBarWidth);
-	
-	const contextBar = '█'.repeat(contextFilled) + '░'.repeat(contextBarWidth - contextFilled);
-	const requestBar = '█'.repeat(requestFilled) + '░'.repeat(requestBarWidth - requestFilled);
+	const requestFilled = Math.floor(
+		(requestsPercentage / 100) * requestBarWidth,
+	);
+
+	const contextBar =
+		'█'.repeat(contextFilled) + '░'.repeat(contextBarWidth - contextFilled);
+	const requestBar =
+		'█'.repeat(requestFilled) + '░'.repeat(requestBarWidth - requestFilled);
 
 	// Determine colors based on usage
-	const contextColor = contextPercentage > 90 ? colors.error : 
-						 contextPercentage > 75 ? colors.warning : colors.success;
-	
-	const requestColor = requestsPercentage > 90 ? colors.error :
-						requestsPercentage > 75 ? colors.warning : colors.success;
+	const contextColor =
+		contextPercentage > 90
+			? colors.error
+			: contextPercentage > 75
+			? colors.warning
+			: colors.success;
+
+	const requestColor =
+		requestsPercentage > 90
+			? colors.error
+			: requestsPercentage > 75
+			? colors.warning
+			: colors.success;
 
 	// Format numbers with commas
 	const formatNumber = (num: number) => num.toLocaleString();
@@ -70,14 +86,10 @@ export default memo(function TokenDisplay({
 					📄 {contextPercentage.toFixed(1)}% context
 				</Text>
 				{remainingRequests !== undefined && (
-					<Text color={requestColor}>
-						🔄 {remainingRequests} requests left
-					</Text>
+					<Text color={requestColor}>🔄 {remainingRequests} requests left</Text>
 				)}
 				{estimatedCost && (
-					<Text color={colors.info}>
-						💰 ${estimatedCost.toFixed(4)}
-					</Text>
+					<Text color={colors.info}>💰 ${estimatedCost.toFixed(4)}</Text>
 				)}
 			</Box>
 		);
@@ -114,9 +126,7 @@ export default memo(function TokenDisplay({
 					<Text color={colors.white}>{formatNumber(totalTokens)} total</Text>
 				</Box>
 				<Box justifyContent="space-between">
-					<Text color={colors.tool}>
-						📥 Input: {formatNumber(inputTokens)}
-					</Text>
+					<Text color={colors.tool}>📥 Input: {formatNumber(inputTokens)}</Text>
 					<Text color={colors.primary}>
 						📤 Output: {formatNumber(outputTokens)}
 					</Text>
@@ -128,7 +138,8 @@ export default memo(function TokenDisplay({
 				<Box justifyContent="space-between" marginBottom={0}>
 					<Text color={colors.secondary}>Context Usage</Text>
 					<Text color={contextColor}>
-						{formatNumber(contextLength)} / {formatNumber(maxContextLength)} ({contextPercentage.toFixed(1)}%)
+						{formatNumber(contextLength)} / {formatNumber(maxContextLength)} (
+						{contextPercentage.toFixed(1)}%)
 					</Text>
 				</Box>
 				<Box>
@@ -142,7 +153,8 @@ export default memo(function TokenDisplay({
 					<Box justifyContent="space-between" marginBottom={0}>
 						<Text color={colors.secondary}>Rate Limit Status</Text>
 						<Text color={requestColor}>
-							{remainingRequests} / {maxRequests} remaining ({(100 - requestsPercentage).toFixed(1)}%)
+							{remainingRequests} / {maxRequests} remaining (
+							{(100 - requestsPercentage).toFixed(1)}%)
 						</Text>
 					</Box>
 					<Box>

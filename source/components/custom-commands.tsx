@@ -61,7 +61,7 @@ export default function CustomCommands({commands}: CustomCommandsProps) {
 					<Text color={colors.white}>To create custom commands:</Text>
 
 					<Text color={colors.secondary}>
-						1. Create a <Text color={colors.primary}>.nanocoder/commands</Text>{' '}
+						1. Create a <Text color={colors.primary}>.codemonkey/commands</Text>{' '}
 						directory in your project
 					</Text>
 

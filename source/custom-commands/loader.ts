@@ -9,24 +9,31 @@ export class CustomCommandLoader {
 	private aliases: Map<string, string> = new Map(); // alias -> command name
 	private projectRoot: string;
 	private commandsDir: string;
+	private legacyCommandsDir: string;
 
 	constructor(projectRoot: string = process.cwd()) {
 		this.projectRoot = projectRoot;
-		this.commandsDir = join(projectRoot, '.nanocoder', 'commands');
+		this.commandsDir = join(projectRoot, '.codemonkey', 'commands');
+		this.legacyCommandsDir = join(projectRoot, '.nanocoder', 'commands');
 	}
 
 	/**
-	 * Load all custom commands from the .nanocoder/commands directory
+	 * Load all custom commands from the .codemonkey/commands directory
+	 * Also check .nanocoder/commands for backward compatibility
 	 */
 	async loadCommands(): Promise<void> {
 		this.commands.clear();
 		this.aliases.clear();
 
-		if (!existsSync(this.commandsDir)) {
-			return; // No custom commands directory
+		// Check primary directory (.codemonkey/commands)
+		if (existsSync(this.commandsDir)) {
+			this.scanDirectory(this.commandsDir);
 		}
 
-		this.scanDirectory(this.commandsDir);
+		// Check legacy directory (.nanocoder/commands) for backward compatibility
+		if (existsSync(this.legacyCommandsDir)) {
+			this.scanDirectory(this.legacyCommandsDir, 'legacy');
+		}
 	}
 
 	/**

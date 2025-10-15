@@ -94,7 +94,7 @@ function InitError({message}: {message: string}) {
 }
 
 const DEFAULT_CONFIG = {
-	nanocoder: {
+	codemonkey: {
 		providers: [
 			{
 				name: 'OpenRouter',
@@ -212,7 +212,7 @@ Make it reusable and well-documented.`;
 export const initCommand: Command = {
 	name: 'init',
 	description:
-		'Initialize nanocoder configuration and analyze project structure',
+		'Initialize CodeMonkey configuration and analyze project structure',
 	handler: async (_args: string[], _messages, _metadata) => {
 		const cwd = process.cwd();
 		const created: string[] = [];
@@ -221,18 +221,18 @@ export const initCommand: Command = {
 			// Check if already initialized
 			const configPath = join(cwd, 'agents.config.json');
 			const agentsPath = join(cwd, 'AGENTS.md');
-			const nanocoderDir = join(cwd, '.nanocoder');
+			const codemonkeyDir = join(cwd, '.codemonkey');
 
 			// Check for existing initialization
 			const hasConfig = existsSync(configPath);
 			const hasAgents = existsSync(agentsPath);
-			const hasNanocoder = existsSync(nanocoderDir);
+			const hasCodemonkey = existsSync(codemonkeyDir);
 
-			if (hasConfig && hasAgents && hasNanocoder) {
+			if (hasConfig && hasAgents && hasCodemonkey) {
 				return React.createElement(InitError, {
 					key: `init-error-${Date.now()}`,
 					message:
-						'Project already fully initialized. Found agents.config.json, AGENTS.md, and .nanocoder/ directory.',
+						'Project already fully initialized. Found agents.config.json, AGENTS.md, and .codemonkey/ directory.',
 				});
 			}
 
@@ -270,16 +270,16 @@ export const initCommand: Command = {
 				}
 			}
 
-			// Create .nanocoder directory structure
-			if (!hasNanocoder) {
-				mkdirSync(nanocoderDir, {recursive: true});
-				created.push('.nanocoder/');
+			// Create .codemonkey directory structure
+			if (!hasCodemonkey) {
+				mkdirSync(codemonkeyDir, {recursive: true});
+				created.push('.codemonkey/');
 			}
 
-			const commandsDir = join(nanocoderDir, 'commands');
+			const commandsDir = join(codemonkeyDir, 'commands');
 			if (!existsSync(commandsDir)) {
 				mkdirSync(commandsDir, {recursive: true});
-				created.push('.nanocoder/commands/');
+				created.push('.codemonkey/commands/');
 			}
 
 			// Create example custom commands based on project analysis
@@ -292,7 +292,7 @@ export const initCommand: Command = {
 				const filePath = join(commandsDir, filename);
 				if (!existsSync(filePath)) {
 					writeFileSync(filePath, content);
-					created.push(`.nanocoder/commands/${filename}`);
+					created.push(`.codemonkey/commands/${filename}`);
 				}
 			}
 

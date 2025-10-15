@@ -45,7 +45,7 @@ export function MCP({toolManager}: MCPProps) {
 					<Box marginTop={1} marginBottom={1}>
 						<Text color={colors.secondary}>
 							{`{
-  "nanocoder": {
+  "codemonkey": {
     "mcpServers": [
       {
         "name": "example-server",

@@ -19,8 +19,8 @@ Before contributing, please:
 
 1. Read our [README](README.md) to understand what CodeMonkey does
 2. Check our [issue tracker](https://github.com/goldensheepai/codemonkey-beta/issues) for existing issues
-2. Check our [issue tracker](https://github.com/goldensheepai/codemonkey/issues) for existing issues
-3. Look for issues labeled `good first issue` or `help wanted` if you're new to the project
+3. Check our [issue tracker](https://github.com/goldensheepai/codemonkey/issues) for existing issues
+4. Look for issues labeled `good first issue` or `help wanted` if you're new to the project
 
 ## Development Setup
 

@@ -60,12 +60,12 @@ function getCurrentVersion(): string {
 async function fetchLatestVersion(): Promise<string | null> {
 	try {
 		const response = await fetch(
-			'https://registry.npmjs.org/@nanocollective/nanocoder/latest',
+			'https://registry.npmjs.org/@radix-obsidian/codemonkey/latest',
 			{
 				method: 'GET',
 				headers: {
 					Accept: 'application/json',
-					'User-Agent': 'nanocoder-update-checker',
+					'User-Agent': 'codemonkey-update-checker',
 				},
 				// Add timeout
 				signal: AbortSignal.timeout(10000), // 10 second timeout
@@ -119,7 +119,7 @@ export async function checkForUpdates(): Promise<UpdateInfo> {
 			currentVersion,
 			latestVersion,
 			updateCommand: hasUpdate
-				? 'npm update -g @nanocollective/nanocoder'
+				? 'npm update -g @radix-obsidian/codemonkey'
 				: undefined,
 		};
 	} catch (error) {

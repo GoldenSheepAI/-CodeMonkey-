@@ -121,7 +121,7 @@ export function useAppInitialization({
 			addToChatQueue(
 				<InfoMessage
 					key={`custom-commands-loaded-${componentKeyCounter}`}
-					message={`Loaded ${customCommands.length} custom commands from .nanocoder/commands`}
+					message={`Loaded ${customCommands.length} custom commands from .codemonkey/commands`}
 					hideBox={true}
 				/>,
 			);

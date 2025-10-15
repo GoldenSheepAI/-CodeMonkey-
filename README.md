@@ -1,6 +1,6 @@
-# Nanocoder
+# CodeMonkey 🐒
 
-A local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter. Built with privacy and control in mind, Nanocoder supports multiple AI providers with tool support for file operations and command execution.
+A local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter. Built with privacy and control in mind, CodeMonkey supports multiple AI providers with tool support for file operations and command execution.
 
 ![Example](./.github/assets/example.gif)
 
@@ -27,13 +27,13 @@ A local-first CLI coding agent that brings the power of agentic coding tools lik
 
 ## FAQs
 
-### What is Nanocoder?
+### What is CodeMonkey?
 
-Nanocoder is a local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter. Built with privacy and control in mind, Nanocoder supports any AI provider that has an OpenAI compatible end-point, tool and non-tool calling models.
+CodeMonkey is a local-first CLI coding agent that brings the power of agentic coding tools like Claude Code and Gemini CLI to local models or controlled APIs like OpenRouter. Built with privacy and control in mind, CodeMonkey supports any AI provider that has an OpenAI compatible end-point, tool and non-tool calling models.
 
 ### How is this different to OpenCode?
 
-This comes down to philosophy. OpenCode is a great tool, but it's owned and managed by a venture-backed company that restricts community and open-source involvement to the outskirts. With Nanocoder, the focus is on building a true community-led project where anyone can contribute openly and directly. We believe AI is too powerful to be in the hands of big corporations and everyone should have access to it.
+This comes down to philosophy. OpenCode is a great tool, but it's owned and managed by a venture-backed company that restricts community and open-source involvement to the outskirts. With CodeMonkey, the focus is on building a true community-led project where anyone can contribute openly and directly. We believe AI is too powerful to be in the hands of big corporations and everyone should have access to it.
 
 We also strongly believe in the "local-first" approach, where your data, models, and processing stay on your machine whenever possible to ensure maximum privacy and user control. Beyond that, we're actively pushing to develop advancements and frameworks for small, local models to be effective at coding locally.
 
@@ -41,7 +41,7 @@ Not everyone will agree with this philosophy, and that's okay. We believe in fos
 
 ### I want to be involved, how do I start?
 
-Firstly, we would love for you to be involved. You can get started contributing to Nanocoder in several ways, check out the [Community](#community) section of this README.
+Firstly, we would love for you to be involved. You can get started contributing to CodeMonkey in several ways, check out the [Community](#community) section of this README.
 
 ## Installation
 
@@ -50,18 +50,18 @@ Firstly, we would love for you to be involved. You can get started contributing 
 Install globally and use anywhere:
 
 ```bash
-npm install -g @nanocollective/nanocoder
+npm install -g @radix-obsidian/codemonkey
 ```
 
 Then run in any directory:
 
 ```bash
-nanocoder
+codemonkey
 ```
 
 ### For Development
 
-If you want to contribute or modify Nanocoder:
+If you want to contribute or modify CodeMonkey:
 
 **Prerequisites:**
 
@@ -74,7 +74,7 @@ If you want to contribute or modify Nanocoder:
 
 ```bash
 git clone [repo-url]
-cd nanocoder
+cd codemonkey
 npm install
 ```
 
@@ -100,11 +100,11 @@ npm run dev
 
 ### AI Provider Setup
 
-Nanocoder supports any OpenAI-compatible API through a unified provider configuration. Create `agents.config.json` in your **working directory** (where you run `nanocoder`):
+CodeMonkey supports any OpenAI-compatible API through a unified provider configuration. Create `agents.config.json` in your **working directory** (where you run `codemonkey`):
 
 ```json
 {
-	"nanocoder": {
+	"codemonkey": {
 		"providers": [
 			{
 				"name": "llama-cpp",
@@ -175,7 +175,7 @@ See `.env.example` for setup instructions
 
 **Timeout Configuration:**
 
-Nanocoder allows you to configure timeouts for your AI providers to handle long-running requests.
+CodeMonkey allows you to configure timeouts for your AI providers to handle long-running requests.
 
 - `requestTimeout`: (Optional) The application-level timeout in milliseconds. This is the total time the application will wait for a response from the provider. If not set, it defaults to 2 minutes (120,000 ms). Set to `-1` to disable this timeout.
 - `socketTimeout`: (Optional) The socket-level timeout in milliseconds. This controls the timeout for the underlying network connection. If not set, it will use the value of `requestTimeout`. Set to `-1` to disable this timeout.
@@ -190,7 +190,7 @@ It is recommended to set both `requestTimeout` and `socketTimeout` to the same v
 
 ```json
 {
-	"nanocoder": {
+	"codemonkey": {
 		"providers": [
 			{
 				"name": "llama-cpp",
@@ -210,11 +210,11 @@ It is recommended to set both `requestTimeout` and `socketTimeout` to the same v
 
 ### MCP (Model Context Protocol) Servers
 
-Nanocoder supports connecting to MCP servers to extend its capabilities with additional tools. Configure MCP servers in your `agents.config.json`:
+CodeMonkey supports connecting to MCP servers to extend its capabilities with additional tools. Configure MCP servers in your `agents.config.json`:
 
 ```json
 {
-	"nanocoder": {
+	"codemonkey": {
 		"mcpServers": [
 			{
 				"name": "filesystem",
@@ -252,7 +252,7 @@ Nanocoder supports connecting to MCP servers to extend its capabilities with add
 - `args`: Array of command-line arguments
 - `env`: Environment variables for the server process
 
-When MCP servers are configured, Nanocoder will:
+When MCP servers are configured, CodeMonkey will:
 
 - Automatically connect to all configured servers on startup
 - Make all server tools available to the AI model
@@ -266,11 +266,11 @@ Popular MCP servers:
 - **Memory**: Persistent context storage
 - [View more MCP servers](https://github.com/modelcontextprotocol/servers)
 
-> **Note**: The `agents.config.json` file should be placed in the directory where you run Nanocoder, allowing for project-by-project configuration with different models or API keys per repository.
+> **Note**: The `agents.config.json` file should be placed in the directory where you run CodeMonkey, allowing for project-by-project configuration with different models or API keys per repository.
 
 ### User Preferences
 
-Nanocoder automatically saves your preferences to remember your choices across sessions. Preferences are stored in `~/.nanocoder-preferences.json` in your home directory.
+CodeMonkey automatically saves your preferences to remember your choices across sessions. Preferences are stored in `~/.codemonkey-preferences.json` in your home directory.
 
 **What gets saved automatically:**
 
@@ -282,13 +282,13 @@ Nanocoder automatically saves your preferences to remember your choices across s
 
 - When you switch providers with `/provider`, your choice is saved
 - When you switch models with `/model`, the selection is saved for that specific provider
-- Next time you start Nanocoder, it will use your last provider and model
+- Next time you start CodeMonkey, it will use your last provider and model
 - Each provider remembers its own preferred model independently
 
 **Manual management:**
 
 - View current preferences: The file is human-readable JSON
-- Reset preferences: Delete `~/.nanocoder-preferences.json` to start fresh
+- Reset preferences: Delete `~/.codemonkey-preferences.json` to start fresh
 - No manual editing needed: Use the `/provider` and `/model` commands instead
 
 ### Commands
@@ -307,15 +307,15 @@ Nanocoder automatically saves your preferences to remember your choices across s
 - `/custom-commands` - List all custom commands
 - `/exit` - Exit the application
 - `/export` - Export current session to markdown file
-- `/theme` - Select a theme for the Nanocoder CLI
-- `/update` - Update Nanocoder to the latest version
-- `!command` - Execute bash commands directly without leaving Nanocoder (output becomes context for the LLM)
+- `/theme` - Select a theme for the CodeMonkey CLI
+- `/update` - Update CodeMonkey to the latest version
+- `!command` - Execute bash commands directly without leaving CodeMonkey (output becomes context for the LLM)
 
 #### Custom Commands
 
-Nanocoder supports custom commands defined as markdown files in the `.nanocoder/commands` directory. Like `agents.config.json`, this directory is created per codebase, allowing you to create reusable prompts with parameters and organize them by category specific to each project.
+CodeMonkey supports custom commands defined as markdown files in the `.codemonkey/commands` directory. Like `agents.config.json`, this directory is created per codebase, allowing you to create reusable prompts with parameters and organize them by category specific to each project.
 
-**Example custom command** (`.nanocoder/commands/test.md`):
+**Example custom command** (`.codemonkey/commands/test.md`):
 
 ```markdown
 ---
@@ -372,7 +372,7 @@ Generate comprehensive unit tests for {{component}}. Include:
 
 ### 📝 Custom Command System
 
-- **Markdown-based commands**: Define reusable prompts in `.nanocoder/commands/`
+- **Markdown-based commands**: Define reusable prompts in `.codemonkey/commands/`
 - **Template variables**: Use `{{parameter}}` syntax for dynamic content
 - **Namespace organization**: Organize commands in folders (e.g., `refactor/dry.md`)
 - **Autocomplete support**: Tab completion for command discovery
@@ -401,7 +401,7 @@ Generate comprehensive unit tests for {{component}}. Include:
 
 ## Community
 
-We're a small community-led team building Nanocoder and would love your help! Whether you're interested in contributing code, documentation, or just being part of our community, there are several ways to get involved.
+We're a small community-led team building CodeMonkey and would love your help! Whether you're interested in contributing code, documentation, or just being part of our community, there are several ways to get involved.
 
 **If you want to contribute to the code:**
 
@@ -413,9 +413,9 @@ We're a small community-led team building Nanocoder and would love your help! Wh
 
 - Head to our GitHub issues or discussions to open and join current conversations with others in the community.
 
-**What does Nanocoder you need help with?**
+**What does CodeMonkey you need help with?**
 
-Nanocoder could benefit from help all across the board. Such as:
+CodeMonkey could benefit from help all across the board. Such as:
 
 - Adding support for new AI providers
 - Improving tool functionality

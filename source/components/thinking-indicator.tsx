@@ -43,7 +43,8 @@ const PROGRESS_CHARS = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', 
 function calculateETA(elapsedSeconds: number): string {
 	if (elapsedSeconds < 3) return 'Initializing...';
 	if (elapsedSeconds < 10) return 'Almost ready...';
-	if (elapsedSeconds < 30) return `~${Math.max(0, 30 - elapsedSeconds)}s remaining`;
+	if (elapsedSeconds < 30)
+		return `~${Math.max(0, 30 - elapsedSeconds)}s remaining`;
 	return 'Processing complex request...';
 }
 
@@ -96,10 +97,14 @@ export default memo(function ThinkingIndicator() {
 	}, []);
 
 	// Calculate progress percentage (estimated based on time)
-	const progressPercentage = Math.min(95, Math.floor((elapsedSeconds / 30) * 100));
+	const progressPercentage = Math.min(
+		95,
+		Math.floor((elapsedSeconds / 30) * 100),
+	);
 	const progressBarWidth = Math.max(20, Math.floor(terminalWidth * 0.4));
 	const filledWidth = Math.floor((progressPercentage / 100) * progressBarWidth);
-	const progressBar = '█'.repeat(filledWidth) + '░'.repeat(progressBarWidth - filledWidth);
+	const progressBar =
+		'█'.repeat(filledWidth) + '░'.repeat(progressBarWidth - filledWidth);
 
 	const eta = calculateETA(elapsedSeconds);
 
@@ -123,9 +128,7 @@ export default memo(function ThinkingIndicator() {
 					</Text>
 				</Box>
 				<Box>
-					<Text color={colors.secondary}>
-						{elapsedSeconds}s elapsed
-					</Text>
+					<Text color={colors.secondary}>{elapsedSeconds}s elapsed</Text>
 				</Box>
 			</Box>
 

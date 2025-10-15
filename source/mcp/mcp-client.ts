@@ -34,7 +34,7 @@ export class MCPClient {
 
 			// Create and connect client
 			const client = new Client({
-				name: 'nanocoder-mcp-client',
+				name: 'codemonkey-mcp-client',
 				version: '1.0.0',
 			});
 
@@ -105,7 +105,7 @@ export class MCPClient {
 
 		for (const [serverName, serverTools] of this.serverTools.entries()) {
 			for (const mcpTool of serverTools) {
-				// Convert MCP tool to nanocoder Tool format
+				// Convert MCP tool to CodeMonkey Tool format
 				// Use the original tool name for better model compatibility
 				const tool: Tool = {
 					type: 'function',

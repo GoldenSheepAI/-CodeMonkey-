@@ -42,7 +42,7 @@ export default function UpdateMessage() {
 		const update = async () => {
 			try {
 				await toolRegistry.execute_bash({
-					command: 'npm update -g @nanocollective/nanocoder',
+					command: 'npm update -g @radix-obsidian/codemonkey',
 				});
 				if (isMounted) {
 					setStatus(Status.Success);

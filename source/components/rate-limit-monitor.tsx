@@ -24,7 +24,8 @@ export default memo(function RateLimitMonitor({
 	const [timeUntilReset, setTimeUntilReset] = useState<string>('');
 
 	// Calculate usage percentage
-	const usagePercentage = ((maxRequests - remainingRequests) / maxRequests) * 100;
+	const usagePercentage =
+		((maxRequests - remainingRequests) / maxRequests) * 100;
 	const remainingPercentage = 100 - usagePercentage;
 
 	// Determine status color
@@ -38,7 +39,8 @@ export default memo(function RateLimitMonitor({
 	// Create progress bar
 	const barWidth = Math.max(20, Math.floor(terminalWidth * 0.4));
 	const filledWidth = Math.floor((usagePercentage / 100) * barWidth);
-	const progressBar = '█'.repeat(filledWidth) + '░'.repeat(barWidth - filledWidth);
+	const progressBar =
+		'█'.repeat(filledWidth) + '░'.repeat(barWidth - filledWidth);
 
 	// Update countdown timer
 	useEffect(() => {
@@ -99,9 +101,13 @@ export default memo(function RateLimitMonitor({
 					{provider}
 				</Text>
 				<Text color={statusColor} bold>
-					{remainingRequests === 0 ? '🚫 RATE LIMITED' : 
-					 remainingPercentage < 10 ? '⚠️ CRITICAL' :
-					 remainingPercentage < 25 ? '⚠️ WARNING' : '✅ HEALTHY'}
+					{remainingRequests === 0
+						? '🚫 RATE LIMITED'
+						: remainingPercentage < 10
+						? '⚠️ CRITICAL'
+						: remainingPercentage < 25
+						? '⚠️ WARNING'
+						: '✅ HEALTHY'}
 				</Text>
 			</Box>
 
@@ -109,7 +115,8 @@ export default memo(function RateLimitMonitor({
 			<Box justifyContent="space-between" marginBottom={1}>
 				<Text color={colors.secondary}>Requests Available</Text>
 				<Text color={statusColor}>
-					{remainingRequests} / {maxRequests} ({remainingPercentage.toFixed(1)}%)
+					{remainingRequests} / {maxRequests} ({remainingPercentage.toFixed(1)}
+					%)
 				</Text>
 			</Box>
 
@@ -130,7 +137,8 @@ export default memo(function RateLimitMonitor({
 			{remainingRequests === 0 && (
 				<Box marginTop={1}>
 					<Text color={colors.error} bold>
-						🚫 Rate limit reached! All requests are being rejected with HTTP 429.
+						🚫 Rate limit reached! All requests are being rejected with HTTP
+						429.
 					</Text>
 				</Box>
 			)}
@@ -138,18 +146,22 @@ export default memo(function RateLimitMonitor({
 			{remainingRequests > 0 && remainingPercentage < 10 && (
 				<Box marginTop={1}>
 					<Text color={colors.warning}>
-						⚠️ Critical: Only {remainingRequests} requests remaining before rate limit.
+						⚠️ Critical: Only {remainingRequests} requests remaining before rate
+						limit.
 					</Text>
 				</Box>
 			)}
 
-			{remainingRequests > 0 && remainingPercentage < 25 && remainingPercentage >= 10 && (
-				<Box marginTop={1}>
-					<Text color={colors.warning}>
-						⚠️ Warning: {remainingRequests} requests remaining. Consider slowing down.
-					</Text>
-				</Box>
-			)}
+			{remainingRequests > 0 &&
+				remainingPercentage < 25 &&
+				remainingPercentage >= 10 && (
+					<Box marginTop={1}>
+						<Text color={colors.warning}>
+							⚠️ Warning: {remainingRequests} requests remaining. Consider
+							slowing down.
+						</Text>
+					</Box>
+				)}
 
 			{/* Reset Instructions */}
 			{remainingRequests === 0 && resetTime && (

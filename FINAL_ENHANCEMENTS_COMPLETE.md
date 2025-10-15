@@ -6,6 +6,7 @@
 **AFTER**: Fixed `AssistantMessage` component to use `paddingX={1}` matching the input container
 
 ### 🔧 **Technical Fix Applied**:
+
 ```tsx
 // source/components/assistant-message.tsx
 <TitledBox
@@ -24,6 +25,7 @@
 Implemented comprehensive token and context tracking system with rate limit monitoring:
 
 ### 🪙 **Token Counter Component** (`source/components/token-display.tsx`)
+
 - **Real-time tracking**: Input tokens, output tokens, total usage
 - **Cost estimation**: Accurate pricing for all major providers
 - **Visual progress bars**: Context usage with color-coded warnings
@@ -31,6 +33,7 @@ Implemented comprehensive token and context tracking system with rate limit moni
 - **Smart formatting**: Human-readable numbers (1.2K, 3.4M)
 
 ### 📊 **Context Tracker Class** (`source/utils/context-tracker.ts`)
+
 - **100% accurate counting**: Uses tiktoken for precise token calculation
 - **Model-specific limits**: Supports all major AI models with correct context windows
 - **Auto-trimming**: Smart context management when approaching limits
@@ -38,17 +41,20 @@ Implemented comprehensive token and context tracking system with rate limit moni
 - **Session metrics**: Comprehensive usage statistics
 
 ### 🔄 **Rate Limit Monitor** (`source/components/rate-limit-monitor.tsx`)
+
 - **Real-time tracking**: Monitors API rate limits with visual indicators
 - **Countdown timer**: Shows time until rate limit reset
 - **Status alerts**: Critical/warning/healthy status with color coding
 - **Provider-specific**: Handles different rate limit patterns
 
 ### 📈 **Enhanced Status Bar** (`source/components/status.tsx`)
+
 - **Compact metrics**: Token count, context usage %, remaining requests
 - **Color-coded indicators**: Visual warnings for high usage
 - **Space-efficient**: Fits all info in bottom status bar
 
 ### 💻 **New `/tokens` Command** (`source/commands/tokens.tsx`)
+
 - **Detailed view**: Complete token usage breakdown
 - **Progress visualization**: Context and rate limit progress bars
 - **Cost analysis**: Session cost tracking and estimates
@@ -59,6 +65,7 @@ Implemented comprehensive token and context tracking system with rate limit moni
 ## 🎯 **Key Features Implemented**:
 
 ### 1. **Model-Specific Context Limits**:
+
 ```typescript
 'gpt-4o': 128000,
 'gpt-4-turbo': 128000,
@@ -68,6 +75,7 @@ Implemented comprehensive token and context tracking system with rate limit moni
 ```
 
 ### 2. **Accurate Pricing Data**:
+
 ```typescript
 'gpt-4o': {input: 2.50, output: 10.00}, // per 1M tokens
 'claude-3-5-sonnet-20241022': {input: 3.00, output: 15.00},
@@ -76,17 +84,20 @@ Implemented comprehensive token and context tracking system with rate limit moni
 ```
 
 ### 3. **Smart Context Management**:
+
 - **Auto-trimming**: Removes old messages when approaching 85% of context limit
 - **System message preservation**: Keeps system prompts during trimming
 - **Token recalculation**: Updates counts when switching models
 
 ### 4. **Rate Limit Handling**:
+
 - **Real-time monitoring**: Tracks remaining requests per provider
 - **Visual warnings**: Color-coded alerts for approaching limits
 - **Reset timer**: Countdown to when limits refresh
 - **0% remaining requests**: Clear indication when rate limited
 
 ### 5. **Visual Progress Indicators**:
+
 - **Context usage**: `📄 85%` (turns red when >90%)
 - **Token count**: `🪙 2.1K` (formatted for readability)
 - **Rate limits**: `🔄 47` (remaining requests)
@@ -97,11 +108,13 @@ Implemented comprehensive token and context tracking system with rate limit moni
 ## 🚀 **Usage Examples**:
 
 ### **Compact Status Bar**:
+
 ```
 ~/-CodeMonkey- (Groq*) llama-3.3-70b-versatile (update available) • 🪙 2.1K • 📄 6% • 🔄 47
 ```
 
 ### **Detailed `/tokens` Command**:
+
 ```
 ┌─ 📊 Token & Context Tracker ─┐
 │ Groq • llama-3.3-70b-versatile        💰 $0.0128 │
@@ -118,6 +131,7 @@ Implemented comprehensive token and context tracking system with rate limit moni
 ```
 
 ### **Rate Limit Warning**:
+
 ```
 ┌─ 🔄 Rate Limit Monitor ─┐
 │ Groq                    ⚠️ WARNING │
@@ -137,6 +151,7 @@ Implemented comprehensive token and context tracking system with rate limit moni
 ## 🎉 **All Issues Resolved - Production Ready!**
 
 ### ✅ **Fixed Issues**:
+
 1. **LLM Response Padding**: Perfect alignment with input container
 2. **Token Tracking**: 100% accurate counting with tiktoken
 3. **Context Management**: Smart auto-trimming and model-specific limits
@@ -144,6 +159,7 @@ Implemented comprehensive token and context tracking system with rate limit moni
 5. **Cost Calculation**: Accurate pricing for all providers
 
 ### ✅ **Enhanced Features**:
+
 1. **Beautiful Progress Bars**: Visual feedback for all metrics
 2. **Color-coded Warnings**: Immediate visual feedback for issues
 3. **Compact Status Display**: Essential info in bottom bar
@@ -151,6 +167,7 @@ Implemented comprehensive token and context tracking system with rate limit moni
 5. **Smart Formatting**: Human-readable numbers and percentages
 
 ### ✅ **Enterprise-Grade Tracking**:
+
 - **Session analytics**: Complete usage statistics
 - **Cost optimization**: Real-time spend tracking
 - **Performance monitoring**: Context efficiency metrics
@@ -161,4 +178,4 @@ Implemented comprehensive token and context tracking system with rate limit moni
 
 ---
 
-*Enhanced by the Full-Stack CLI Developer Agent with precision engineering and attention to detail.*
+_Enhanced by the Full-Stack CLI Developer Agent with precision engineering and attention to detail._

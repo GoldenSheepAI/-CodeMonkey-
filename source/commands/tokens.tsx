@@ -22,7 +22,7 @@ function getTokenStats() {
 
 function TokenStatsDisplay() {
 	const stats = getTokenStats();
-	
+
 	// Sample rate limit data - in real implementation this would be from API headers
 	const rateLimitData = {
 		provider: stats.provider,
@@ -45,7 +45,7 @@ function TokenStatsDisplay() {
 				provider={stats.provider}
 				model={stats.model}
 			/>
-			
+
 			{stats.remainingRequests !== undefined && stats.maxRequests && (
 				<RateLimitMonitor
 					provider={stats.provider}
@@ -60,7 +60,8 @@ function TokenStatsDisplay() {
 
 export const tokensCommand: Command = {
 	name: 'tokens',
-	description: 'Show detailed token usage, context length, and rate limit status',
+	description:
+		'Show detailed token usage, context length, and rate limit status',
 	handler: async (_args: string[], _messages, _metadata) => {
 		return React.createElement(TokenStatsDisplay, {
 			key: `tokens-${Date.now()}`,

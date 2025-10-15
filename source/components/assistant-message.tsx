@@ -81,21 +81,21 @@ export function parseMarkdown(text: string, themeColors: any): string {
 function wrapText(text: string, maxWidth: number): string[] {
 	const lines: string[] = [];
 	const paragraphs = text.split('\n');
-	
+
 	for (const paragraph of paragraphs) {
 		if (paragraph.trim() === '') {
 			lines.push('');
 			continue;
 		}
-		
+
 		const words = paragraph.split(' ');
 		let currentLine = '';
-		
+
 		for (const word of words) {
 			// Strip ANSI codes for length calculation
 			const testLine = currentLine ? `${currentLine} ${word}` : word;
 			const testLineLength = testLine.replace(/\u001b\[[0-9;]*m/g, '').length;
-			
+
 			if (testLineLength <= maxWidth) {
 				currentLine = testLine;
 			} else {
@@ -108,12 +108,12 @@ function wrapText(text: string, maxWidth: number): string[] {
 				}
 			}
 		}
-		
+
 		if (currentLine) {
 			lines.push(currentLine);
 		}
 	}
-	
+
 	return lines;
 }
 
@@ -123,7 +123,7 @@ export default memo(function AssistantMessage({
 }: AssistantMessageProps) {
 	const {colors} = useTheme();
 	const terminalWidth = useTerminalWidth();
-	
+
 	// Calculate content width (accounting for padding and borders)
 	const contentWidth = Math.max(40, terminalWidth - 6);
 
@@ -136,7 +136,7 @@ export default memo(function AssistantMessage({
 			return message;
 		}
 	}, [message, colors]);
-	
+
 	// Wrap text for better display
 	const wrappedLines = useMemo(() => {
 		return wrapText(renderedMessage, contentWidth);
