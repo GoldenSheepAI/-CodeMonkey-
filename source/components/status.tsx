@@ -1,9 +1,7 @@
-import {Text} from 'ink';
+import {Box, Text} from 'ink';
 import {memo} from 'react';
 import {existsSync} from 'fs';
 
-import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
-import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {themes, getThemeColors} from '@/config/themes.js';
 import type {ThemePreset} from '@/types/ui.js';
 
@@ -30,60 +28,30 @@ export default memo(function Status({
 	updateInfo?: UpdateInfo | null;
 	agentsMdLoaded?: boolean;
 }) {
-	const boxWidth = useTerminalWidth();
 	const colors = getThemeColors(theme);
 
 	// Check for AGENTS.md synchronously if not provided
 	const hasAgentsMd = agentsMdLoaded ?? existsSync(`${cwd}/AGENTS.md`);
 
+	// Determine sandbox status
+	const sandboxStatus = hasAgentsMd ? '' : 'no sandbox';
+
+	// Determine update status
+	const updatePercent = updateInfo?.hasUpdate ? '(update available)' : '(100%)';
+
+	// Extract directory name from full path
+	const dirName = cwd.split('/').pop() || cwd;
+
 	return (
-		<TitledBox
-			key={colors.primary}
+		<Box
 			borderStyle="round"
-			titles={['Status']}
-			titleStyles={titleStyles.pill}
-			width={boxWidth}
-			borderColor={colors.info}
-			paddingX={2}
-			paddingY={1}
-			flexDirection="column"
-			marginBottom={1}
+			borderColor={colors.secondary}
+			paddingX={1}
+			width="100%"
 		>
-			<Text color={colors.info}>
-				<Text bold={true}>CWD: </Text>
-				{cwd}
+			<Text color={colors.secondary}>
+				~/{dirName} ({provider}*) {sandboxStatus} {model} {updatePercent}
 			</Text>
-			<Text color={colors.success}>
-				<Text bold={true}>Provider: </Text>
-				{provider}, <Text bold={true}>Model: </Text>
-				{model}
-			</Text>
-			<Text color={colors.primary}>
-				<Text bold={true}>Theme: </Text>
-				{themes[theme].displayName}
-			</Text>
-			{hasAgentsMd ? (
-				<Text color={colors.secondary} italic>
-					<Text>↳ Using AGENTS.md. Project initialized</Text>
-				</Text>
-			) : (
-				<Text color={colors.secondary} italic>
-					↳ No AGENTS.md file found, run `/init` to initialize this directory
-				</Text>
-			)}
-			{updateInfo?.hasUpdate && (
-				<>
-					<Text color={colors.warning}>
-						<Text bold={true}>Update Available: </Text>v
-						{updateInfo.currentVersion} → v{updateInfo.latestVersion}
-					</Text>
-					{updateInfo.updateCommand && (
-						<Text color={colors.secondary}>
-							↳ Run: /update or {updateInfo.updateCommand}
-						</Text>
-					)}
-				</>
-			)}
-		</TitledBox>
+		</Box>
 	);
 });

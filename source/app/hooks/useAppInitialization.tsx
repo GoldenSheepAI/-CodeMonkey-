@@ -23,6 +23,7 @@ import {
 	debugCommand,
 	exitCommand,
 	exportCommand,
+	feedbackCommand,
 	helpCommand,
 	initCommand,
 	mcpCommand,
@@ -258,6 +259,7 @@ export function useAppInitialization({
 				updateCommand,
 				recommendationsCommand,
 				statusCommand,
+				feedbackCommand,
 			]);
 
 			// Now start with the properly initialized objects (excluding MCP)

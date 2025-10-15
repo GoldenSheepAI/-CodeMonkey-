@@ -4,7 +4,6 @@ import {useCallback, useEffect, useState} from 'react';
 import {useTheme} from '@/hooks/useTheme.js';
 import {promptHistory} from '@/prompt-history.js';
 import {commandRegistry} from '@/commands.js';
-import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {useUIStateContext} from '@/hooks/useUIState.js';
 import {useInputState} from '@/hooks/useInputState.js';
 import {Completion} from '@/types/index.js';
@@ -22,7 +21,7 @@ interface ChatProps {
 
 export default function UserInput({
 	onSubmit,
-	placeholder = 'Type `/` and then press Tab for command suggestions or `!` to execute bash commands. Use ↑/↓ for history.',
+	placeholder = 'Type your message or @path/to/file',
 	customCommands = [],
 	disabled = false,
 	onCancel,
@@ -33,7 +32,6 @@ export default function UserInput({
 	const {colors} = useTheme();
 	const inputState = useInputState();
 	const uiState = useUIStateContext();
-	const boxWidth = useTerminalWidth();
 	const [textInputKey, setTextInputKey] = useState(0);
 
 	const {
@@ -257,33 +255,26 @@ export default function UserInput({
 		return input;
 	};
 
-	const textColor = disabled || !input ? colors.secondary : colors.primary;
+	const textColor = disabled || !input ? colors.secondary : colors.white;
+	const borderColor = isBashMode ? colors.tool : colors.primary;
 
 	return (
-		<Box flexDirection="column" paddingY={1} width="100%" marginTop={1}>
+		<Box flexDirection="column" width="100%">
+			{/* Modern single-line input box */}
 			<Box
-				flexDirection="column"
-				borderStyle={isBashMode ? 'round' : undefined}
-				borderColor={isBashMode ? colors.tool : undefined}
-				paddingX={isBashMode ? 1 : 0}
-				width={isBashMode ? boxWidth : undefined}
+				borderStyle="round"
+				borderColor={borderColor}
+				paddingX={1}
+				width="100%"
 			>
-				{!isBashMode && (
-					<>
-						<Text color={colors.primary} bold>
-							{disabled ? '' : 'What would you like me to help with?'}
-						</Text>
-					</>
-				)}
-
 				{/* Input row */}
 				{hasLargeContent && input.length > 150 && !showFullContent ? (
 					<Text color={textColor}>
-						{'>'} {renderDisplayContent()}
+						{'> '} {renderDisplayContent()}
 					</Text>
 				) : (
 					<Box>
-						<Text color={textColor}>{'>'} </Text>
+						<Text color={textColor}>{'> '}</Text>
 						{disabled ? (
 							<Text color={colors.secondary}>...</Text>
 						) : (
@@ -298,47 +289,50 @@ export default function UserInput({
 						)}
 					</Box>
 				)}
+			</Box>
 
-				{isBashMode && (
+			{/* Contextual hints below input */}
+			{isBashMode && (
+				<Box marginTop={1}>
 					<Text color={colors.tool} dimColor>
 						Bash Mode
 					</Text>
-				)}
-				{showClearMessage && (
+				</Box>
+			)}
+			{showClearMessage && (
+				<Box marginTop={1}>
 					<Text color={colors.secondary} dimColor>
 						Press escape again to clear
 					</Text>
-				)}
-				{showCompletions && completions.length > 0 && (
-					<Box flexDirection="column" marginTop={1}>
-						<Text color={colors.secondary}>Available commands:</Text>
-						{completions.map((completion, index) => (
-							<Text
-								key={index}
-								color={completion.isCustom ? colors.info : colors.primary}
-							>
-								/{completion.name}
-							</Text>
-						))}
-					</Box>
-				)}
-			</Box>
+				</Box>
+			)}
+			{showCompletions && completions.length > 0 && (
+				<Box flexDirection="column" marginTop={1}>
+					<Text color={colors.secondary}>Available commands:</Text>
+					{completions.map((completion, index) => (
+						<Text
+							key={index}
+							color={completion.isCustom ? colors.info : colors.primary}
+						>
+							/{completion.name}
+						</Text>
+					))}
+				</Box>
+			)}
 
-			{/* Development mode indicator - always visible */}
-			<Box marginTop={1}>
-				<Text
-					color={
-						developmentMode === 'normal'
-							? colors.secondary
-							: developmentMode === 'auto-accept'
-							? colors.info
-							: colors.warning
-					}
-				>
-					<Text bold>{DEVELOPMENT_MODE_LABELS[developmentMode]}</Text>{' '}
-					<Text dimColor>(Shift+Tab to cycle)</Text>
-				</Text>
-			</Box>
+			{/* Development mode indicator - compact */}
+			{developmentMode !== 'normal' && (
+				<Box marginTop={1}>
+					<Text
+						color={
+							developmentMode === 'auto-accept' ? colors.info : colors.warning
+						}
+					>
+						<Text bold>{DEVELOPMENT_MODE_LABELS[developmentMode]}</Text>{' '}
+						<Text dimColor>(Shift+Tab to cycle)</Text>
+					</Text>
+				</Box>
+			)}
 		</Box>
 	);
 }

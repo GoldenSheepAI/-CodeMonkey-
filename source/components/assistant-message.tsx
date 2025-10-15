@@ -1,9 +1,11 @@
 import {Text, Box} from 'ink';
 import {memo, useMemo} from 'react';
 import {useTheme} from '@/hooks/useTheme.js';
+import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import type {AssistantMessageProps} from '@/types/index.js';
 import chalk from 'chalk';
 import {highlight} from 'cli-highlight';
+import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 
 // Basic markdown parser for terminal
 export function parseMarkdown(text: string, themeColors: any): string {
@@ -75,11 +77,55 @@ export function parseMarkdown(text: string, themeColors: any): string {
 	return result;
 }
 
+// Helper function to wrap text to terminal width
+function wrapText(text: string, maxWidth: number): string[] {
+	const lines: string[] = [];
+	const paragraphs = text.split('\n');
+	
+	for (const paragraph of paragraphs) {
+		if (paragraph.trim() === '') {
+			lines.push('');
+			continue;
+		}
+		
+		const words = paragraph.split(' ');
+		let currentLine = '';
+		
+		for (const word of words) {
+			// Strip ANSI codes for length calculation
+			const testLine = currentLine ? `${currentLine} ${word}` : word;
+			const testLineLength = testLine.replace(/\u001b\[[0-9;]*m/g, '').length;
+			
+			if (testLineLength <= maxWidth) {
+				currentLine = testLine;
+			} else {
+				if (currentLine) {
+					lines.push(currentLine);
+					currentLine = word;
+				} else {
+					// Word is longer than max width, break it
+					lines.push(word);
+				}
+			}
+		}
+		
+		if (currentLine) {
+			lines.push(currentLine);
+		}
+	}
+	
+	return lines;
+}
+
 export default memo(function AssistantMessage({
 	message,
 	model,
 }: AssistantMessageProps) {
 	const {colors} = useTheme();
+	const terminalWidth = useTerminalWidth();
+	
+	// Calculate content width (accounting for padding and borders)
+	const contentWidth = Math.max(40, terminalWidth - 6);
 
 	// Render markdown to terminal-formatted text with theme colors
 	const renderedMessage = useMemo(() => {
@@ -90,15 +136,30 @@ export default memo(function AssistantMessage({
 			return message;
 		}
 	}, [message, colors]);
+	
+	// Wrap text for better display
+	const wrappedLines = useMemo(() => {
+		return wrapText(renderedMessage, contentWidth);
+	}, [renderedMessage, contentWidth]);
 
 	return (
-		<Box flexDirection="column" marginBottom={1}>
-			<Box marginBottom={1}>
-				<Text color={colors.primary} bold>
-					{model}:
+		<TitledBox
+			key={`assistant-${model}`}
+			borderStyle="round"
+			titles={[`🤖 ${model}`]}
+			titleStyles={titleStyles.pill}
+			width={terminalWidth}
+			borderColor={colors.primary}
+			paddingX={2}
+			paddingY={1}
+			flexDirection="column"
+			marginBottom={1}
+		>
+			{wrappedLines.map((line, index) => (
+				<Text key={index} wrap="wrap">
+					{line}
 				</Text>
-			</Box>
-			<Text>{renderedMessage}</Text>
-		</Box>
+			))}
+		</TitledBox>
 	);
 });

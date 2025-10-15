@@ -18,9 +18,7 @@ interface ProviderSwitcherProps {
 	onComplete?: () => void;
 }
 
-export default function ProviderSwitcher({
-	onComplete,
-}: ProviderSwitcherProps) {
+export default function ProviderSwitcher({onComplete}: ProviderSwitcherProps) {
 	const boxWidth = useTerminalWidth();
 	const {colors} = useTheme();
 	const [status, setStatus] = useState<'selecting' | 'success' | 'error'>(
@@ -48,7 +46,9 @@ export default function ProviderSwitcher({
 
 	// Create selection items
 	const items = providers.map(provider => ({
-		label: `${provider.enabled ? '✓' : ' '} ${provider.name}${provider.description ? ` - ${provider.description}` : ''}`,
+		label: `${provider.enabled ? '✓' : ' '} ${provider.name}${
+			provider.description ? ` - ${provider.description}` : ''
+		}`,
 		value: provider.name,
 		key: provider.name.charAt(0).toUpperCase(),
 	}));

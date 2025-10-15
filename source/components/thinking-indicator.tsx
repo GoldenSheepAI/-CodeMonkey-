@@ -1,6 +1,8 @@
 import {memo, useState, useEffect, useRef} from 'react';
 import {Box, Text} from 'ink';
 import {useTheme} from '@/hooks/useTheme.js';
+import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
+import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 
 const THINKING_WORDS = [
 	'Thinking',
@@ -35,10 +37,22 @@ const THINKING_WORDS = [
 	'Meditating',
 ];
 
+const PROGRESS_CHARS = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+
+// Calculate ETA based on elapsed time and typical response patterns
+function calculateETA(elapsedSeconds: number): string {
+	if (elapsedSeconds < 3) return 'Initializing...';
+	if (elapsedSeconds < 10) return 'Almost ready...';
+	if (elapsedSeconds < 30) return `~${Math.max(0, 30 - elapsedSeconds)}s remaining`;
+	return 'Processing complex request...';
+}
+
 export default memo(function ThinkingIndicator() {
 	const {colors} = useTheme();
+	const terminalWidth = useTerminalWidth();
 	const [elapsedSeconds, setElapsedSeconds] = useState(0);
 	const [wordIndex, setWordIndex] = useState(0);
+	const [progressIndex, setProgressIndex] = useState(0);
 	const startTimeRef = useRef<number>(Date.now());
 
 	useEffect(() => {
@@ -46,6 +60,7 @@ export default memo(function ThinkingIndicator() {
 		setElapsedSeconds(0);
 	}, []);
 
+	// Timer for elapsed time tracking
 	useEffect(() => {
 		const timer = setInterval(() => {
 			const currentTime = Date.now();
@@ -58,6 +73,7 @@ export default memo(function ThinkingIndicator() {
 		};
 	}, []);
 
+	// Timer for thinking word rotation
 	useEffect(() => {
 		const wordTimer = setInterval(() => {
 			setWordIndex(Math.floor(Math.random() * THINKING_WORDS.length));
@@ -68,21 +84,67 @@ export default memo(function ThinkingIndicator() {
 		};
 	}, []);
 
-	// Cycle through 1-3 dots based on elapsed seconds
-	const dots = '.'.repeat((elapsedSeconds % 4) + 1);
+	// Timer for progress spinner animation
+	useEffect(() => {
+		const progressTimer = setInterval(() => {
+			setProgressIndex(prev => (prev + 1) % PROGRESS_CHARS.length);
+		}, 100);
+
+		return () => {
+			clearInterval(progressTimer);
+		};
+	}, []);
+
+	// Calculate progress percentage (estimated based on time)
+	const progressPercentage = Math.min(95, Math.floor((elapsedSeconds / 30) * 100));
+	const progressBarWidth = Math.max(20, Math.floor(terminalWidth * 0.4));
+	const filledWidth = Math.floor((progressPercentage / 100) * progressBarWidth);
+	const progressBar = '█'.repeat(filledWidth) + '░'.repeat(progressBarWidth - filledWidth);
+
+	const eta = calculateETA(elapsedSeconds);
 
 	return (
-		<Box flexDirection="column" marginBottom={1}>
-			<Box flexWrap="wrap">
-				<Text color={colors.primary} bold italic>
-					{THINKING_WORDS[wordIndex]}
-					{dots}{' '}
-				</Text>
-				<Text color={colors.white}>{elapsedSeconds}s</Text>
+		<TitledBox
+			borderStyle="round"
+			titles={['🧠 AI Processing']}
+			titleStyles={titleStyles.pill}
+			width={terminalWidth}
+			borderColor={colors.primary}
+			paddingX={2}
+			paddingY={1}
+			flexDirection="column"
+			marginBottom={1}
+		>
+			{/* Main status line */}
+			<Box justifyContent="space-between" marginBottom={1}>
+				<Box>
+					<Text color={colors.primary} bold>
+						{PROGRESS_CHARS[progressIndex]} {THINKING_WORDS[wordIndex]}...
+					</Text>
+				</Box>
+				<Box>
+					<Text color={colors.secondary}>
+						{elapsedSeconds}s elapsed
+					</Text>
+				</Box>
 			</Box>
-			<Box marginTop={1}>
+
+			{/* Progress bar */}
+			<Box flexDirection="column" marginBottom={1}>
+				<Box justifyContent="space-between" marginBottom={0}>
+					<Text color={colors.secondary}>Progress</Text>
+					<Text color={colors.secondary}>{progressPercentage}%</Text>
+				</Box>
+				<Box>
+					<Text color={colors.primary}>{progressBar}</Text>
+				</Box>
+			</Box>
+
+			{/* ETA and controls */}
+			<Box justifyContent="space-between">
+				<Text color={colors.info}>{eta}</Text>
 				<Text color={colors.secondary}>Press Escape to cancel</Text>
 			</Box>
-		</Box>
+		</TitledBox>
 	);
 });

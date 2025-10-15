@@ -6,7 +6,7 @@ import {logError} from '@/utils/message-queue.js';
 
 import type {UserPreferences} from '@/types/index.js';
 
-const PREFERENCES_PATH = join(homedir(), '.nanocoder-preferences.json');
+const PREFERENCES_PATH = join(homedir(), '.codemonkey-preferences.json');
 
 export function loadPreferences(): UserPreferences {
 	if (existsSync(PREFERENCES_PATH)) {

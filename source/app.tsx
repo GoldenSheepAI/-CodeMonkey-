@@ -239,22 +239,8 @@ export default function App() {
 
 	// Memoize static components to prevent unnecessary re-renders
 	const staticComponents = React.useMemo(
-		() => [
-			<WelcomeMessage key="welcome" />,
-			<Status
-				key="status"
-				provider={appState.currentProvider}
-				model={appState.currentModel}
-				theme={appState.currentTheme}
-				updateInfo={appState.updateInfo}
-			/>,
-		],
-		[
-			appState.currentProvider,
-			appState.currentModel,
-			appState.currentTheme,
-			appState.updateInfo,
-		],
+		() => [<WelcomeMessage key="welcome" />],
+		[],
 	);
 
 	// Handle loading state for directory trust check
@@ -292,8 +278,8 @@ export default function App() {
 	return (
 		<ThemeContext.Provider value={themeContextValue}>
 			<UIStateProvider>
-				<Box flexDirection="column" padding={1} width="100%">
-					{/* Use natural flexGrow layout - Static components prevent re-renders */}
+				<Box flexDirection="column" height="100%">
+					{/* Main content area - grows to fill available space */}
 					<Box flexGrow={1} flexDirection="column" minHeight={0}>
 						{appState.startChat && (
 							<ChatQueue
@@ -302,13 +288,18 @@ export default function App() {
 							/>
 						)}
 					</Box>
+
+					{/* Bottom input/status area - fixed height */}
 					{appState.startChat && (
-						<Box flexDirection="column" marginLeft={-1}>
+						<Box flexDirection="column">
+							{/* Status indicators */}
 							{appState.isCancelling ? (
 								<CancellingIndicator />
 							) : appState.isThinking ? (
 								<ThinkingIndicator />
 							) : null}
+
+							{/* Mode overlays */}
 							{appState.isModelSelectionMode ? (
 								<ModelSelector
 									client={appState.client}
@@ -377,6 +368,16 @@ export default function App() {
 									<Spinner type="dots2" /> Loading...
 								</Text>
 							)}
+
+							{/* Bottom status bar - compact and informative */}
+							<Box marginTop={1}>
+								<Status
+									provider={appState.currentProvider}
+									model={appState.currentModel}
+									theme={appState.currentTheme}
+									updateInfo={appState.updateInfo}
+								/>
+							</Box>
 						</Box>
 					)}
 				</Box>
