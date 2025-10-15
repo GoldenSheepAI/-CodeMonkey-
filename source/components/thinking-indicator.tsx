@@ -3,6 +3,8 @@ import {Box, Text} from 'ink';
 import {useTheme} from '@/hooks/useTheme.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
+import {getTerminalSafeConfig} from '@/utils/terminal-detector.js';
+import Spinner from 'ink-spinner';
 
 const THINKING_WORDS = [
 	'Thinking',
@@ -51,6 +53,7 @@ function calculateETA(elapsedSeconds: number): string {
 export default memo(function ThinkingIndicator() {
 	const {colors} = useTheme();
 	const terminalWidth = useTerminalWidth();
+	const terminalConfig = getTerminalSafeConfig();
 	const [elapsedSeconds, setElapsedSeconds] = useState(0);
 	const [wordIndex, setWordIndex] = useState(0);
 	const [progressIndex, setProgressIndex] = useState(0);
@@ -101,10 +104,23 @@ export default memo(function ThinkingIndicator() {
 		95,
 		Math.floor((elapsedSeconds / 30) * 100),
 	);
+
+	// Use terminal-safe progress indicators
+	const spinnerChar = terminalConfig.features.spinners
+		? PROGRESS_CHARS[progressIndex]
+		: terminalConfig.features.progressBars
+		? '●'
+		: '*';
+
 	const progressBarWidth = Math.max(20, Math.floor(terminalWidth * 0.4));
 	const filledWidth = Math.floor((progressPercentage / 100) * progressBarWidth);
-	const progressBar =
-		'█'.repeat(filledWidth) + '░'.repeat(progressBarWidth - filledWidth);
+
+	// Use terminal-safe progress bar characters
+	const progressBar = terminalConfig.features.progressBars
+		? '█'.repeat(filledWidth) + '░'.repeat(progressBarWidth - filledWidth)
+		: `[${'='.repeat(Math.floor(progressPercentage / 5))}${'.'.repeat(
+				20 - Math.floor(progressPercentage / 5),
+		  )}]`;
 
 	const eta = calculateETA(elapsedSeconds);
 
@@ -124,7 +140,7 @@ export default memo(function ThinkingIndicator() {
 			<Box justifyContent="space-between" marginBottom={1}>
 				<Box>
 					<Text color={colors.primary} bold>
-						{PROGRESS_CHARS[progressIndex]} {THINKING_WORDS[wordIndex]}...
+						{spinnerChar} {THINKING_WORDS[wordIndex]}...
 					</Text>
 				</Box>
 				<Box>
@@ -132,16 +148,18 @@ export default memo(function ThinkingIndicator() {
 				</Box>
 			</Box>
 
-			{/* Progress bar */}
-			<Box flexDirection="column" marginBottom={1}>
-				<Box justifyContent="space-between" marginBottom={0}>
-					<Text color={colors.secondary}>Progress</Text>
-					<Text color={colors.secondary}>{progressPercentage}%</Text>
+			{/* Progress bar - only show if terminal supports it */}
+			{terminalConfig.features.progressBars && (
+				<Box flexDirection="column" marginBottom={1}>
+					<Box justifyContent="space-between" marginBottom={0}>
+						<Text color={colors.secondary}>Progress</Text>
+						<Text color={colors.secondary}>{progressPercentage}%</Text>
+					</Box>
+					<Box>
+						<Text color={colors.primary}>{progressBar}</Text>
+					</Box>
 				</Box>
-				<Box>
-					<Text color={colors.primary}>{progressBar}</Text>
-				</Box>
-			</Box>
+			)}
 
 			{/* ETA and controls */}
 			<Box justifyContent="space-between">

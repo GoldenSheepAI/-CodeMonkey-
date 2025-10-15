@@ -18,6 +18,7 @@ import {setGlobalMessageQueue} from './utils/message-queue.js';
 import Spinner from 'ink-spinner';
 import SecurityDisclaimer from './components/security-disclaimer.js';
 import {RecommendationsDisplay} from './commands/recommendations.js';
+import {getTerminalSafeConfig} from './utils/terminal-detector.js';
 
 // Import extracted hooks and utilities
 import {useAppState} from './app/hooks/useAppState.js';
