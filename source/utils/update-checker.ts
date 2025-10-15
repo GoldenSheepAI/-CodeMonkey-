@@ -60,7 +60,7 @@ function getCurrentVersion(): string {
 async function fetchLatestVersion(): Promise<string | null> {
 	try {
 		const response = await fetch(
-			'https://registry.npmjs.org/@radix-obsidian/codemonkey/latest',
+			'https://registry.npmjs.org/@goldensheepai/codemonkey/latest',
 			{
 				method: 'GET',
 				headers: {
@@ -119,7 +119,7 @@ export async function checkForUpdates(): Promise<UpdateInfo> {
 			currentVersion,
 			latestVersion,
 			updateCommand: hasUpdate
-				? 'npm update -g @radix-obsidian/codemonkey'
+				? 'npm update -g @goldensheepai/codemonkey'
 				: undefined,
 		};
 	} catch (error) {

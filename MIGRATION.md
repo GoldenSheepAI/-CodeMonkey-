@@ -387,7 +387,7 @@ For issues or questions:
 
 1. Check the [troubleshooting section](#troubleshooting)
 2. Review [documentation](./docs/)
-3. Check [GitHub Issues](https://github.com/Radix-Obsidian/-CodeMonkey-/issues)
+3. Check [GitHub Issues](https://github.com/GoldenSheepAI/-CodeMonkey-/issues)
 4. Contact the development team
 
 ## Timeline Estimate

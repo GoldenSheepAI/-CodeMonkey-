@@ -42,7 +42,7 @@ export default function UpdateMessage() {
 		const update = async () => {
 			try {
 				await toolRegistry.execute_bash({
-					command: 'npm update -g @radix-obsidian/codemonkey',
+					command: 'npm update -g @goldensheepai/codemonkey',
 				});
 				if (isMounted) {
 					setStatus(Status.Success);
