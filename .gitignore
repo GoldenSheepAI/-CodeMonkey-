@@ -112,3 +112,4 @@ refactor.md
 
 .gemini/
 gha-creds-*.json
+releases/
