@@ -113,3 +113,6 @@ refactor.md
 .gemini/
 gha-creds-*.json
 releases/
+releases/
+*.zip
+beta-testing-package/
