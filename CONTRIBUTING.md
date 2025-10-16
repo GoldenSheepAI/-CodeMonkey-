@@ -36,6 +36,8 @@ Before contributing, please:
 
    ```bash
    git clone https://github.com/YOUR-USERNAME/codemonkey.git
+   # Or, to use SSH:
+   # git clone git@github.com:YOUR-USERNAME/codemonkey.git
    cd codemonkey
    ```
 

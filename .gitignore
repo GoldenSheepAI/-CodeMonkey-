@@ -109,3 +109,6 @@ refactor.md
 
 # Heap snapshots
 .heap-snapshots
+
+.gemini/
+gha-creds-*.json
