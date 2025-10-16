@@ -3,7 +3,7 @@
  * Scans code for security vulnerabilities and sensitive data
  */
 
-export interface ScanResult {
+export type ScanResult = {
 	fileName: string;
 	line: number;
 	column: number;
@@ -11,7 +11,7 @@ export interface ScanResult {
 	type: string;
 	message: string;
 	suggestion?: string;
-}
+};
 
 export class SecurityScanner {
 	async scanFile(filePath: string, content: string): Promise<ScanResult[]> {

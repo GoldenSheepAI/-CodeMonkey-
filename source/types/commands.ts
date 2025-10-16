@@ -1,6 +1,6 @@
-import {Message} from './core.js';
+import {type Message} from './core.js';
 
-export interface Command<T = React.ReactElement> {
+export type Command<T = React.ReactElement> = {
 	name: string;
 	description: string;
 	handler: (
@@ -8,9 +8,9 @@ export interface Command<T = React.ReactElement> {
 		messages: Message[],
 		metadata: {provider: string; model: string; tokens: number},
 	) => Promise<T>;
-}
+};
 
-export interface ParsedCommand {
+export type ParsedCommand = {
 	isCommand: boolean;
 	command?: string;
 	args?: string[];
@@ -18,24 +18,24 @@ export interface ParsedCommand {
 	// Bash command properties
 	isBashCommand?: boolean;
 	bashCommand?: string;
-}
+};
 
-export interface CustomCommandMetadata {
+export type CustomCommandMetadata = {
 	description?: string;
 	aliases?: string[];
 	parameters?: string[];
-}
+};
 
-export interface CustomCommand {
+export type CustomCommand = {
 	name: string;
 	path: string;
 	namespace?: string;
-	fullName: string; // e.g., "refactor:dry" or just "test"
+	fullName: string; // E.g., "refactor:dry" or just "test"
 	metadata: CustomCommandMetadata;
 	content: string; // The markdown content without frontmatter
-}
+};
 
-export interface ParsedCustomCommand {
+export type ParsedCustomCommand = {
 	metadata: CustomCommandMetadata;
 	content: string;
-}
+};

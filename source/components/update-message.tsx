@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {toolRegistry} from '@/tools/index.js';
 import InfoMessage from './info-message.js';
 import SuccessMessage from './success-message.js';
 import ErrorMessage from './error-message.js';
+import {toolRegistry} from '@/tools/index.js';
 import {checkForUpdates} from '@/utils/update-checker.js';
 
 enum Status {
@@ -15,7 +15,7 @@ enum Status {
 
 export default function UpdateMessage() {
 	const [status, setStatus] = useState<Status>(Status.Checking);
-	const [error, setError] = useState<Error | null>(null);
+	const [error, setError] = useState<Error | undefined>(undefined);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -31,10 +31,10 @@ export default function UpdateMessage() {
 						setStatus(Status.NoUpdate);
 					}
 				}
-			} catch (e) {
+			} catch (error_) {
 				if (isMounted) {
 					setStatus(Status.Error);
-					setError(e as Error);
+					setError(error_ as Error);
 				}
 			}
 		};
@@ -47,10 +47,10 @@ export default function UpdateMessage() {
 				if (isMounted) {
 					setStatus(Status.Success);
 				}
-			} catch (e) {
+			} catch (error_) {
 				if (isMounted) {
 					setStatus(Status.Error);
-					setError(e as Error);
+					setError(error_ as Error);
 				}
 			}
 		};

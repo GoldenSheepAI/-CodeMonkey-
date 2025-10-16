@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {LLMClient} from '@/types/core.js';
+import {type LLMClient} from '@/types/core.js';
 import {ToolManager} from '@/tools/tool-manager.js';
 import {CustomCommandLoader} from '@/custom-commands/loader.js';
 import {CustomCommandExecutor} from '@/custom-commands/executor.js';
@@ -9,7 +9,11 @@ import {
 	loadPreferences,
 	updateLastUsed,
 } from '@/config/preferences.js';
-import type {MCPInitResult, UserPreferences} from '@/types/index.js';
+import type {
+	MCPInitResult,
+	UserPreferences,
+	UpdateInfo,
+} from '@/types/index.js';
 import {
 	setToolManagerGetter,
 	setToolRegistryGetter,
@@ -39,23 +43,24 @@ import SuccessMessage from '@/components/success-message.js';
 import ErrorMessage from '@/components/error-message.js';
 import InfoMessage from '@/components/info-message.js';
 import {checkForUpdates} from '@/utils/update-checker.js';
-import type {UpdateInfo} from '@/types/index.js';
 
-interface UseAppInitializationProps {
-	setClient: (client: LLMClient | null) => void;
+type UseAppInitializationProps = {
+	setClient: (client: LLMClient | undefined) => void;
 	setCurrentModel: (model: string) => void;
 	setCurrentProvider: (provider: string) => void;
-	setToolManager: (manager: ToolManager | null) => void;
-	setCustomCommandLoader: (loader: CustomCommandLoader | null) => void;
-	setCustomCommandExecutor: (executor: CustomCommandExecutor | null) => void;
+	setToolManager: (manager: ToolManager | undefined) => void;
+	setCustomCommandLoader: (loader: CustomCommandLoader | undefined) => void;
+	setCustomCommandExecutor: (
+		executor: CustomCommandExecutor | undefined,
+	) => void;
 	setCustomCommandCache: (cache: Map<string, any>) => void;
 	setStartChat: (start: boolean) => void;
 	setMcpInitialized: (initialized: boolean) => void;
-	setUpdateInfo: (info: UpdateInfo | null) => void;
+	setUpdateInfo: (info: UpdateInfo | undefined) => void;
 	addToChatQueue: (component: React.ReactNode) => void;
 	componentKeyCounter: number;
 	customCommandCache: Map<string, any>;
-}
+};
 
 export function useAppInitialization({
 	setClient,
@@ -121,8 +126,8 @@ export function useAppInitialization({
 			addToChatQueue(
 				<InfoMessage
 					key={`custom-commands-loaded-${componentKeyCounter}`}
+					hideBox
 					message={`Loaded ${customCommands.length} custom commands from .codemonkey/commands`}
-					hideBox={true}
 				/>,
 			);
 		}
@@ -135,10 +140,10 @@ export function useAppInitialization({
 			addToChatQueue(
 				<InfoMessage
 					key={`mcp-connecting-${componentKeyCounter}`}
+					hideBox
 					message={`Connecting to ${appConfig.mcpServers.length} MCP server${
 						appConfig.mcpServers.length > 1 ? 's' : ''
 					}...`}
-					hideBox={true}
 				/>,
 			);
 
@@ -148,16 +153,16 @@ export function useAppInitialization({
 					addToChatQueue(
 						<SuccessMessage
 							key={`mcp-success-${result.serverName}-${componentKeyCounter}`}
+							hideBox
 							message={`Connected to MCP server "${result.serverName}" with ${result.toolCount} tools`}
-							hideBox={true}
 						/>,
 					);
 				} else {
 					addToChatQueue(
 						<ErrorMessage
 							key={`mcp-error-${result.serverName}-${componentKeyCounter}`}
+							hideBox
 							message={`Failed to connect to MCP server "${result.serverName}": ${result.error}`}
-							hideBox={true}
 						/>,
 					);
 				}
@@ -169,11 +174,12 @@ export function useAppInitialization({
 				addToChatQueue(
 					<ErrorMessage
 						key={`mcp-fatal-error-${componentKeyCounter}`}
+						hideBox
 						message={`Failed to initialize MCP servers: ${error}`}
-						hideBox={true}
 					/>,
 				);
 			}
+
 			// Mark MCP as initialized whether successful or not
 			setMcpInitialized(true);
 		} else {
@@ -194,8 +200,8 @@ export function useAppInitialization({
 			addToChatQueue(
 				<ErrorMessage
 					key={`init-error-${componentKeyCounter}`}
+					hideBox
 					message={`No providers available: ${error}`}
-					hideBox={true}
 				/>,
 			);
 			// Leave client as null - the UI will handle this gracefully
@@ -207,8 +213,8 @@ export function useAppInitialization({
 			addToChatQueue(
 				<ErrorMessage
 					key={`commands-error-${componentKeyCounter}`}
+					hideBox
 					message={`Failed to load custom commands: ${error}`}
-					hideBox={true}
 				/>,
 			);
 		}
@@ -216,61 +222,80 @@ export function useAppInitialization({
 
 	useEffect(() => {
 		const initializeApp = async () => {
-			setClient(null);
-			setCurrentModel('');
-
-			const newToolManager = new ToolManager();
-			const newCustomCommandLoader = new CustomCommandLoader();
-			const newCustomCommandExecutor = new CustomCommandExecutor();
-
-			setToolManager(newToolManager);
-			setCustomCommandLoader(newCustomCommandLoader);
-			setCustomCommandExecutor(newCustomCommandExecutor);
-
-			// Load preferences - we'll pass them directly to avoid state timing issues
-			const preferences = loadPreferences();
-
-			// Set up the tool registry getter for the message handler
-			setToolRegistryGetter(() => newToolManager.getToolRegistry());
-
-			// Set up the tool manager getter for commands that need it
-			setToolManagerGetter(() => newToolManager);
-
-			commandRegistry.register([
-				helpCommand,
-				exitCommand,
-				clearCommand,
-				modelCommand,
-				providerCommand,
-				commandsCommand,
-				debugCommand,
-				mcpCommand,
-				initCommand,
-				themeCommand,
-				exportCommand,
-				updateCommand,
-				recommendationsCommand,
-				statusCommand,
-				feedbackCommand,
-				tokensCommand,
-			]);
-
-			// Now start with the properly initialized objects (excluding MCP)
-			await start(newToolManager, newCustomCommandLoader, preferences);
-
-			// Check for updates before showing UI
 			try {
-				const info = await checkForUpdates();
-				setUpdateInfo(info);
+				setClient(undefined);
+				setCurrentModel('');
+
+				const newToolManager = new ToolManager();
+				const newCustomCommandLoader = new CustomCommandLoader();
+				const newCustomCommandExecutor = new CustomCommandExecutor();
+
+				setToolManager(newToolManager);
+				setCustomCommandLoader(newCustomCommandLoader);
+				setCustomCommandExecutor(newCustomCommandExecutor);
+
+				// Load preferences - we'll pass them directly to avoid state timing issues
+				const preferences = loadPreferences();
+
+				// Set up the tool registry getter for the message handler
+				setToolRegistryGetter(() => newToolManager.getToolRegistry());
+
+				// Set up the tool manager getter for commands that need it
+				setToolManagerGetter(() => newToolManager);
+
+				commandRegistry.register([
+					helpCommand,
+					exitCommand,
+					clearCommand,
+					modelCommand,
+					providerCommand,
+					commandsCommand,
+					debugCommand,
+					mcpCommand,
+					initCommand,
+					themeCommand,
+					exportCommand,
+					updateCommand,
+					recommendationsCommand,
+					statusCommand,
+					feedbackCommand,
+					tokensCommand,
+				]);
+
+				// Now start with the properly initialized objects (excluding MCP)
+				await start(newToolManager, newCustomCommandLoader, preferences);
+
+				// Check for updates before showing UI
+				try {
+					const info = await checkForUpdates();
+					setUpdateInfo(info);
+				} catch {
+					// Silent failure - don't show errors for update checks
+					setUpdateInfo(undefined);
+				}
+
+				setStartChat(true);
+
+				// Initialize MCP servers after UI is shown - with error handling
+				try {
+					await initializeMCPServers(newToolManager);
+				} catch (error) {
+					// Log MCP initialization error but don't crash the app
+					console.error('MCP initialization failed:', error);
+					// App continues to work without MCP
+				}
 			} catch (error) {
-				// Silent failure - don't show errors for update checks
-				setUpdateInfo(null);
+				// Critical app initialization error - show error and exit gracefully
+				console.error('Critical initialization error:', error);
+				addToChatQueue(
+					<ErrorMessage
+						key={`init-error-${Date.now()}`}
+						message={`Failed to initialize CodeMonkey: ${error instanceof Error ? error.message : 'Unknown error'}`}
+					/>,
+				);
+				// Still allow basic functionality by setting minimal state
+				setStartChat(true);
 			}
-
-			setStartChat(true);
-
-			// Initialize MCP servers after UI is shown
-			await initializeMCPServers(newToolManager);
 		};
 
 		initializeApp();

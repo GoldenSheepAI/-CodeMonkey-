@@ -3,8 +3,6 @@ import {logInfo, logError} from '@/utils/message-queue.js';
 
 import type {LogLevel} from '@/types/index.js';
 
-export type {LogLevel};
-
 let currentLogLevel: LogLevel = 'normal';
 
 // Initialize log level from preferences
@@ -42,22 +40,22 @@ export function shouldLog(level: 'info' | 'warn' | 'error' | 'debug'): boolean {
 
 // Wrapper for console methods that respects log level
 export const logger = {
-	info: (...args: any[]) => {
+	info(...args: any[]) {
 		if (shouldLog('info')) {
 			logInfo(args.join(' '));
 		}
 	},
-	warn: (...args: any[]) => {
+	warn(...args: any[]) {
 		if (shouldLog('warn')) {
 			logError(args.join(' '));
 		}
 	},
-	error: (...args: any[]) => {
+	error(...args: any[]) {
 		if (shouldLog('error')) {
 			logError(args.join(' '));
 		}
 	},
-	debug: (...args: any[]) => {
+	debug(...args: any[]) {
 		if (shouldLog('debug')) {
 			logInfo(args.join(' '));
 		}
@@ -68,3 +66,5 @@ export const logger = {
 export function logImportant(...args: any[]): void {
 	logInfo(args.join(' '));
 }
+
+export {type LogLevel} from '@/types/index.js';

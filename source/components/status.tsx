@@ -1,6 +1,6 @@
+import {existsSync} from 'node:fs';
 import {Box, Text} from 'ink';
 import {memo} from 'react';
-import {existsSync} from 'fs';
 
 import {themes, getThemeColors} from '@/config/themes.js';
 import type {ThemePreset} from '@/types/ui.js';
@@ -9,33 +9,33 @@ import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 // Get CWD once at module load time
 const cwd = process.cwd();
 
-interface UpdateInfo {
+type UpdateInfo = {
 	hasUpdate: boolean;
 	currentVersion: string;
 	latestVersion?: string;
 	updateCommand?: string;
-}
+};
 
-interface StatusProps {
-	provider: string;
-	model: string;
-	theme: ThemePreset;
-	updateInfo?: UpdateInfo | null;
-	agentsMdLoaded?: boolean;
-	contextUsage?: {
+type StatusProps = {
+	readonly provider: string;
+	readonly model: string;
+	readonly theme: ThemePreset;
+	readonly updateInfo?: UpdateInfo | undefined;
+	readonly agentsMdLoaded?: boolean;
+	readonly contextUsage?: {
 		used: number;
 		max: number;
 		percentage: number;
 	};
-	tokenUsage?: {
+	readonly tokenUsage?: {
 		session: number;
 		estimated: number;
 	};
-	rateLimitInfo?: {
+	readonly rateLimitInfo?: {
 		remaining: number;
 		max: number;
 	};
-}
+};
 
 export default memo(function Status({
 	provider,
@@ -63,10 +63,10 @@ export default memo(function Status({
 	const dirName = cwd.split('/').pop() || cwd;
 
 	// Format numbers for display
-	const formatNumber = (num: number) => {
-		if (num > 1000000) return `${(num / 1000000).toFixed(1)}M`;
-		if (num > 1000) return `${(num / 1000).toFixed(1)}K`;
-		return num.toString();
+	const formatNumber = (number_: number) => {
+		if (number_ > 1_000_000) return `${(number_ / 1_000_000).toFixed(1)}M`;
+		if (number_ > 1000) return `${(number_ / 1000).toFixed(1)}K`;
+		return number_.toString();
 	};
 
 	// Context usage color

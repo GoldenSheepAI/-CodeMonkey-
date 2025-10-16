@@ -1,17 +1,22 @@
 import type {ToolCall} from '@/types/index.js';
 
-export interface ParsedToolCall {
+export type ParsedToolCall = {
 	toolName: string;
 	parameters: Record<string, any>;
-}
+};
 
 /**
  * Parses XML-formatted tool calls from non-function-calling models
  * Expected format: <tool_name><param1>value1</param1><param2>value2</param2></tool_name>
  */
 export class XMLToolCallParser {
-	private static readonly TOOL_CALL_REGEX = /<(\w+)>(.*?)<\/\1>/gs;
-	private static readonly PARAMETER_REGEX = /<(\w+)>(.*?)<\/\1>/g;
+	private static get TOOL_CALL_REGEX() {
+		return /<(\w+)>(.*?)<\/\1>/gs;
+	}
+
+	private static get PARAMETER_REGEX() {
+		return /<(\w+)>(.*?)<\/\1>/g;
+	}
 
 	/**
 	 * Extracts tool calls from text content containing XML-formatted tool calls
@@ -22,7 +27,7 @@ export class XMLToolCallParser {
 
 		// Handle content that might be wrapped in markdown code blocks
 		let processedContent = content;
-		const codeBlockMatch = content.match(/```(?:\w+)?\s*\n?([\s\S]*?)\n?```/);
+		const codeBlockMatch = /```(?:\w+)?\s*\n?([\s\S]*?)\n?```/.exec(content);
 		if (codeBlockMatch && codeBlockMatch[1]) {
 			processedContent = codeBlockMatch[1].trim();
 		}
@@ -62,14 +67,14 @@ export class XMLToolCallParser {
 		this.PARAMETER_REGEX.lastIndex = 0;
 
 		while ((match = this.PARAMETER_REGEX.exec(innerXml)) !== null) {
-			const [, paramName, paramValue] = match;
+			const [, parameterName, parameterValue] = match;
 
 			// Try to parse as JSON for complex objects/arrays
 			try {
-				parameters[paramName] = JSON.parse(paramValue);
+				parameters[parameterName] = JSON.parse(parameterValue);
 			} catch {
 				// If not valid JSON, use as string
-				parameters[paramName] = paramValue;
+				parameters[parameterName] = parameterValue;
 			}
 		}
 
@@ -107,6 +112,7 @@ export class XMLToolCallParser {
 						return '';
 					}
 				}
+
 				// Keep blocks that don't contain XML tool calls
 				return match;
 			},
@@ -131,7 +137,7 @@ export class XMLToolCallParser {
 	static hasToolCalls(content: string): boolean {
 		// Handle content that might be wrapped in markdown code blocks
 		let processedContent = content;
-		const codeBlockMatch = content.match(/```(?:\w+)?\s*\n?([\s\S]*?)\n?```/);
+		const codeBlockMatch = /```(?:\w+)?\s*\n?([\s\S]*?)\n?```/.exec(content);
 		if (codeBlockMatch && codeBlockMatch[1]) {
 			processedContent = codeBlockMatch[1].trim();
 		}

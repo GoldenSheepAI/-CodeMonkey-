@@ -6,16 +6,16 @@ import type {ToolHandler, ToolDefinition} from '@/types/index.js';
 import {ThemeContext} from '@/hooks/useTheme.js';
 import ToolMessage from '@/components/tool-message.js';
 
-interface SearchArgs {
+type SearchArgs = {
 	query: string;
 	max_results?: number;
-}
+};
 
-interface SearchResult {
+type SearchResult = {
 	title: string;
 	url: string;
 	snippet: string;
-}
+};
 
 const handler: ToolHandler = async (args: SearchArgs): Promise<string> => {
 	const maxResults = args.max_results ?? 10;
@@ -31,7 +31,7 @@ const handler: ToolHandler = async (args: SearchArgs): Promise<string> => {
 					'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
 				Accept: 'text/html',
 			},
-			signal: AbortSignal.timeout(10000),
+			signal: AbortSignal.timeout(10_000),
 		});
 
 		if (!response.ok) {
@@ -44,18 +44,18 @@ const handler: ToolHandler = async (args: SearchArgs): Promise<string> => {
 		const results: SearchResult[] = [];
 
 		// Brave Search uses specific result containers
-		$('[data-type="web"]').each((i, elem) => {
+		$('[data-type="web"]').each((i, element) => {
 			if (results.length >= maxResults) return;
 
-			const $elem = $(elem);
+			const $element = $(element);
 
 			// Extract title and URL
-			const titleLink = $elem.find('a[href^="http"]').first();
+			const titleLink = $element.find('a[href^="http"]').first();
 			const url = titleLink.attr('href');
 			const title = titleLink.text().trim();
 
 			// Extract snippet
-			const snippet = $elem.find('.snippet-description').text().trim();
+			const snippet = $element.find('.snippet-description').text().trim();
 
 			if (url && title) {
 				results.push({
@@ -73,13 +73,13 @@ const handler: ToolHandler = async (args: SearchArgs): Promise<string> => {
 		// Format results as markdown for easier LLM reading
 		let formattedResults = `# Web Search Results: "${args.query}"\n\n`;
 
-		for (let i = 0; i < results.length; i++) {
-			const result = results[i];
+		for (const [i, result] of results.entries()) {
 			formattedResults += `## ${i + 1}. ${result.title}\n\n`;
 			formattedResults += `**URL:** ${result.url}\n\n`;
 			if (result.snippet) {
 				formattedResults += `${result.snippet}\n\n`;
 			}
+
 			formattedResults += '---\n\n';
 		}
 
@@ -95,7 +95,7 @@ const handler: ToolHandler = async (args: SearchArgs): Promise<string> => {
 
 // Create a component that will re-render when theme changes
 const WebSearchFormatter = React.memo(
-	({args, result}: {args: any; result?: string}) => {
+	({args, result}: {readonly args: any; readonly result?: string}) => {
 		const {colors} = React.useContext(ThemeContext)!;
 		const query = args.query || 'unknown';
 		const maxResults = args.max_results ?? 5;
@@ -141,7 +141,7 @@ const WebSearchFormatter = React.memo(
 			</Box>
 		);
 
-		return <ToolMessage message={messageContent} hideBox={true} />;
+		return <ToolMessage hideBox message={messageContent} />;
 	},
 );
 

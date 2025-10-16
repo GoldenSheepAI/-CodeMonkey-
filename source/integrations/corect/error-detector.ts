@@ -3,7 +3,7 @@
  * Detects and categorizes errors in code
  */
 
-export interface DetectedError {
+export type DetectedError = {
 	type: 'syntax' | 'runtime' | 'logical' | 'type' | 'unknown';
 	severity: 'critical' | 'high' | 'medium' | 'low';
 	message: string;
@@ -14,7 +14,7 @@ export interface DetectedError {
 	};
 	stackTrace?: string;
 	context?: string;
-}
+};
 
 export class ErrorDetector {
 	detect(error: Error, code?: string): DetectedError {
@@ -34,12 +34,15 @@ export class ErrorDetector {
 		if (name.includes('syntax') || message.includes('syntax')) {
 			return 'syntax';
 		}
+
 		if (name.includes('type') || message.includes('type')) {
 			return 'type';
 		}
+
 		if (name.includes('reference') || name.includes('range')) {
 			return 'runtime';
 		}
+
 		return 'unknown';
 	}
 

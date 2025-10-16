@@ -1,9 +1,9 @@
 import React, {memo, useState, useEffect} from 'react';
 import {Box, Text} from 'ink';
 import Spinner from 'ink-spinner';
+import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {useTheme} from '@/hooks/useTheme.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
-import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import type {ToolExecutionIndicatorProps} from '@/types/index.js';
 
 export default memo(function ToolExecutionIndicator({
@@ -53,7 +53,7 @@ export default memo(function ToolExecutionIndicator({
 			<Box justifyContent="space-between" marginBottom={1}>
 				<Box>
 					<Spinner type="dots2" />
-					<Text color={colors.tool} bold>
+					<Text bold color={colors.tool}>
 						{' '}
 						Executing: {toolName}
 					</Text>

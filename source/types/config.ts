@@ -1,7 +1,7 @@
 import type {ThemePreset} from './ui.js';
 
 // LangChain provider configurations
-export interface LangChainProviderConfig {
+export type LangChainProviderConfig = {
 	name: string;
 	type: string;
 	models: string[];
@@ -12,11 +12,11 @@ export interface LangChainProviderConfig {
 		cumulativeMaxIdleTimeout?: number;
 	};
 	config: Record<string, any>;
-}
+};
 
-export interface AppConfig {
+export type AppConfig = {
 	// Providers array structure - all OpenAI compatible
-	providers?: {
+	providers?: Array<{
 		name: string;
 		baseUrl?: string;
 		apiKey?: string;
@@ -28,17 +28,17 @@ export interface AppConfig {
 			cumulativeMaxIdleTimeout?: number;
 		};
 		[key: string]: any; // Allow additional provider-specific config
-	}[];
+	}>;
 
-	mcpServers?: {
+	mcpServers?: Array<{
 		name: string;
 		command: string;
 		args?: string[];
 		env?: Record<string, string>;
-	}[];
-}
+	}>;
+};
 
-export interface UserPreferences {
+export type UserPreferences = {
 	lastProvider?: string;
 	lastModel?: string;
 	providerModels?: {
@@ -47,6 +47,6 @@ export interface UserPreferences {
 	lastUpdateCheck?: number;
 	selectedTheme?: ThemePreset;
 	trustedDirectories?: string[];
-}
+};
 
 export type LogLevel = 'silent' | 'normal' | 'verbose';

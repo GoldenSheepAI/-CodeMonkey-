@@ -9,12 +9,12 @@ import {existsSync, readFileSync, writeFileSync, mkdirSync} from 'node:fs';
 import {join} from 'node:path';
 import {homedir} from 'node:os';
 
-interface Migration {
+type Migration = {
 	version: string;
 	description: string;
 	up: () => Promise<void>;
 	down?: () => Promise<void>;
-}
+};
 
 const migrations: Migration[] = [
 	{
@@ -42,6 +42,7 @@ async function getMigrationState(): Promise<string> {
 	if (!existsSync(stateFile)) {
 		return '0.0.0';
 	}
+
 	const state = JSON.parse(readFileSync(stateFile, 'utf-8'));
 	return state.version || '0.0.0';
 }
@@ -68,6 +69,7 @@ function compareVersions(v1: string, v2: string): number {
 		if (parts1[i] > parts2[i]) return 1;
 		if (parts1[i] < parts2[i]) return -1;
 	}
+
 	return 0;
 }
 
@@ -121,7 +123,7 @@ async function main() {
 			m => compareVersions(m.version, currentVersion) > 0,
 		);
 		console.log(`Pending migrations: ${pending.length}`);
-		pending.forEach(m => console.log(`  - ${m.version}: ${m.description}`));
+		for (const m of pending) console.log(`  - ${m.version}: ${m.description}`);
 		return;
 	}
 

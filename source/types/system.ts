@@ -1,4 +1,4 @@
-export interface SystemCapabilities {
+export type SystemCapabilities = {
 	cpu: {
 		cores: number;
 		architecture: string;
@@ -17,16 +17,16 @@ export interface SystemCapabilities {
 		connected: boolean;
 		speed?: 'slow' | 'medium' | 'fast';
 	};
-}
+};
 
 export type ProviderCategory = 'local-server' | 'hosted-api';
 
-export interface ProviderInfo {
+export type ProviderInfo = {
 	name: string;
 	category: ProviderCategory;
-}
+};
 
-export interface ModelEntry {
+export type ModelEntry = {
 	name: string;
 	author: string; // Model creator/organization (e.g., "Meta", "Anthropic", "Qwen")
 	size: string; // "7B", "13B", "70B", "Unknown" for API models
@@ -41,10 +41,10 @@ export interface ModelEntry {
 	};
 	// Cost info
 	costType: 'free' | 'paid';
-	costDetails?: string; // e.g., "$0.15/1M tokens" or "Free via Ollama"
-}
+	costDetails?: string; // E.g., "$0.15/1M tokens" or "Free via Ollama"
+};
 
-export interface ProviderRecommendation {
+export type ProviderRecommendation = {
 	provider: string;
 	providerCategory: ProviderCategory;
 	priority: 'high' | 'medium' | 'low';
@@ -53,11 +53,11 @@ export interface ProviderRecommendation {
 	models: ModelRecommendation[];
 	isConfigured?: boolean; // Whether this provider is in agents.config.json
 	isRunning?: boolean; // For local servers
-}
+};
 
-export interface ModelRecommendation {
+export type ModelRecommendation = {
 	model: ModelEntry;
 	compatibility: 'perfect' | 'good' | 'marginal' | 'incompatible';
 	warnings: string[]; // ["May be slow on your system", "Limited agentic capabilities"]
 	recommendation: string; // "Excellent for complex coding tasks"
-}
+};

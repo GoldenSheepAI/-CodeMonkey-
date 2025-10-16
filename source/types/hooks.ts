@@ -1,21 +1,21 @@
-import React from 'react';
+import type React from 'react';
 
-export interface UseModeHandlersProps {
+export type UseModeHandlersProps = {
 	onEnterModelSelectionMode: () => void;
 	onEnterProviderSelectionMode: () => void;
 	onExitSelectionMode: () => void;
-}
+};
 
-export interface UseToolHandlerProps {
+export type UseToolHandlerProps = {
 	client: any;
 	setIsThinking: (thinking: boolean) => void;
 	onAddToChatQueue: (component: React.ReactNode) => void;
 	componentKeyCounter: number;
 	messages: any[];
 	setMessages: (messages: any[]) => void;
-}
+};
 
-export interface UseChatHandlerProps {
+export type UseChatHandlerProps = {
 	client: any;
 	setIsThinking: (thinking: boolean) => void;
 	onAddToChatQueue: (component: React.ReactNode) => void;
@@ -23,4 +23,4 @@ export interface UseChatHandlerProps {
 	messages: any[];
 	setMessages: (messages: any[]) => void;
 	setConversationContext: (context: any) => void;
-}
+};

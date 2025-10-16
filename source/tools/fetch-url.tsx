@@ -5,9 +5,9 @@ import type {ToolHandler, ToolDefinition} from '@/types/index.js';
 import {ThemeContext} from '@/hooks/useTheme.js';
 import ToolMessage from '@/components/tool-message.js';
 
-interface FetchArgs {
+type FetchArgs = {
 	url: string;
-}
+};
 
 const handler: ToolHandler = async (args: FetchArgs): Promise<string> => {
 	// Validate URL
@@ -25,7 +25,7 @@ const handler: ToolHandler = async (args: FetchArgs): Promise<string> => {
 			headers: {
 				Accept: 'text/plain',
 			},
-			signal: AbortSignal.timeout(15000), // 15 second timeout
+			signal: AbortSignal.timeout(15_000), // 15 second timeout
 			method: 'GET',
 		});
 
@@ -40,9 +40,9 @@ const handler: ToolHandler = async (args: FetchArgs): Promise<string> => {
 		}
 
 		// Limit content size to prevent context overflow (~100KB)
-		const maxSize = 100000;
+		const maxSize = 100_000;
 		if (content.length > maxSize) {
-			const truncated = content.substring(0, maxSize);
+			const truncated = content.slice(0, Math.max(0, maxSize));
 			return `${truncated}\n\n[Content truncated - original size was ${content.length} characters]`;
 		}
 
@@ -51,13 +51,14 @@ const handler: ToolHandler = async (args: FetchArgs): Promise<string> => {
 		if (error.name === 'AbortError') {
 			throw new Error(`Request timeout: URL took too long to fetch (>15s)`);
 		}
+
 		throw new Error(`Failed to fetch URL: ${error.message}`);
 	}
 };
 
 // Create a component that will re-render when theme changes
 const FetchUrlFormatter = React.memo(
-	({args, result}: {args: any; result?: string}) => {
+	({args, result}: {readonly args: any; readonly result?: string}) => {
 		const {colors} = React.useContext(ThemeContext)!;
 		const url = args.url || 'unknown';
 
@@ -103,7 +104,7 @@ const FetchUrlFormatter = React.memo(
 			</Box>
 		);
 
-		return <ToolMessage message={messageContent} hideBox={true} />;
+		return <ToolMessage hideBox message={messageContent} />;
 	},
 );
 
@@ -137,7 +138,7 @@ const validator = async (
 			hostname === '0.0.0.0' ||
 			hostname.startsWith('192.168.') ||
 			hostname.startsWith('10.') ||
-			hostname.match(/^172\.(1[6-9]|2[0-9]|3[0-1])\./)
+			/^172\.(1[6-9]|2\d|3[01])\./.test(hostname)
 		) {
 			return {
 				valid: false,
@@ -146,7 +147,7 @@ const validator = async (
 		}
 
 		return {valid: true};
-	} catch (error: any) {
+	} catch {
 		return {
 			valid: false,
 			error: `⚒ Invalid URL format: ${args.url}`,

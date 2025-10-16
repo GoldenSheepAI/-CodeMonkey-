@@ -4,10 +4,10 @@ import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {getThemeColors, defaultTheme} from '@/config/themes.js';
 
-interface SecurityDisclaimerProps {
-	onConfirm: () => void;
-	onExit: () => void;
-}
+type SecurityDisclaimerProps = {
+	readonly onConfirm: () => void;
+	readonly onExit: () => void;
+};
 
 enum SecurityDisclaimerOption {
 	Yes = 'yes',
@@ -22,7 +22,7 @@ export default function SecurityDisclaimer({
 	const colors = getThemeColors(defaultTheme);
 
 	// Inline item type kept close to usage to limit scope and improve readability
-	const items: {label: string; value: SecurityDisclaimerOption}[] = [
+	const items: Array<{label: string; value: SecurityDisclaimerOption}> = [
 		{
 			label: 'Yes, proceed',
 			value: SecurityDisclaimerOption.Yes,

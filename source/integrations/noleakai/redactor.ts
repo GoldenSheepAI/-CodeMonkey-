@@ -5,16 +5,21 @@
 
 import {SECURITY_PATTERNS} from './patterns.js';
 
-export interface RedactionResult {
+export type RedactionResult = {
 	original: string;
 	redacted: string;
 	redactedCount: number;
 	patterns: string[];
-}
+};
 
 export class Redactor {
-	private maskChar = '*';
-	private partialReveal = 4; // Show first/last N characters
+	private get maskChar() {
+		return '*';
+	}
+
+	private get partialReveal() {
+		return 4;
+	} // Show first/last N characters
 
 	redact(text: string, options?: {full?: boolean}): RedactionResult {
 		let redacted = text;
@@ -22,7 +27,7 @@ export class Redactor {
 		const matchedPatterns: string[] = [];
 
 		for (const pattern of SECURITY_PATTERNS) {
-			const matches = text.match(pattern.pattern);
+			const matches = pattern.pattern.exec(text);
 			if (matches) {
 				for (const match of matches) {
 					if (options?.full) {
@@ -33,6 +38,7 @@ export class Redactor {
 					} else {
 						redacted = redacted.replace(match, this.partialRedact(match));
 					}
+
 					redactedCount++;
 					if (!matchedPatterns.includes(pattern.name)) {
 						matchedPatterns.push(pattern.name);
@@ -53,6 +59,7 @@ export class Redactor {
 		if (value.length <= this.partialReveal * 2) {
 			return this.maskChar.repeat(value.length);
 		}
+
 		const start = value.slice(0, this.partialReveal);
 		const end = value.slice(-this.partialReveal);
 		const middle = this.maskChar.repeat(value.length - this.partialReveal * 2);

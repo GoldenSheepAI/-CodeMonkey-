@@ -1,4 +1,4 @@
-import {ModelEntry} from '@/types/index.js';
+import {type ModelEntry} from '@/types/index.js';
 
 export const MODEL_DATABASE: ModelEntry[] = [
 	{
@@ -460,6 +460,7 @@ export class ModelDatabase {
 		if (!ModelDatabase.instance) {
 			ModelDatabase.instance = new ModelDatabase();
 		}
+
 		return ModelDatabase.instance;
 	}
 

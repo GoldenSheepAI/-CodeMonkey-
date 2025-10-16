@@ -7,7 +7,10 @@ import type {TiktokenModel} from 'tiktoken';
 import type {TokenUsage} from './types.js';
 
 export class TokenCounter {
-	private encoders: Map<string, ReturnType<typeof get_encoding>> = new Map();
+	private readonly encoders = new Map<
+		string,
+		ReturnType<typeof get_encoding>
+	>();
 
 	/**
 	 * Count tokens for a given text and model
@@ -18,7 +21,7 @@ export class TokenCounter {
 			const encoder = this.getEncoder(model);
 			const tokens = encoder.encode(text);
 			return tokens.length;
-		} catch (error) {
+		} catch {
 			// Fallback to cl100k_base (GPT-4 encoding)
 			return this.estimateTokens(text);
 		}
@@ -100,9 +103,11 @@ export class TokenCounter {
 		if (model.includes('gpt-4') || model.includes('gpt-3.5')) {
 			return 3; // <|start|>role<|end|>\n
 		}
+
 		if (model.includes('claude')) {
 			return 4; // Claude has slightly more overhead
 		}
+
 		return 3; // Default
 	}
 
@@ -114,6 +119,7 @@ export class TokenCounter {
 		if (model.includes('gpt')) {
 			return 3; // <|start|>assistant<|message|>
 		}
+
 		return 2; // Default
 	}
 
@@ -165,6 +171,7 @@ export class TokenCounter {
 		for (const encoder of this.encoders.values()) {
 			encoder.free();
 		}
+
 		this.encoders.clear();
 	}
 }

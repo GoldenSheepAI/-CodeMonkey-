@@ -1,11 +1,11 @@
-import {readFileSync, existsSync} from 'fs';
-import {join} from 'path';
+import {readFileSync, existsSync} from 'node:fs';
+import {join} from 'node:path';
 
-export interface ExistingRules {
+export type ExistingRules = {
 	source: string;
 	content: string;
 	type: 'agents' | 'rules' | 'instructions';
-}
+};
 
 export class ExistingRulesExtractor {
 	private static readonly AI_CONFIG_FILES = [
@@ -29,7 +29,7 @@ export class ExistingRulesExtractor {
 		'dev-guidelines.md',
 	];
 
-	constructor(private projectPath: string) {}
+	constructor(private readonly projectPath: string) {}
 
 	/**
 	 * Find and extract content from existing AI configuration files
@@ -55,7 +55,7 @@ export class ExistingRulesExtractor {
 							type: this.determineFileType(configFile),
 						});
 					}
-				} catch (error) {
+				} catch {
 					// Skip files we can't read
 					continue;
 				}
@@ -133,7 +133,7 @@ export class ExistingRulesExtractor {
 			const trimmed = line.trim().toLowerCase();
 
 			// Check if this is a header
-			if (line.match(/^#+\s/) || line.match(/^[=\-]{3,}$/)) {
+			if (/^#+\s/.test(line) || /^[=\-]{3,}$/.test(line)) {
 				// Save previous section if it was relevant
 				if (inRelevantSection && currentSection.trim()) {
 					relevantSections.push(sectionHeader + '\n' + currentSection.trim());
@@ -272,12 +272,12 @@ export class ExistingRulesExtractor {
 		}
 
 		const sections: string[] = [];
-		sections.push('## Existing Project Guidelines');
-		sections.push('');
 		sections.push(
+			'## Existing Project Guidelines',
+			'',
 			'*The following guidelines were found in existing AI configuration files:*',
+			'',
 		);
-		sections.push('');
 
 		// Group by type
 		const agentRules = existingRules.filter(r => r.type === 'agents');
@@ -288,9 +288,7 @@ export class ExistingRulesExtractor {
 		if (agentRules.length > 0) {
 			sections.push('### AI Agent Guidelines');
 			for (const rule of agentRules) {
-				sections.push(`**From ${rule.source}:**`);
-				sections.push(rule.content);
-				sections.push('');
+				sections.push(`**From ${rule.source}:**`, rule.content, '');
 			}
 		}
 
@@ -298,9 +296,7 @@ export class ExistingRulesExtractor {
 		if (ruleFiles.length > 0) {
 			sections.push('### Project Rules');
 			for (const rule of ruleFiles) {
-				sections.push(`**From ${rule.source}:**`);
-				sections.push(rule.content);
-				sections.push('');
+				sections.push(`**From ${rule.source}:**`, rule.content, '');
 			}
 		}
 
@@ -308,9 +304,7 @@ export class ExistingRulesExtractor {
 		if (instructions.length > 0) {
 			sections.push('### Additional Instructions');
 			for (const rule of instructions) {
-				sections.push(`**From ${rule.source}:**`);
-				sections.push(rule.content);
-				sections.push('');
+				sections.push(`**From ${rule.source}:**`, rule.content, '');
 			}
 		}
 

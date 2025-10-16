@@ -1,10 +1,10 @@
 import {memo, useState, useEffect, useRef} from 'react';
 import {Box, Text} from 'ink';
+import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
+import Spinner from 'ink-spinner';
 import {useTheme} from '@/hooks/useTheme.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
-import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {getTerminalSafeConfig} from '@/utils/terminal-detector.js';
-import Spinner from 'ink-spinner';
 
 const THINKING_WORDS = [
 	'Thinking',
@@ -91,7 +91,7 @@ export default memo(function ThinkingIndicator() {
 	// Timer for progress spinner animation
 	useEffect(() => {
 		const progressTimer = setInterval(() => {
-			setProgressIndex(prev => (prev + 1) % PROGRESS_CHARS.length);
+			setProgressIndex(previous => (previous + 1) % PROGRESS_CHARS.length);
 		}, 100);
 
 		return () => {
@@ -142,7 +142,7 @@ export default memo(function ThinkingIndicator() {
 			{/* Main status line */}
 			<Box justifyContent="space-between" marginBottom={1}>
 				<Box>
-					<Text color={colors.primary} bold>
+					<Text bold color={colors.primary}>
 						{spinnerChar} {THINKING_WORDS[wordIndex]}...
 					</Text>
 				</Box>

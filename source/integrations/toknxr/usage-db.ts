@@ -5,18 +5,18 @@
  * with efficient querying and aggregation capabilities.
  */
 
-import {promises as fs} from 'fs';
-import path from 'path';
+import {promises as fs} from 'node:fs';
+import path from 'node:path';
 import type {TokenUsage, ToknxrConfig} from './types.js';
 
-interface DatabaseRecord extends TokenUsage {
+type DatabaseRecord = {
 	id: string;
-}
+} & TokenUsage;
 
 export class UsageDatabase {
-	private config: ToknxrConfig;
-	private dbPath: string;
-	private cache: Map<string, DatabaseRecord> = new Map();
+	private readonly config: ToknxrConfig;
+	private readonly dbPath: string;
+	private readonly cache = new Map<string, DatabaseRecord>();
 
 	constructor(config: ToknxrConfig) {
 		this.config = config;
@@ -57,7 +57,7 @@ export class UsageDatabase {
 	 * Retrieve usage records for a time range
 	 */
 	async getUsageInRange(startDate: Date, endDate: Date): Promise<TokenUsage[]> {
-		const records = Array.from(this.cache.values())
+		const records = [...this.cache.values()]
 			.filter(
 				record => record.timestamp >= startDate && record.timestamp <= endDate,
 			)
@@ -69,7 +69,7 @@ export class UsageDatabase {
 	/**
 	 * Get usage statistics for a model
 	 */
-	async getModelUsage(model: string, days: number = 30): Promise<TokenUsage[]> {
+	async getModelUsage(model: string, days = 30): Promise<TokenUsage[]> {
 		const startDate = new Date();
 		startDate.setDate(startDate.getDate() - days);
 
@@ -81,7 +81,7 @@ export class UsageDatabase {
 	/**
 	 * Get total usage statistics
 	 */
-	async getTotalStats(days: number = 30): Promise<{
+	async getTotalStats(days = 30): Promise<{
 		totalTokens: number;
 		totalRecords: number;
 		modelsUsed: string[];
@@ -109,7 +109,7 @@ export class UsageDatabase {
 	/**
 	 * Clear old records (older than specified days)
 	 */
-	async clearOldRecords(daysToKeep: number = 90): Promise<number> {
+	async clearOldRecords(daysToKeep = 90): Promise<number> {
 		const cutoffDate = new Date();
 		cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
 
@@ -132,14 +132,14 @@ export class UsageDatabase {
 	 * Generate a unique ID for records
 	 */
 	private generateId(): string {
-		return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 	}
 
 	/**
 	 * Load cache from disk
 	 */
 	private async loadCache(): Promise<void> {
-		const data = await fs.readFile(this.dbPath, 'utf-8');
+		const data = await fs.readFile(this.dbPath, 'utf8');
 		const records: DatabaseRecord[] = JSON.parse(data);
 
 		this.cache.clear();
@@ -154,7 +154,7 @@ export class UsageDatabase {
 	 * Save cache to disk
 	 */
 	private async saveCache(): Promise<void> {
-		const records = Array.from(this.cache.values());
+		const records = [...this.cache.values()];
 		const data = JSON.stringify(records, null, 2);
 		await fs.writeFile(this.dbPath, data, 'utf-8');
 	}

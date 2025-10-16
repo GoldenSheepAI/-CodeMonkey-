@@ -2,25 +2,25 @@ import {relative} from 'node:path';
 import {exec} from 'node:child_process';
 import {promisify} from 'node:util';
 import React from 'react';
-
-const execAsync = promisify(exec);
 import {Text, Box} from 'ink';
 import type {ToolHandler, ToolDefinition} from '@/types/index.js';
 import {ThemeContext} from '@/hooks/useTheme.js';
 import ToolMessage from '@/components/tool-message.js';
 
-interface SearchMatch {
+const execAsync = promisify(exec);
+
+type SearchMatch = {
 	file: string;
 	line?: number;
 	content?: string;
 	context?: string[];
-}
+};
 
-interface SearchResult {
+type SearchResult = {
 	matches: SearchMatch[];
 	truncated: boolean;
 	totalMatches: number;
-}
+};
 
 /**
  * Search file contents using grep
@@ -45,11 +45,11 @@ async function searchFiles(
 		const lines = stdout.trim().split('\n').filter(Boolean);
 
 		for (const line of lines) {
-			const match = line.match(/^\.\/(.+?):(\d+):(.*)$/);
+			const match = /^\.\/(.+?):(\d+):(.*)$/.exec(line);
 			if (match) {
 				matches.push({
 					file: match[1],
-					line: parseInt(match[2], 10),
+					line: Number.parseInt(match[2], 10),
 					content: match[3].trim(),
 				});
 			}
@@ -61,10 +61,11 @@ async function searchFiles(
 			totalMatches: matches.length,
 		};
 	} catch (error: any) {
-		// grep returns exit code 1 when no matches found
+		// Grep returns exit code 1 when no matches found
 		if (error.code === 1) {
 			return {matches: [], truncated: false, totalMatches: 0};
 		}
+
 		throw error;
 	}
 }
@@ -85,7 +86,7 @@ async function listFiles(
 
 		if (pattern.includes('{') && pattern.includes('}')) {
 			// Handle brace expansion
-			const braceMatch = pattern.match(/\{([^}]+)\}/);
+			const braceMatch = /{([^}]+)}/.exec(pattern);
 			if (braceMatch) {
 				const extensions = braceMatch[1].split(',');
 				const patterns = extensions.map(ext => `-name "*.${ext}"`).join(' -o ');
@@ -117,6 +118,7 @@ async function listFiles(
 		if (error.code === 1) {
 			return {matches: [], truncated: false, totalMatches: 0};
 		}
+
 		throw error;
 	}
 }
@@ -152,17 +154,21 @@ const handler: ToolHandler = async (args: {
 				if (match.content) {
 					output += `  ${match.content}\n`;
 				}
+
 				if (match.context && match.context.length > 1) {
 					output += `  Context:\n`;
 					for (const line of match.context.slice(0, 3)) {
 						output += `    ${line.trim()}\n`;
 					}
 				}
+
 				output += '\n';
 			}
 
 			return output.trim();
-		} else if (args.pattern) {
+		}
+
+		if (args.pattern) {
 			// File pattern search
 			result = await listFiles(args.pattern, cwd, maxResults);
 
@@ -176,25 +182,25 @@ const handler: ToolHandler = async (args: {
 			output += result.matches.map(m => m.file).join('\n');
 
 			return output;
-		} else {
-			throw new Error('Either "query" or "pattern" must be provided');
 		}
+
+		throw new Error('Either "query" or "pattern" must be provided');
 	} catch (error: any) {
 		throw new Error(`Search failed: ${error.message}`);
 	}
 };
 
 const SearchFilesFormatter = React.memo(
-	({args, result}: {args: any; result?: string}) => {
+	({args, result}: {readonly args: any; readonly result?: string}) => {
 		const {colors} = React.useContext(ThemeContext)!;
 
 		// Parse result to get match count
 		let matchCount = 0;
 		if (result && !result.startsWith('Error:')) {
 			const firstLine = result.split('\n')[0];
-			const matchFound = firstLine.match(/Found (\d+)/);
+			const matchFound = /Found (\d+)/.exec(firstLine);
 			if (matchFound) {
-				matchCount = parseInt(matchFound[1], 10);
+				matchCount = Number.parseInt(matchFound[1], 10);
 			}
 		}
 
@@ -223,7 +229,7 @@ const SearchFilesFormatter = React.memo(
 			</Box>
 		);
 
-		return <ToolMessage message={messageContent} hideBox={true} />;
+		return <ToolMessage hideBox message={messageContent} />;
 	},
 );
 
@@ -234,6 +240,7 @@ const formatter = async (
 	if (result && result.startsWith('Error:')) {
 		return <></>;
 	}
+
 	return <SearchFilesFormatter args={args} result={result} />;
 };
 

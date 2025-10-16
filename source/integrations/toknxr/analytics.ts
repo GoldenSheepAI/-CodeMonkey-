@@ -8,7 +8,7 @@
 import type {TokenUsage, UsageStats, ToknxrConfig} from './types.js';
 
 export class AnalyticsEngine {
-	private config: ToknxrConfig;
+	private readonly config: ToknxrConfig;
 
 	constructor(config: ToknxrConfig) {
 		this.config = config;
@@ -90,7 +90,7 @@ export class AnalyticsEngine {
 		}
 
 		// Get top models
-		const topModels = Array.from(modelStats.entries())
+		const topModels = [...modelStats.entries()]
 			.map(([model, stats]) => ({
 				model,
 				usageCount: stats.count,
@@ -113,13 +113,13 @@ export class AnalyticsEngine {
 			dailyCosts.set(date, (dailyCosts.get(date) || 0) + cost);
 		}
 
-		const costTrends = Array.from(dailyCosts.entries())
+		const costTrends = [...dailyCosts.entries()]
 			.map(([date, cost]) => ({date, cost}))
 			.sort((a, b) => a.date.localeCompare(b.date));
 
 		// Calculate efficiency metrics
 		const totalTokens = usages.reduce((sum, u) => sum + u.totalTokens, 0);
-		const totalCost = Array.from(modelStats.values()).reduce(
+		const totalCost = [...modelStats.values()].reduce(
 			(sum, s) => sum + s.cost,
 			0,
 		);

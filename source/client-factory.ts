@@ -1,9 +1,9 @@
+import {existsSync} from 'node:fs';
+import {join} from 'node:path';
 import {LangGraphClient} from './langgraph-client.js';
 import {appConfig} from './config/index.js';
 import {loadPreferences} from './config/preferences.js';
 import type {LLMClient, LangChainProviderConfig} from './types/index.js';
-import {existsSync} from 'fs';
-import {join} from 'path';
 
 export async function createLLMClient(
 	provider?: string,
@@ -127,10 +127,11 @@ async function testProviderConnection(
 		} catch (error) {
 			// Only throw if it's a network error, not a 404 or other HTTP response
 			if (error instanceof TypeError) {
-				throw new Error(
+				throw new TypeError(
 					`Server not accessible at ${providerConfig.config.baseURL}`,
 				);
 			}
+
 			// For AbortError (timeout), also throw
 			if (error instanceof Error && error.name === 'AbortError') {
 				throw new Error(
@@ -140,6 +141,7 @@ async function testProviderConnection(
 			// Other errors (like HTTP errors) mean the server is responding, so pass
 		}
 	}
+
 	// Require API key for hosted providers
 	if (
 		!providerConfig.config.apiKey &&

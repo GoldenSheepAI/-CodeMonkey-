@@ -12,11 +12,11 @@ export default memo(function ToolMessage({
 	hideBox = false,
 	isBashMode = false,
 }: {
-	title?: string;
-	message: string | React.ReactNode;
-	hideTitle?: boolean;
-	hideBox?: boolean;
-	isBashMode?: boolean;
+	readonly title?: string;
+	readonly message: string | React.ReactNode;
+	readonly hideTitle?: boolean;
+	readonly hideBox?: boolean;
+	readonly isBashMode?: boolean;
 }) {
 	const boxWidth = useTerminalWidth();
 	const {colors} = useTheme();
@@ -36,13 +36,13 @@ export default memo(function ToolMessage({
 			{hideBox ? (
 				<Box width={boxWidth} flexDirection="column" marginBottom={1}>
 					{isBashMode && (
-						<Text color={colors.tool} bold>
+						<Text bold color={colors.tool}>
 							Bash Command Output
 						</Text>
 					)}
 					{messageContent}
 					{isBashMode && (
-						<Text color={colors.secondary} dimColor>
+						<Text dimColor color={colors.secondary}>
 							Output truncated to 4k characters to save context
 						</Text>
 					)}
@@ -58,7 +58,7 @@ export default memo(function ToolMessage({
 				>
 					{messageContent}
 					{isBashMode && (
-						<Text color={colors.white} dimColor>
+						<Text dimColor color={colors.white}>
 							Output truncated to 4k characters to save context
 						</Text>
 					)}
@@ -78,7 +78,7 @@ export default memo(function ToolMessage({
 				>
 					{messageContent}
 					{isBashMode && (
-						<Text color={colors.tool} dimColor>
+						<Text dimColor color={colors.tool}>
 							Output truncated to 4k characters to save context
 						</Text>
 					)}

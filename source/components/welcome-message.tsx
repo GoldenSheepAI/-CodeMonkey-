@@ -1,11 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {Box, Text} from 'ink';
 import {memo} from 'react';
 
 import {useTheme} from '@/hooks/useTheme.js';
-
-import fs from 'fs';
-import path from 'path';
-import {fileURLToPath} from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,7 +21,7 @@ export default memo(function WelcomeMessage() {
 		<Box flexDirection="column" marginBottom={1}>
 			{/* Modern minimalist header */}
 			<Box marginBottom={1}>
-				<Text color={colors.primary} bold>
+				<Text bold color={colors.primary}>
 					CodeMonkey 🐒
 				</Text>
 				<Text color={colors.secondary}> v{packageJson.version}</Text>

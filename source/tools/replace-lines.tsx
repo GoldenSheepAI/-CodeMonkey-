@@ -1,7 +1,7 @@
-import React from 'react';
 import {resolve} from 'node:path';
 import {readFile, writeFile, access} from 'node:fs/promises';
 import {constants} from 'node:fs';
+import React from 'react';
 import {highlight} from 'cli-highlight';
 import {Text, Box} from 'ink';
 import type {ToolHandler, ToolDefinition} from '@/types/index.js';
@@ -10,12 +10,12 @@ import {getColors} from '@/config/index.js';
 import {getLanguageFromExtension} from '@/utils/programming-language-helper.js';
 import ToolMessage from '@/components/tool-message.js';
 
-interface ReplaceLinesArgs {
+type ReplaceLinesArgs = {
 	path: string;
 	line_number: number;
 	end_line?: number;
 	content: string;
-}
+};
 
 const handler: ToolHandler = async (
 	args: ReplaceLinesArgs,
@@ -46,6 +46,7 @@ const handler: ToolHandler = async (
 			`Line number ${line_number} is out of range (file has ${lines.length} lines)`,
 		);
 	}
+
 	if (endLine > lines.length) {
 		throw new Error(
 			`End line ${endLine} is out of range (file has ${lines.length} lines)`,
@@ -64,10 +65,10 @@ const handler: ToolHandler = async (
 
 	// Generate full file contents to show the model the current file state
 	let fileContext = '\n\nUpdated file contents:\n';
-	for (let i = 0; i < newLines.length; i++) {
-		const lineNumStr = String(i + 1).padStart(4, ' ');
-		const line = newLines[i] || '';
-		fileContext += `${lineNumStr}: ${line}\n`;
+	for (const [i, newLine] of newLines.entries()) {
+		const lineNumberString = String(i + 1).padStart(4, ' ');
+		const line = newLine || '';
+		fileContext += `${lineNumberString}: ${line}\n`;
 	}
 
 	const rangeDesc =
@@ -101,6 +102,7 @@ async function formatReplaceLinesPreview(
 			`Invalid line_number: ${line_number}. Must be a positive integer.`,
 		);
 	}
+
 	if (endLine < lineNumber) {
 		throw new Error(
 			`end_line (${endLine}) cannot be less than line_number (${lineNumber}).`,
@@ -129,7 +131,7 @@ async function formatReplaceLinesPreview(
 			const contextElements: React.ReactElement[] = [];
 
 			for (let i = showStart; i <= showEnd; i++) {
-				const lineNumStr = String(i + 1).padStart(4, ' ');
+				const lineNumberString = String(i + 1).padStart(4, ' ');
 				const line = lines[i] || '';
 				const isReplacedLine =
 					i + 1 >= lineNumber && i + 1 < lineNumber + replaceLines.length;
@@ -149,13 +151,13 @@ async function formatReplaceLinesPreview(
 							color={themeColors.diffAddedText}
 							wrap="wrap"
 						>
-							{lineNumStr} + {displayLine}
+							{lineNumberString} + {displayLine}
 						</Text>,
 					);
 				} else {
 					contextElements.push(
 						<Text key={`context-${i}`} color={themeColors.secondary}>
-							{lineNumStr} {displayLine}
+							{lineNumberString} {displayLine}
 						</Text>,
 					);
 				}
@@ -194,7 +196,7 @@ async function formatReplaceLinesPreview(
 				</Box>
 			);
 
-			return <ToolMessage message={messageContent} hideBox={true} />;
+			return <ToolMessage hideBox message={messageContent} />;
 		}
 
 		// Preview mode - show what will be replaced
@@ -218,7 +220,7 @@ async function formatReplaceLinesPreview(
 
 		// Show context before
 		for (let i = showStart; i < lineNumber - 1; i++) {
-			const lineNumStr = String(i + 1).padStart(4, ' ');
+			const lineNumberString = String(i + 1).padStart(4, ' ');
 			const line = lines[i] || '';
 			let displayLine: string;
 			try {
@@ -229,14 +231,14 @@ async function formatReplaceLinesPreview(
 
 			contextBefore.push(
 				<Text key={`before-${i}`} color={themeColors.secondary}>
-					{lineNumStr} {displayLine}
+					{lineNumberString} {displayLine}
 				</Text>,
 			);
 		}
 
 		// Show removed lines
 		for (let i = lineNumber - 1; i < endLine; i++) {
-			const lineNumStr = String(i + 1).padStart(4, ' ');
+			const lineNumberString = String(i + 1).padStart(4, ' ');
 			const line = lines[i] || '';
 			let displayLine: string;
 			try {
@@ -252,15 +254,15 @@ async function formatReplaceLinesPreview(
 					color={themeColors.diffRemovedText}
 					wrap="wrap"
 				>
-					{lineNumStr} - {displayLine}
+					{lineNumberString} - {displayLine}
 				</Text>,
 			);
 		}
 
 		// Show added lines
-		for (let i = 0; i < replaceLines.length; i++) {
-			const lineNumStr = String(lineNumber + i).padStart(4, ' ');
-			const line = replaceLines[i] || '';
+		for (const [i, replaceLine] of replaceLines.entries()) {
+			const lineNumberString = String(lineNumber + i).padStart(4, ' ');
+			const line = replaceLine || '';
 			let displayLine: string;
 			try {
 				displayLine = highlight(line, {language, theme: 'default'});
@@ -275,14 +277,14 @@ async function formatReplaceLinesPreview(
 					color={themeColors.diffAddedText}
 					wrap="wrap"
 				>
-					{lineNumStr} + {displayLine}
+					{lineNumberString} + {displayLine}
 				</Text>,
 			);
 		}
 
 		// Show context after
 		for (let i = endLine; i <= showEnd; i++) {
-			const lineNumStr = String(
+			const lineNumberString = String(
 				i + replaceLines.length - linesToRemove + 1,
 			).padStart(4, ' ');
 			const line = lines[i] || '';
@@ -295,7 +297,7 @@ async function formatReplaceLinesPreview(
 
 			contextAfter.push(
 				<Text key={`after-${i}`} color={themeColors.secondary}>
-					{lineNumStr} {displayLine}
+					{lineNumberString} {displayLine}
 				</Text>,
 			);
 		}
@@ -333,7 +335,7 @@ async function formatReplaceLinesPreview(
 			</Box>
 		);
 
-		return <ToolMessage message={messageContent} hideBox={true} />;
+		return <ToolMessage hideBox message={messageContent} />;
 	} catch (error) {
 		const errorContent = (
 			<Box flexDirection="column">
@@ -353,7 +355,7 @@ async function formatReplaceLinesPreview(
 			</Box>
 		);
 
-		return <ToolMessage message={errorContent} hideBox={true} />;
+		return <ToolMessage hideBox message={errorContent} />;
 	}
 }
 
@@ -382,6 +384,7 @@ const validator = async (
 				error: `⚒ File "${path}" does not exist`,
 			};
 		}
+
 		return {
 			valid: false,
 			error: `⚒ Cannot access file "${path}": ${error.message}`,

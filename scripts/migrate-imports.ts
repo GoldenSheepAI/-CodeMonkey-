@@ -4,14 +4,14 @@
  * Converts relative imports to path alias imports (@/...)
  */
 
-import {readFileSync, writeFileSync, readdirSync, statSync} from 'fs';
-import {join, relative, dirname} from 'path';
+import {readFileSync, writeFileSync, readdirSync, statSync} from 'node:fs';
+import {join, relative, dirname} from 'node:path';
 
-interface ImportReplacement {
+type ImportReplacement = {
 	file: string;
 	oldImport: string;
 	newImport: string;
-}
+};
 
 const sourceDir = join(process.cwd(), 'source');
 const replacements: ImportReplacement[] = [];
@@ -19,7 +19,10 @@ const replacements: ImportReplacement[] = [];
 /**
  * Convert relative import to alias import
  */
-function convertToAlias(filePath: string, importPath: string): string | null {
+function convertToAlias(
+	filePath: string,
+	importPath: string,
+): string | undefined {
 	// Skip if already using alias
 	if (importPath.startsWith('@/')) {
 		return null;
@@ -117,9 +120,9 @@ try {
 	// Show sample replacements
 	if (replacements.length > 0) {
 		console.log('\n📝 Sample replacements:');
-		replacements.slice(0, 5).forEach(r => {
+		for (const r of replacements.slice(0, 5)) {
 			console.log(`   ${r.oldImport} → ${r.newImport}`);
-		});
+		}
 	}
 } catch (error) {
 	console.error('❌ Migration failed:', error);

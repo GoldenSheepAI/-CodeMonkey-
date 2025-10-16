@@ -1,11 +1,11 @@
-import {Command} from '@/types/index.js';
-import InfoMessage from '@/components/info-message.js';
 import React from 'react';
+import {type Command} from '@/types/index.js';
+import InfoMessage from '@/components/info-message.js';
 
 export const exitCommand: Command = {
 	name: 'exit',
 	description: 'Exit the application',
-	handler: async (_args: string[], _messages, _metadata) => {
+	async handler(_args: string[], _messages, _metadata) {
 		// Return InfoMessage component first, then exit after a short delay
 		setTimeout(() => {
 			process.exit(0);

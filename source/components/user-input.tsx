@@ -7,18 +7,18 @@ import {commandRegistry} from '@/commands.js';
 import {useUIStateContext} from '@/hooks/useUIState.js';
 import {useInputState} from '@/hooks/useInputState.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
-import {Completion} from '@/types/index.js';
-import {DevelopmentMode, DEVELOPMENT_MODE_LABELS} from '@/types/core.js';
+import {type Completion} from '@/types/index.js';
+import {type DevelopmentMode, DEVELOPMENT_MODE_LABELS} from '@/types/core.js';
 
-interface ChatProps {
-	onSubmit?: (message: string) => void;
-	placeholder?: string;
-	customCommands?: string[]; // List of custom command names and aliases
-	disabled?: boolean; // Disable input when AI is processing
-	onCancel?: () => void; // Callback when user presses escape while thinking
-	onToggleMode?: () => void; // Callback when user presses shift+tab to toggle development mode
-	developmentMode?: DevelopmentMode; // Current development mode
-}
+type ChatProps = {
+	readonly onSubmit?: (message: string) => void;
+	readonly placeholder?: string;
+	readonly customCommands?: string[]; // List of custom command names and aliases
+	readonly disabled?: boolean; // Disable input when AI is processing
+	readonly onCancel?: () => void; // Callback when user presses escape while thinking
+	readonly onToggleMode?: () => void; // Callback when user presses shift+tab to toggle development mode
+	readonly developmentMode?: DevelopmentMode; // Current development mode
+};
 
 export default function UserInput({
 	onSubmit,
@@ -92,7 +92,7 @@ export default function UserInput({
 
 				// Force TextInput to remount by changing its key, which resets cursor position
 				updateInput(completedText);
-				setTextInputKey(prev => prev + 1);
+				setTextInputKey(previous => previous + 1);
 			} else if (allCompletions.length > 1) {
 				// Show completions when there are multiple matches
 				setCompletions(allCompletions);
@@ -136,33 +136,31 @@ export default function UserInput({
 					setOriginalInput(input);
 					setHistoryIndex(history.length - 1);
 					updateInput(history[history.length - 1]);
-					setTextInputKey(prev => prev + 1);
+					setTextInputKey(previous => previous + 1);
 				} else if (historyIndex > 0) {
 					const newIndex = historyIndex - 1;
 					setHistoryIndex(newIndex);
 					updateInput(history[newIndex]);
-					setTextInputKey(prev => prev + 1);
+					setTextInputKey(previous => previous + 1);
 				} else {
 					setHistoryIndex(-2);
 					updateInput('');
-					setTextInputKey(prev => prev + 1);
+					setTextInputKey(previous => previous + 1);
 				}
-			} else {
-				if (historyIndex >= 0 && historyIndex < history.length - 1) {
-					const newIndex = historyIndex + 1;
-					setHistoryIndex(newIndex);
-					updateInput(history[newIndex]);
-					setTextInputKey(prev => prev + 1);
-				} else if (historyIndex === history.length - 1) {
-					setHistoryIndex(-1);
-					updateInput(originalInput);
-					setOriginalInput('');
-					setTextInputKey(prev => prev + 1);
-				} else if (historyIndex === -2) {
-					setHistoryIndex(0);
-					updateInput(history[0]);
-					setTextInputKey(prev => prev + 1);
-				}
+			} else if (historyIndex >= 0 && historyIndex < history.length - 1) {
+				const newIndex = historyIndex + 1;
+				setHistoryIndex(newIndex);
+				updateInput(history[newIndex]);
+				setTextInputKey(previous => previous + 1);
+			} else if (historyIndex === history.length - 1) {
+				setHistoryIndex(-1);
+				updateInput(originalInput);
+				setOriginalInput('');
+				setTextInputKey(previous => previous + 1);
+			} else if (historyIndex === -2) {
+				setHistoryIndex(0);
+				updateInput(history[0]);
+				setTextInputKey(previous => previous + 1);
 			}
 		},
 		[
@@ -201,8 +199,9 @@ export default function UserInput({
 
 		if (key.ctrl && inputChar === 'b') {
 			if (hasLargeContent && input.length > 150) {
-				setShowFullContent(prev => !prev);
+				setShowFullContent(previous => !previous);
 			}
+
 			return;
 		}
 
@@ -217,6 +216,7 @@ export default function UserInput({
 			setShowCompletions(false);
 			setCompletions([]);
 		}
+
 		if (showClearMessage) {
 			setShowClearMessage(false);
 			focus('user-input');
@@ -236,7 +236,6 @@ export default function UserInput({
 
 		if (key.downArrow) {
 			handleHistoryNavigation('down');
-			return;
 		}
 	});
 
@@ -286,10 +285,10 @@ export default function UserInput({
 							<TextInput
 								key={textInputKey}
 								value={input}
-								onChange={updateInput}
-								onSubmit={handleSubmit}
 								placeholder={placeholder}
 								focus={isFocused}
+								onChange={updateInput}
+								onSubmit={handleSubmit}
 							/>
 						)}
 					</Box>
@@ -299,14 +298,14 @@ export default function UserInput({
 			{/* Contextual hints below input */}
 			{isBashMode && (
 				<Box marginTop={1}>
-					<Text color={colors.tool} dimColor>
+					<Text dimColor color={colors.tool}>
 						Bash Mode
 					</Text>
 				</Box>
 			)}
 			{showClearMessage && (
 				<Box marginTop={1}>
-					<Text color={colors.secondary} dimColor>
+					<Text dimColor color={colors.secondary}>
 						Press escape again to clear
 					</Text>
 				</Box>

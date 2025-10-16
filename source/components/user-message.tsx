@@ -11,7 +11,7 @@ export default memo(function UserMessage({message}: UserMessageProps) {
 		return (
 			<Box flexDirection="column" marginBottom={1}>
 				<Box>
-					<Text color={colors.secondary} bold>
+					<Text bold color={colors.secondary}>
 						You:
 					</Text>
 				</Box>
@@ -29,7 +29,7 @@ export default memo(function UserMessage({message}: UserMessageProps) {
 	return (
 		<Box flexDirection="column" marginBottom={1}>
 			<Box>
-				<Text color={colors.secondary} bold>
+				<Text bold color={colors.secondary}>
 					You:
 				</Text>
 			</Box>

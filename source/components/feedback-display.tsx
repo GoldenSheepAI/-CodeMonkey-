@@ -1,22 +1,22 @@
 import React, {useState, useCallback, memo} from 'react';
 import {Box, Text, useInput} from 'ink';
-import {useTheme} from '@/hooks/useTheme.js';
-import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import SelectInput from 'ink-select-input';
 import TextInput from 'ink-text-input';
+import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
+import {useTheme} from '@/hooks/useTheme.js';
 import {Command} from '@/types/index.js';
 import {saveFeedback, getFeedbackStats} from '@/utils/feedback-logger.js';
 
-interface FeedbackDisplayProps {
-	onSubmit: (feedback: {
+type FeedbackDisplayProps = {
+	readonly onSubmit: (feedback: {
 		category: string;
 		rating: number;
 		message: string;
 		email?: string;
 	}) => void;
-	onCancel: () => void;
-}
+	readonly onCancel: () => void;
+};
 
 const FEEDBACK_CATEGORIES = [
 	{label: '🚀 Performance & Speed', value: 'performance'},
@@ -190,7 +190,7 @@ export default memo(function FeedbackDisplay({
 			{step === 'category' && (
 				<Box flexDirection="column">
 					<Box marginBottom={1}>
-						<Text color={colors.primary} bold>
+						<Text bold color={colors.primary}>
 							Help us improve CodeMonkey! What area would you like to provide
 							feedback on?
 						</Text>
@@ -203,7 +203,6 @@ export default memo(function FeedbackDisplay({
 					</Box>
 					<SelectInput
 						items={FEEDBACK_CATEGORIES}
-						onSelect={handleCategorySelect}
 						indicatorComponent={({isSelected}) => (
 							<Text color={isSelected ? colors.primary : colors.secondary}>
 								{isSelected ? '❯' : ' '}
@@ -214,6 +213,7 @@ export default memo(function FeedbackDisplay({
 								{label}
 							</Text>
 						)}
+						onSelect={handleCategorySelect}
 					/>
 					<Box marginTop={2}>
 						<Text color={colors.secondary}>Press Escape to cancel</Text>
@@ -224,13 +224,12 @@ export default memo(function FeedbackDisplay({
 			{step === 'rating' && (
 				<Box flexDirection="column">
 					<Box marginBottom={1}>
-						<Text color={colors.primary} bold>
+						<Text bold color={colors.primary}>
 							Rate your experience with: {getCategoryLabel(selectedCategory)}
 						</Text>
 					</Box>
 					<SelectInput
 						items={RATING_OPTIONS}
-						onSelect={handleRatingSelect}
 						indicatorComponent={({isSelected}) => (
 							<Text color={isSelected ? colors.primary : colors.secondary}>
 								{isSelected ? '❯' : ' '}
@@ -241,6 +240,7 @@ export default memo(function FeedbackDisplay({
 								{label}
 							</Text>
 						)}
+						onSelect={handleRatingSelect}
 					/>
 					<Box marginTop={2}>
 						<Text color={colors.secondary}>Press Escape to cancel</Text>
@@ -251,14 +251,14 @@ export default memo(function FeedbackDisplay({
 			{step === 'message' && (
 				<Box flexDirection="column">
 					<Box marginBottom={1}>
-						<Text color={colors.primary} bold>
+						<Text bold color={colors.primary}>
 							Tell us more about your experience:
 						</Text>
 					</Box>
 
 					{/* Show helpful questions */}
 					<Box flexDirection="column" marginBottom={1}>
-						<Text color={colors.secondary} italic>
+						<Text italic color={colors.secondary}>
 							Some questions to consider:
 						</Text>
 						{getQuestions().map((question, index) => (
@@ -274,7 +274,9 @@ export default memo(function FeedbackDisplay({
 							value={message}
 							placeholder="Share your thoughts, suggestions, or issues..."
 							onSubmit={handleMessageSubmit}
-							onChange={value => setMessage(value)}
+							onChange={value => {
+								setMessage(value);
+							}}
 						/>
 					</Box>
 
@@ -289,7 +291,7 @@ export default memo(function FeedbackDisplay({
 			{step === 'email' && (
 				<Box flexDirection="column">
 					<Box marginBottom={1}>
-						<Text color={colors.primary} bold>
+						<Text bold color={colors.primary}>
 							Email (optional) - for follow-up questions:
 						</Text>
 					</Box>
@@ -304,7 +306,9 @@ export default memo(function FeedbackDisplay({
 							value={email}
 							placeholder="your-email@example.com (optional)"
 							onSubmit={handleEmailSubmit}
-							onChange={value => setEmail(value)}
+							onChange={value => {
+								setEmail(value);
+							}}
 						/>
 					</Box>
 					<Box>
@@ -318,7 +322,7 @@ export default memo(function FeedbackDisplay({
 			{step === 'confirm' && (
 				<Box flexDirection="column">
 					<Box marginBottom={1}>
-						<Text color={colors.primary} bold>
+						<Text bold color={colors.primary}>
 							Review your feedback:
 						</Text>
 					</Box>
@@ -331,26 +335,26 @@ export default memo(function FeedbackDisplay({
 						borderColor={colors.secondary}
 					>
 						<Text color={colors.white}>
-							<Text color={colors.primary} bold>
+							<Text bold color={colors.primary}>
 								Category:
 							</Text>{' '}
 							{getCategoryLabel(selectedCategory)}
 						</Text>
 						<Text color={colors.white}>
-							<Text color={colors.primary} bold>
+							<Text bold color={colors.primary}>
 								Rating:
 							</Text>{' '}
 							{getRatingLabel(selectedRating)}
 						</Text>
 						<Text color={colors.white}>
-							<Text color={colors.primary} bold>
+							<Text bold color={colors.primary}>
 								Message:
 							</Text>{' '}
 							{message || 'No additional message'}
 						</Text>
 						{email && (
 							<Text color={colors.white}>
-								<Text color={colors.primary} bold>
+								<Text bold color={colors.primary}>
 									Email:
 								</Text>{' '}
 								{email}
@@ -359,7 +363,7 @@ export default memo(function FeedbackDisplay({
 					</Box>
 
 					<Box justifyContent="space-between">
-						<Text color={colors.success} bold>
+						<Text bold color={colors.success}>
 							Press Enter to submit feedback
 						</Text>
 						<Text color={colors.secondary}>Press Escape to cancel</Text>
@@ -370,7 +374,7 @@ export default memo(function FeedbackDisplay({
 			{step === 'success' && (
 				<Box flexDirection="column" alignItems="center">
 					<Box marginBottom={1}>
-						<Text color={colors.success} bold>
+						<Text bold color={colors.success}>
 							🎉 Thank you for your feedback!
 						</Text>
 					</Box>
@@ -397,11 +401,10 @@ export function useFeedbackConfirmInput(
 	onCancel: () => void,
 ) {
 	useInput((input, key) => {
-		if (step === 'confirm') {
-			if (key.return) {
-				onSubmit();
-			}
+		if (step === 'confirm' && key.return) {
+			onSubmit();
 		}
+
 		if (key.escape) {
 			onCancel();
 		}

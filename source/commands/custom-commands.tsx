@@ -1,13 +1,13 @@
-import type {Command, CustomCommand} from '@/types/index.js';
-import {CustomCommandLoader} from '@/custom-commands/loader.js';
 import React from 'react';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {Text, Box} from 'ink';
+import {CustomCommandLoader} from '@/custom-commands/loader.js';
+import type {Command, CustomCommand} from '@/types/index.js';
 import {useTheme} from '@/hooks/useTheme.js';
 
-interface CustomCommandsProps {
-	commands: CustomCommand[];
-}
+type CustomCommandsProps = {
+	readonly commands: CustomCommand[];
+};
 
 function formatCommand(cmd: CustomCommand): string {
 	const parts: string[] = [`/${cmd.fullName}`];
@@ -53,7 +53,7 @@ function CustomCommands({commands}: CustomCommandsProps) {
 			{commands.length === 0 ? (
 				<>
 					<Box marginBottom={1}>
-						<Text color={colors.white} bold>
+						<Text bold color={colors.white}>
 							No custom commands found
 						</Text>
 					</Box>
@@ -108,7 +108,7 @@ function CustomCommands({commands}: CustomCommandsProps) {
 export const commandsCommand: Command = {
 	name: 'custom-commands',
 	description: 'List all custom commands from .codemonkey/commands',
-	handler: async (_args: string[]) => {
+	async handler(_args: string[]) {
 		// Create a custom command loader to get the commands
 		const loader = new CustomCommandLoader();
 		await loader.loadCommands();
@@ -116,7 +116,7 @@ export const commandsCommand: Command = {
 
 		return React.createElement(CustomCommands, {
 			key: `custom-commands-${Date.now()}`,
-			commands: commands,
+			commands,
 		});
 	},
 };

@@ -5,13 +5,13 @@
 
 import type {DetectedError} from './error-detector.js';
 
-export interface GeneratedFix {
+export type GeneratedFix = {
 	description: string;
 	confidence: number;
 	originalCode: string;
 	fixedCode: string;
 	explanation: string;
-}
+};
 
 export class FixGenerator {
 	async generate(error: DetectedError, code: string): Promise<GeneratedFix[]> {
@@ -19,17 +19,24 @@ export class FixGenerator {
 
 		// Fix generation logic based on error type
 		switch (error.type) {
-			case 'syntax':
+			case 'syntax': {
 				fixes.push(...this.generateSyntaxFixes(error, code));
 				break;
-			case 'type':
+			}
+
+			case 'type': {
 				fixes.push(...this.generateTypeFixes(error, code));
 				break;
-			case 'runtime':
+			}
+
+			case 'runtime': {
 				fixes.push(...this.generateRuntimeFixes(error, code));
 				break;
-			default:
+			}
+
+			default: {
 				fixes.push(...this.generateGenericFixes(error, code));
+			}
 		}
 
 		return fixes.sort((a, b) => b.confidence - a.confidence);

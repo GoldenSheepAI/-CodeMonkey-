@@ -5,7 +5,8 @@ import SuccessMessage from '@/components/success-message.js';
 import type {MessageType, MessageQueueItem} from '@/types/index.js';
 
 // Global message queue function - will be set by App component
-let globalAddToChatQueue: ((component: React.ReactNode) => void) | null = null;
+let globalAddToChatQueue: ((component: React.ReactNode) => void) | undefined =
+	undefined;
 let componentKeyCounter = 0;
 
 // Set the global chat queue function
@@ -25,7 +26,7 @@ function getNextKey(): string {
 export function addMessageToQueue(
 	type: MessageType,
 	message: string,
-	hideBox: boolean = true,
+	hideBox = true,
 ) {
 	if (!globalAddToChatQueue) {
 		// Fallback to console if queue not available
@@ -37,34 +38,39 @@ export function addMessageToQueue(
 	let component: React.ReactNode;
 
 	switch (type) {
-		case 'error':
+		case 'error': {
 			component = (
 				<ErrorMessage key={key} message={message} hideBox={hideBox} />
 			);
 			break;
-		case 'success':
+		}
+
+		case 'success': {
 			component = (
 				<SuccessMessage key={key} message={message} hideBox={hideBox} />
 			);
 			break;
+		}
+
 		case 'info':
-		default:
+		default: {
 			component = <InfoMessage key={key} message={message} hideBox={hideBox} />;
 			break;
+		}
 	}
 
 	globalAddToChatQueue(component);
 }
 
 // Convenience functions for each message type
-export function logInfo(message: string, hideBox: boolean = true) {
+export function logInfo(message: string, hideBox = true) {
 	addMessageToQueue('info', message, hideBox);
 }
 
-export function logError(message: string, hideBox: boolean = true) {
+export function logError(message: string, hideBox = true) {
 	addMessageToQueue('error', message, hideBox);
 }
 
-export function logSuccess(message: string, hideBox: boolean = true) {
+export function logSuccess(message: string, hideBox = true) {
 	addMessageToQueue('success', message, hideBox);
 }

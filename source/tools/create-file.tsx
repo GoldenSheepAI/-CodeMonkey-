@@ -19,7 +19,7 @@ const handler: ToolHandler = async (args: {
 };
 
 // Create a component that will re-render when theme changes
-const CreateFileFormatter = React.memo(({args}: {args: any}) => {
+const CreateFileFormatter = React.memo(({args}: {readonly args: any}) => {
 	const {colors} = React.useContext(ThemeContext)!;
 	const path = args.path || args.file_path || 'unknown';
 	const newContent = args.content || '';
@@ -48,7 +48,7 @@ const CreateFileFormatter = React.memo(({args}: {args: any}) => {
 				<Box flexDirection="column" marginTop={1}>
 					<Text color={colors.white}>File content:</Text>
 					{newContent.split('\n').map((line: string, i: number) => {
-						const lineNumStr = String(i + 1).padStart(4, ' ');
+						const lineNumberString = String(i + 1).padStart(4, ' ');
 						const ext = path.split('.').pop()?.toLowerCase();
 						const language = getLanguageFromExtension(ext);
 
@@ -56,14 +56,14 @@ const CreateFileFormatter = React.memo(({args}: {args: any}) => {
 							const highlighted = highlight(line, {language, theme: 'default'});
 							return (
 								<Box key={i}>
-									<Text color={colors.secondary}>{lineNumStr} </Text>
+									<Text color={colors.secondary}>{lineNumberString} </Text>
 									<Text wrap="wrap">{highlighted}</Text>
 								</Box>
 							);
 						} catch {
 							return (
 								<Box key={i}>
-									<Text color={colors.secondary}>{lineNumStr} </Text>
+									<Text color={colors.secondary}>{lineNumberString} </Text>
 									<Text wrap="wrap">{line}</Text>
 								</Box>
 							);
@@ -78,7 +78,7 @@ const CreateFileFormatter = React.memo(({args}: {args: any}) => {
 		</Box>
 	);
 
-	return <ToolMessage message={messageContent} hideBox={true} />;
+	return <ToolMessage hideBox message={messageContent} />;
 });
 
 const formatter = async (args: any): Promise<React.ReactElement> => {
@@ -119,6 +119,7 @@ const validator = async (args: {
 				error: `⚒ Parent directory does not exist: "${parentDir}"`,
 			};
 		}
+
 		return {
 			valid: false,
 			error: `⚒ Cannot access parent directory "${parentDir}": ${error.message}`,
@@ -132,8 +133,8 @@ const validator = async (args: {
 		/^\/proc\//i,
 		/^\/dev\//i,
 		/^\/boot\//i,
-		/^C:\\Windows\\/i,
-		/^C:\\Program Files\\/i,
+		/^c:\\windows\\/i,
+		/^c:\\program files\\/i,
 	];
 
 	for (const pattern of invalidPatterns) {

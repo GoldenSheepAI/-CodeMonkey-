@@ -6,16 +6,16 @@ import {appConfig} from '@/config/index.js';
 import {useTheme} from '@/hooks/useTheme.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 
-interface ProviderSelectorProps {
-	currentProvider: string;
-	onProviderSelect: (provider: string) => void;
-	onCancel: () => void;
-}
+type ProviderSelectorProps = {
+	readonly currentProvider: string;
+	readonly onProviderSelect: (provider: string) => void;
+	readonly onCancel: () => void;
+};
 
-interface ProviderOption {
+type ProviderOption = {
 	label: string;
 	value: string;
-}
+};
 
 export default function ProviderSelector({
 	currentProvider,

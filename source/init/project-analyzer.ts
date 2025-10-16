@@ -1,10 +1,13 @@
+import {readFileSync, existsSync} from 'node:fs';
+import {join, basename} from 'node:path';
 import {FileScanner} from './file-scanner.js';
-import {LanguageDetector, DetectedLanguages} from './language-detector.js';
-import {FrameworkDetector, ProjectDependencies} from './framework-detector.js';
-import {readFileSync, existsSync} from 'fs';
-import {join, basename} from 'path';
+import {LanguageDetector, type DetectedLanguages} from './language-detector.js';
+import {
+	FrameworkDetector,
+	type ProjectDependencies,
+} from './framework-detector.js';
 
-export interface ProjectAnalysis {
+export type ProjectAnalysis = {
 	projectPath: string;
 	projectName: string;
 	languages: DetectedLanguages;
@@ -23,16 +26,16 @@ export interface ProjectAnalysis {
 		directories: string[];
 		importantDirectories: string[];
 	};
-	buildCommands: {[key: string]: string};
+	buildCommands: Record<string, string>;
 	description?: string;
 	repository?: string;
-}
+};
 
 export class ProjectAnalyzer {
-	private fileScanner: FileScanner;
-	private frameworkDetector: FrameworkDetector;
+	private readonly fileScanner: FileScanner;
+	private readonly frameworkDetector: FrameworkDetector;
 
-	constructor(private projectPath: string) {
+	constructor(private readonly projectPath: string) {
 		this.fileScanner = new FileScanner(projectPath);
 		this.frameworkDetector = new FrameworkDetector(projectPath);
 	}
@@ -121,7 +124,7 @@ export class ProjectAnalyzer {
 			'.svelte',
 		];
 
-		const ext = file.substring(file.lastIndexOf('.'));
+		const ext = file.slice(Math.max(0, file.lastIndexOf('.')));
 		return codeExtensions.includes(ext);
 	}
 
@@ -146,7 +149,7 @@ export class ProjectAnalyzer {
 	private getImportantDirectories(directories: string[]): string[] {
 		const important = new Set<string>();
 
-		const sourcePatterns = [
+		const sourcePatterns = new Set([
 			'src',
 			'source',
 			'app',
@@ -172,7 +175,7 @@ export class ProjectAnalyzer {
 			'public',
 			'docs',
 			'documentation',
-		];
+		]);
 
 		const testPatterns = ['test', 'tests', '__tests__', 'spec'];
 
@@ -188,14 +191,12 @@ export class ProjectAnalyzer {
 
 			if (!isInTestDir) {
 				// Add if directory name matches source patterns
-				if (sourcePatterns.includes(dirName)) {
+				if (sourcePatterns.has(dirName)) {
 					important.add(dir);
 				}
 
 				// Add if any part of the path matches source patterns (e.g., "src/components")
-				if (
-					dirParts.some(part => sourcePatterns.includes(part.toLowerCase()))
-				) {
+				if (dirParts.some(part => sourcePatterns.has(part.toLowerCase()))) {
 					important.add(dir);
 				}
 			}
@@ -212,20 +213,18 @@ export class ProjectAnalyzer {
 					testPatterns.includes(dirName) ||
 					dirParts.some(part => testPatterns.includes(part.toLowerCase()));
 
-				if (isTestDir) {
-					// Only add test directories that contain meaningful structure
-					if (
-						dirParts.length > 1 ||
-						directories.filter(d => d.startsWith(dir)).length > 1
-					) {
-						important.add(dir);
-					}
+				if (
+					isTestDir && // Only add test directories that contain meaningful structure
+					(dirParts.length > 1 ||
+						directories.filter(d => d.startsWith(dir)).length > 1)
+				) {
+					important.add(dir);
 				}
 			}
 		}
 
 		// Sort with source directories first, then by depth (fewer levels first), then alphabetically
-		return Array.from(important).sort((a, b) => {
+		return [...important].sort((a, b) => {
 			const aIsTest = testPatterns.some(pattern => a.includes(pattern));
 			const bIsTest = testPatterns.some(pattern => b.includes(pattern));
 
@@ -264,19 +263,23 @@ export class ProjectAnalyzer {
 		if (existsSync(packageJsonPath)) {
 			try {
 				const content = readFileSync(packageJsonPath, 'utf-8');
-				const pkg = JSON.parse(content);
-
-				if (pkg.name) projectName = pkg.name;
-				if (pkg.description) description = pkg.description;
-				if (pkg.repository) {
-					if (typeof pkg.repository === 'string') {
-						repository = pkg.repository;
-					} else if (pkg.repository.url) {
-						repository = pkg.repository.url;
+				try {
+					const pkg = JSON.parse(content);
+					if (pkg.name) projectName = pkg.name;
+					if (pkg.description) description = pkg.description;
+					if (pkg.repository) {
+						if (typeof pkg.repository === 'string') {
+							repository = pkg.repository;
+						} else if (pkg.repository.url) {
+							repository = pkg.repository.url;
+						}
 					}
+				} catch (parseError) {
+					console.error('Error parsing package.json:', parseError);
+					// Continue without package.json data
 				}
-			} catch (error) {
-				// Ignore parsing errors
+			} catch (readError) {
+				// File read error - continue without package.json data
 			}
 		}
 
@@ -286,12 +289,12 @@ export class ProjectAnalyzer {
 			if (existsSync(cargoPath)) {
 				try {
 					const content = readFileSync(cargoPath, 'utf-8');
-					const nameMatch = content.match(/^name\s*=\s*"([^"]+)"/m);
-					const descMatch = content.match(/^description\s*=\s*"([^"]+)"/m);
+					const nameMatch = /^name\s*=\s*"([^"]+)"/m.exec(content);
+					const descMatch = /^description\s*=\s*"([^"]+)"/m.exec(content);
 
 					if (nameMatch) projectName = nameMatch[1];
 					if (descMatch) description = descMatch[1];
-				} catch (error) {
+				} catch {
 					// Ignore parsing errors
 				}
 			}
@@ -318,8 +321,9 @@ export class ProjectAnalyzer {
 								break;
 							}
 						}
+
 						break;
-					} catch (error) {
+					} catch {
 						// Ignore parsing errors
 					}
 				}
@@ -387,37 +391,52 @@ export class ProjectAnalyzer {
 
 			switch (lang) {
 				case 'JavaScript':
-				case 'TypeScript':
-					conventions.push('Use camelCase for variables and functions');
-					conventions.push('Use PascalCase for classes and components');
-					conventions.push('Use const/let instead of var');
+				case 'TypeScript': {
+					conventions.push(
+						'Use camelCase for variables and functions',
+						'Use PascalCase for classes and components',
+						'Use const/let instead of var',
+					);
 					if (
 						analysis.dependencies.frameworks.some(f => f.name.includes('React'))
 					) {
-						conventions.push('Use functional components with hooks');
-						conventions.push('Follow React naming conventions');
+						conventions.push(
+							'Use functional components with hooks',
+							'Follow React naming conventions',
+						);
 					}
-					break;
 
-				case 'Python':
-					conventions.push('Follow PEP 8 style guide');
-					conventions.push('Use snake_case for variables and functions');
-					conventions.push('Use PascalCase for classes');
-					conventions.push('Include type hints where appropriate');
 					break;
+				}
 
-				case 'Rust':
-					conventions.push('Follow Rust naming conventions (snake_case)');
-					conventions.push('Use cargo fmt for formatting');
-					conventions.push('Handle errors explicitly with Result<T, E>');
+				case 'Python': {
+					conventions.push(
+						'Follow PEP 8 style guide',
+						'Use snake_case for variables and functions',
+						'Use PascalCase for classes',
+						'Include type hints where appropriate',
+					);
 					break;
+				}
 
-				case 'Go':
-					conventions.push('Follow Go naming conventions');
-					conventions.push('Use gofmt for formatting');
-					conventions.push('Handle errors explicitly');
-					conventions.push('Use interfaces for abstraction');
+				case 'Rust': {
+					conventions.push(
+						'Follow Rust naming conventions (snake_case)',
+						'Use cargo fmt for formatting',
+						'Handle errors explicitly with Result<T, E>',
+					);
 					break;
+				}
+
+				case 'Go': {
+					conventions.push(
+						'Follow Go naming conventions',
+						'Use gofmt for formatting',
+						'Handle errors explicitly',
+						'Use interfaces for abstraction',
+					);
+					break;
+				}
 			}
 		}
 
@@ -427,8 +446,8 @@ export class ProjectAnalyzer {
 				`Write tests using ${analysis.dependencies.testingFrameworks.join(
 					', ',
 				)}`,
+				'Maintain good test coverage',
 			);
-			conventions.push('Maintain good test coverage');
 		}
 
 		return conventions;

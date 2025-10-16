@@ -1,20 +1,26 @@
-import {Message, LLMClient, DevelopmentMode} from '@/types/core.js';
+import React from 'react';
+import {type ConversationContext} from './useAppState.js';
+import {
+	type Message,
+	type LLMClient,
+	type DevelopmentMode,
+} from '@/types/core.js';
 import {processToolUse, getToolManager} from '@/message-handler.js';
-import {ConversationContext} from './useAppState.js';
 import InfoMessage from '@/components/info-message.js';
 import ErrorMessage from '@/components/error-message.js';
 import ToolMessage from '@/components/tool-message.js';
-import React from 'react';
 
-interface UseToolHandlerProps {
+type UseToolHandlerProps = {
 	pendingToolCalls: any[];
 	currentToolIndex: number;
 	completedToolResults: any[];
-	currentConversationContext: ConversationContext | null;
+	currentConversationContext: ConversationContext | undefined;
 	setPendingToolCalls: (calls: any[]) => void;
 	setCurrentToolIndex: (index: number) => void;
 	setCompletedToolResults: (results: any[]) => void;
-	setCurrentConversationContext: (context: ConversationContext | null) => void;
+	setCurrentConversationContext: (
+		context: ConversationContext | undefined,
+	) => void;
 	setIsToolConfirmationMode: (mode: boolean) => void;
 	setIsToolExecuting: (executing: boolean) => void;
 	setMessages: (messages: Message[]) => void;
@@ -25,10 +31,10 @@ interface UseToolHandlerProps {
 		systemMessage: Message,
 		messages: Message[],
 	) => Promise<void>;
-	client?: LLMClient | null;
+	client?: LLMClient | undefined;
 	currentProvider?: string;
 	setDevelopmentMode?: (mode: DevelopmentMode) => void;
-}
+};
 
 export function useToolHandler({
 	pendingToolCalls,
@@ -62,10 +68,11 @@ export function useToolHandler({
 					if (typeof parsedArgs === 'string') {
 						try {
 							parsedArgs = JSON.parse(parsedArgs);
-						} catch (e) {
+						} catch {
 							// If parsing fails, use as-is
 						}
 					}
+
 					const formattedResult = await formatter(parsedArgs, result.content);
 
 					if (React.isValidElement(formattedResult)) {
@@ -82,20 +89,20 @@ export function useToolHandler({
 								key={`tool-result-${
 									result.tool_call_id
 								}-${componentKeyCounter}-${Date.now()}`}
+								hideBox
 								title={`⚒ ${result.name}`}
 								message={String(formattedResult)}
-								hideBox={true}
 							/>,
 						);
 					}
-				} catch (formatterError) {
+				} catch {
 					// If formatter fails, show raw result
 					addToChatQueue(
 						<ToolMessage
 							key={`tool-result-${result.tool_call_id}-${componentKeyCounter}`}
+							hideBox
 							title={`⚒ ${result.name}`}
 							message={result.content}
-							hideBox={true}
 						/>,
 					);
 				}
@@ -104,9 +111,9 @@ export function useToolHandler({
 				addToChatQueue(
 					<ToolMessage
 						key={`tool-result-${result.tool_call_id}-${componentKeyCounter}`}
+						hideBox
 						title={`⚒ ${result.name}`}
 						message={result.content}
-						hideBox={true}
 					/>,
 				);
 			}
@@ -158,8 +165,8 @@ export function useToolHandler({
 			addToChatQueue(
 				<InfoMessage
 					key={`tool-cancelled-${componentKeyCounter}`}
+					hideBox
 					message="Tool execution cancelled by user"
-					hideBox={true}
 				/>,
 			);
 			resetToolConfirmationState();
@@ -188,8 +195,8 @@ export function useToolHandler({
 				addToChatQueue(
 					<InfoMessage
 						key={`mcp-tool-executing-${componentKeyCounter}-${Date.now()}`}
+						hideBox
 						message={`Executing MCP tool "${currentTool.function.name}" from server "${mcpInfo.serverName}"`}
-						hideBox={true}
 					/>,
 				);
 			}
@@ -203,7 +210,7 @@ export function useToolHandler({
 					if (typeof parsedArgs === 'string') {
 						try {
 							parsedArgs = JSON.parse(parsedArgs);
-						} catch (e) {
+						} catch {
 							// If parsing fails, use as-is
 						}
 					}
@@ -225,8 +232,8 @@ export function useToolHandler({
 						addToChatQueue(
 							<ErrorMessage
 								key={`tool-validation-error-${componentKeyCounter}-${Date.now()}`}
+								hideBox
 								message={validationResult.error}
-								hideBox={true}
 							/>,
 						);
 
@@ -241,6 +248,7 @@ export function useToolHandler({
 							setIsToolExecuting(false);
 							await continueConversationWithToolResults(newResults);
 						}
+
 						return;
 					}
 				} catch (validationError) {
@@ -262,8 +270,8 @@ export function useToolHandler({
 					addToChatQueue(
 						<ErrorMessage
 							key={`tool-validation-error-${componentKeyCounter}-${Date.now()}`}
+							hideBox
 							message={`Validation error: ${validationError}`}
-							hideBox={true}
 						/>,
 					);
 
@@ -276,6 +284,7 @@ export function useToolHandler({
 						setIsToolExecuting(false);
 						await continueConversationWithToolResults(newResults);
 					}
+
 					return;
 				}
 			}
@@ -288,7 +297,7 @@ export function useToolHandler({
 				if (typeof parsedArgs === 'string') {
 					try {
 						parsedArgs = JSON.parse(parsedArgs);
-					} catch (e) {
+					} catch {
 						// If parsing fails, use as-is
 					}
 				}
@@ -300,8 +309,8 @@ export function useToolHandler({
 				addToChatQueue(
 					<InfoMessage
 						key={`mode-switched-${componentKeyCounter}-${Date.now()}`}
+						hideBox
 						message={`Development mode switched to: ${requestedMode.toUpperCase()}`}
-						hideBox={true}
 					/>,
 				);
 			}
@@ -342,8 +351,8 @@ export function useToolHandler({
 		addToChatQueue(
 			<InfoMessage
 				key={`tool-cancelled-${componentKeyCounter}`}
+				hideBox
 				message="Tool execution cancelled by user"
-				hideBox={true}
 			/>,
 		);
 		resetToolConfirmationState();
@@ -353,7 +362,7 @@ export function useToolHandler({
 	const startToolConfirmationFlow = (
 		toolCalls: any[],
 		updatedMessages: Message[],
-		assistantMsg: Message,
+		assistantMessage: Message,
 		systemMessage: Message,
 	) => {
 		setPendingToolCalls(toolCalls);
@@ -361,7 +370,7 @@ export function useToolHandler({
 		setCompletedToolResults([]);
 		setCurrentConversationContext({
 			updatedMessages,
-			assistantMsg,
+			assistantMsg: assistantMessage,
 			systemMessage,
 		});
 		setIsToolConfirmationMode(true);

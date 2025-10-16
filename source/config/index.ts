@@ -1,12 +1,12 @@
-import type {AppConfig, Colors} from '@/types/index.js';
-import {existsSync, readFileSync} from 'fs';
-import {join, dirname} from 'path';
-import {fileURLToPath} from 'url';
+import {existsSync, readFileSync} from 'node:fs';
+import {join, dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {config as loadEnv} from 'dotenv';
-import {logError} from '@/utils/message-queue.js';
 import {loadPreferences} from './preferences.js';
 import {getThemeColors, defaultTheme} from './themes.js';
 import {substituteEnvVars} from './env-substitution.js';
+import {logError} from '@/utils/message-queue.js';
+import type {AppConfig, Colors} from '@/types/index.js';
 
 // Load .env file from working directory (shell environment takes precedence)
 // Suppress dotenv console output by temporarily redirecting stdout
@@ -28,19 +28,23 @@ function loadAppConfig(): AppConfig {
 	if (existsSync(agentsJsonPath)) {
 		try {
 			const rawData = readFileSync(agentsJsonPath, 'utf-8');
-			const agentsData = JSON.parse(rawData);
+			try {
+				const agentsData = JSON.parse(rawData);
 
-			// Apply environment variable substitution
-			const processedData = substituteEnvVars(agentsData);
+				// Apply environment variable substitution
+				const processedData = substituteEnvVars(agentsData);
 
-			if (processedData.codemonkey) {
-				return {
-					providers: processedData.codemonkey.providers,
-					mcpServers: processedData.codemonkey.mcpServers,
-				};
+				if (processedData.codemonkey) {
+					return {
+						providers: processedData.codemonkey.providers,
+						mcpServers: processedData.codemonkey.mcpServers,
+					};
+				}
+			} catch (parseError) {
+				logError(`Failed to parse agents.config.json: ${parseError}`);
 			}
-		} catch (error) {
-			logError(`Failed to parse agents.config.json: ${error}`);
+		} catch (readError) {
+			logError(`Failed to read agents.config.json: ${readError}`);
 		}
 	}
 

@@ -1,6 +1,7 @@
 import {Box, Text, useApp} from 'ink';
-import WelcomeMessage from './components/welcome-message.js';
 import React from 'react';
+import Spinner from 'ink-spinner';
+import WelcomeMessage from './components/welcome-message.js';
 import {getThemeColors} from './config/themes.js';
 import {ThemeContext} from './hooks/useTheme.js';
 import UserInput from './components/user-input.js';
@@ -15,7 +16,6 @@ import ToolConfirmation from './components/tool-confirmation.js';
 import ToolExecutionIndicator from './components/tool-execution-indicator.js';
 import BashExecutionIndicator from './components/bash-execution-indicator.js';
 import {setGlobalMessageQueue} from './utils/message-queue.js';
-import Spinner from 'ink-spinner';
 import SecurityDisclaimer from './components/security-disclaimer.js';
 import {RecommendationsDisplay} from './commands/recommendations.js';
 import {getTerminalSafeConfig} from './utils/terminal-detector.js';
@@ -73,18 +73,18 @@ export default function App() {
 		abortController: appState.abortController,
 		setAbortController: appState.setAbortController,
 		developmentMode: appState.developmentMode,
-		onStartToolConfirmationFlow: (
+		onStartToolConfirmationFlow(
 			toolCalls,
 			updatedMessages,
-			assistantMsg,
+			assistantMessage,
 			systemMessage,
-		) => {
+		) {
 			appState.setPendingToolCalls(toolCalls);
 			appState.setCurrentToolIndex(0);
 			appState.setCompletedToolResults([]);
 			appState.setCurrentConversationContext({
 				updatedMessages,
-				assistantMsg,
+				assistantMsg: assistantMessage,
 				systemMessage,
 			});
 			appState.setIsToolConfirmationMode(true);
@@ -346,18 +346,16 @@ export default function App() {
 								<BashExecutionIndicator command={appState.currentBashCommand} />
 							) : appState.mcpInitialized && appState.client ? (
 								<UserInput
-									customCommands={Array.from(
-										appState.customCommandCache.keys(),
-									)}
-									onSubmit={handleMessageSubmit}
+									customCommands={[...appState.customCommandCache.keys()]}
 									disabled={
 										appState.isThinking ||
 										appState.isToolExecuting ||
 										appState.isBashExecuting
 									}
+									developmentMode={appState.developmentMode}
+									onSubmit={handleMessageSubmit}
 									onCancel={handleCancel}
 									onToggleMode={handleToggleDevelopmentMode}
-									developmentMode={appState.developmentMode}
 								/>
 							) : appState.mcpInitialized && !appState.client ? (
 								<Text color={themeContextValue.colors.secondary}>

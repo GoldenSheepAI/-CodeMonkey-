@@ -3,20 +3,20 @@ import {Box, Text, useInput} from 'ink';
 import SelectInput from 'ink-select-input';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {useTheme} from '@/hooks/useTheme.js';
-import {LLMClient} from '@/types/core.js';
+import {type LLMClient} from '@/types/core.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 
-interface ModelSelectorProps {
-	client: LLMClient | null;
-	currentModel: string;
-	onModelSelect: (model: string) => void;
-	onCancel: () => void;
-}
+type ModelSelectorProps = {
+	readonly client: LLMClient | undefined;
+	readonly currentModel: string;
+	readonly onModelSelect: (model: string) => void;
+	readonly onCancel: () => void;
+};
 
-interface ModelOption {
+type ModelOption = {
 	label: string;
 	value: string;
-}
+};
 
 export default function ModelSelector({
 	client,
@@ -28,7 +28,7 @@ export default function ModelSelector({
 	const {colors} = useTheme();
 	const [models, setModels] = useState<ModelOption[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | undefined>(undefined);
 
 	// Handle escape key to cancel
 	useInput((_, key) => {
@@ -61,8 +61,8 @@ export default function ModelSelector({
 
 				setModels(modelOptions);
 				setLoading(false);
-			} catch (err) {
-				setError(`Error accessing models: ${err}`);
+			} catch (error_) {
+				setError(`Error accessing models: ${error_}`);
 				setLoading(false);
 			}
 		};

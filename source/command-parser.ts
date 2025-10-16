@@ -9,7 +9,7 @@ export function parseInput(input: string): ParsedCommand {
 		return {
 			isCommand: false, // Not a regular command
 			isBashCommand: true,
-			bashCommand: bashCommand,
+			bashCommand,
 		};
 	}
 

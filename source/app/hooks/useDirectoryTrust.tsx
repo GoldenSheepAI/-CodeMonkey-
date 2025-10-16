@@ -1,15 +1,15 @@
+import path from 'node:path';
 import {useState, useEffect, useCallback} from 'react';
-import path from 'path';
 import {loadPreferences, savePreferences} from '@/config/preferences.js';
 import {logError} from '@/utils/message-queue.js';
 import {shouldLog} from '@/config/logging.js';
 
-export interface UseDirectoryTrustReturn {
+export type UseDirectoryTrustReturn = {
 	isTrusted: boolean;
 	handleConfirmTrust: () => void;
 	isTrustLoading: boolean;
-	isTrustedError: string | null;
-}
+	isTrustedError: string | undefined;
+};
 
 /**
  * Custom hook for managing directory trust functionality.
@@ -23,14 +23,14 @@ export function useDirectoryTrust(
 ): UseDirectoryTrustReturn {
 	const [isTrusted, setIsTrusted] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | undefined>(undefined);
 
 	// Check if directory is trusted on mount and when directory changes
 	useEffect(() => {
 		const checkTrustStatus = async () => {
 			try {
 				setIsLoading(true);
-				setError(null);
+				setError(undefined);
 
 				const preferences = loadPreferences();
 				const trustedDirectories = preferences.trustedDirectories || [];
@@ -42,9 +42,9 @@ export function useDirectoryTrust(
 				);
 
 				setIsTrusted(isTrustedDir);
-			} catch (err) {
+			} catch (error_) {
 				const errorMessage =
-					err instanceof Error ? err.message : 'Unknown error occurred';
+					error_ instanceof Error ? error_.message : 'Unknown error occurred';
 				setError(`Failed to check directory trust status: ${errorMessage}`);
 
 				if (shouldLog('warn')) {
@@ -61,7 +61,7 @@ export function useDirectoryTrust(
 	// Handler to confirm trust for the current directory
 	const handleConfirmTrust = useCallback(() => {
 		try {
-			setError(null);
+			setError(undefined);
 
 			const preferences = loadPreferences();
 			const trustedDirectories = preferences.trustedDirectories || [];
@@ -87,9 +87,9 @@ export function useDirectoryTrust(
 			}
 
 			setIsTrusted(true);
-		} catch (err) {
+		} catch (error_) {
 			const errorMessage =
-				err instanceof Error ? err.message : 'Unknown error occurred';
+				error_ instanceof Error ? error_.message : 'Unknown error occurred';
 			setError(`Failed to save directory trust: ${errorMessage}`);
 
 			if (shouldLog('warn')) {

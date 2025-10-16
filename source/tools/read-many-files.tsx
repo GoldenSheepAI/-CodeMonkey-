@@ -11,14 +11,15 @@ const handler: ToolHandler = async (args: {
 	paths: string[];
 }): Promise<string> => {
 	if (!Array.isArray(args.paths)) {
-		throw new Error('paths must be an array of strings');
+		throw new TypeError('paths must be an array of strings');
 	}
-	const results = [] as {
+
+	const results = [] as Array<{
 		path: string;
 		content: string;
 		size: number;
 		estimatedTokens: number;
-	}[];
+	}>;
 	let totalSize = 0;
 	let totalEstimatedTokens = 0;
 
@@ -29,9 +30,9 @@ const handler: ToolHandler = async (args: {
 
 			// Add line numbers for precise editing
 			let numberedContent = '';
-			for (let i = 0; i < lines.length; i++) {
-				const lineNum = String(i + 1).padStart(4, ' ');
-				numberedContent += `${lineNum}: ${lines[i]}\n`;
+			for (const [i, line] of lines.entries()) {
+				const lineNumber = String(i + 1).padStart(4, ' ');
+				numberedContent += `${lineNumber}: ${line}\n`;
 			}
 
 			const fileSize = content.length;
@@ -45,11 +46,11 @@ const handler: ToolHandler = async (args: {
 				size: fileSize,
 				estimatedTokens,
 			});
-		} catch (err) {
+		} catch (error) {
 			results.push({
 				path: p,
 				content: `Error reading file: ${
-					err instanceof Error ? err.message : String(err)
+					error instanceof Error ? error.message : String(error)
 				}`,
 				size: 0,
 				estimatedTokens: 0,
@@ -74,8 +75,12 @@ const ReadManyFilesFormatter = React.memo(
 		args,
 		fileInfo,
 	}: {
-		args: any;
-		fileInfo: {totalFiles: number; totalSize: number; totalTokens: number};
+		readonly args: any;
+		readonly fileInfo: {
+			totalFiles: number;
+			totalSize: number;
+			totalTokens: number;
+		};
 	}) => {
 		const {colors} = React.useContext(ThemeContext)!;
 		const paths = args.paths || [];
@@ -87,7 +92,7 @@ const ReadManyFilesFormatter = React.memo(
 					<Text color={colors.error}>Error: paths must be an array</Text>
 				</Box>
 			);
-			return <ToolMessage message={messageContent} hideBox={true} />;
+			return <ToolMessage hideBox message={messageContent} />;
 		}
 
 		const messageContent = (
@@ -118,7 +123,7 @@ const ReadManyFilesFormatter = React.memo(
 			</Box>
 		);
 
-		return <ToolMessage message={messageContent} hideBox={true} />;
+		return <ToolMessage hideBox message={messageContent} />;
 	},
 );
 
@@ -145,10 +150,11 @@ const formatter = async (
 			try {
 				const content = await readFile(resolve(path), 'utf-8');
 				totalSize += content.length;
-			} catch (error) {
+			} catch {
 				// Skip files that can't be read
 			}
 		}
+
 		const estimatedTokens = Math.ceil(totalSize / 4);
 		fileInfo = {
 			totalFiles: paths.length,

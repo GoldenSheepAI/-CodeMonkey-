@@ -1,16 +1,14 @@
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
-import type {Tool} from '@/types/index.js';
+import type {Tool, MCPServer, MCPTool, MCPInitResult} from '@/types/index.js';
 import {shouldLog} from '@/config/logging.js';
 import {logInfo, logError} from '@/utils/message-queue.js';
 
-import type {MCPServer, MCPTool, MCPInitResult} from '@/types/index.js';
-
 export class MCPClient {
-	private clients: Map<string, Client> = new Map();
-	private transports: Map<string, StdioClientTransport> = new Map();
-	private serverTools: Map<string, MCPTool[]> = new Map();
-	private isConnected: boolean = false;
+	private readonly clients = new Map<string, Client>();
+	private readonly transports = new Map<string, StdioClientTransport>();
+	private readonly serverTools = new Map<string, MCPTool[]>();
+	private isConnected = false;
 
 	constructor() {}
 
@@ -162,6 +160,7 @@ export class MCPClient {
 					return this.executeToolCall(client, originalToolName, args);
 				}
 			}
+
 			throw new Error(`MCP tool not found: ${toolName}`);
 		}
 
@@ -195,9 +194,9 @@ export class MCPClient {
 				const content = result.content[0];
 				if (content.type === 'text') {
 					return content.text || '';
-				} else {
-					return JSON.stringify(content);
 				}
+
+				return JSON.stringify(content);
 			}
 
 			return 'Tool executed successfully (no output)';
@@ -223,7 +222,7 @@ export class MCPClient {
 	}
 
 	getConnectedServers(): string[] {
-		return Array.from(this.clients.keys());
+		return [...this.clients.keys()];
 	}
 
 	isServerConnected(serverName: string): boolean {

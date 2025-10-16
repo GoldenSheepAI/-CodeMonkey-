@@ -22,9 +22,9 @@ const handler: ToolHandler = async (args: {path: string}): Promise<string> => {
 
 		// Return content with line numbers for precise editing
 		let result = '';
-		for (let i = 0; i < lines.length; i++) {
-			const lineNum = String(i + 1).padStart(4, ' ');
-			result += `${lineNum}: ${lines[i]}\n`;
+		for (const [i, line] of lines.entries()) {
+			const lineNumber = String(i + 1).padStart(4, ' ');
+			result += `${lineNumber}: ${line}\n`;
 		}
 
 		return result.slice(0, -1); // Remove trailing newline
@@ -41,7 +41,13 @@ const handler: ToolHandler = async (args: {path: string}): Promise<string> => {
 
 // Create a component that will re-render when theme changes
 const ReadFileFormatter = React.memo(
-	({args, fileInfo}: {args: any; fileInfo: {size: number; tokens: number}}) => {
+	({
+		args,
+		fileInfo,
+	}: {
+		readonly args: any;
+		readonly fileInfo: {size: number; tokens: number};
+	}) => {
 		const {colors} = React.useContext(ThemeContext)!;
 		const path = args.path || args.file_path || 'unknown';
 
@@ -73,7 +79,7 @@ const ReadFileFormatter = React.memo(
 			</Box>
 		);
 
-		return <ToolMessage message={messageContent} hideBox={true} />;
+		return <ToolMessage hideBox message={messageContent} />;
 	},
 );
 
@@ -97,7 +103,7 @@ const formatter = async (
 			const estimatedTokens = Math.ceil(fileSize / 4);
 			fileInfo = {size: fileSize, tokens: estimatedTokens};
 		}
-	} catch (error) {
+	} catch {
 		// File doesn't exist or can't be read - keep fileInfo as {size: 0, tokens: 0}
 	}
 
@@ -119,6 +125,7 @@ const validator = async (args: {
 				error: `⚒ File "${args.path}" does not exist`,
 			};
 		}
+
 		return {
 			valid: false,
 			error: `⚒ Cannot access file "${args.path}": ${error.message}`,

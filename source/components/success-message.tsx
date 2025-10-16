@@ -10,13 +10,13 @@ export default function SuccessMessage({
 	hideTitle = false,
 	hideBox = false,
 	autoHide = false,
-	autoHideDelay = 30000, // 30 seconds
+	autoHideDelay = 30_000, // 30 seconds
 }: {
-	message: string;
-	hideTitle?: boolean;
-	hideBox?: boolean;
-	autoHide?: boolean;
-	autoHideDelay?: number;
+	readonly message: string;
+	readonly hideTitle?: boolean;
+	readonly hideBox?: boolean;
+	readonly autoHide?: boolean;
+	readonly autoHideDelay?: number;
 }) {
 	const boxWidth = Math.min(useTerminalWidth(), 120);
 	const {colors} = useTheme();
@@ -29,7 +29,9 @@ export default function SuccessMessage({
 				setIsVisible(false);
 			}, autoHideDelay);
 
-			return () => clearTimeout(timer);
+			return () => {
+				clearTimeout(timer);
+			};
 		}
 	}, [autoHide, autoHideDelay, isVisible]);
 
@@ -37,6 +39,7 @@ export default function SuccessMessage({
 	if (!isVisible) {
 		return null;
 	}
+
 	return (
 		<>
 			{hideBox ? (

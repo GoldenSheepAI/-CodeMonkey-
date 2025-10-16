@@ -1,9 +1,9 @@
-import {readFileSync} from 'fs';
-import {join, dirname} from 'path';
-import {fileURLToPath} from 'url';
+import {readFileSync} from 'node:fs';
+import {join, dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {logError} from './message-queue.js';
 import {loadPreferences, savePreferences} from '@/config/preferences.js';
 import {shouldLog} from '@/config/logging.js';
-import {logError} from './message-queue.js';
 import type {NpmRegistryResponse, UpdateInfo} from '@/types/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,7 +16,7 @@ const __dirname = dirname(__filename);
 function isNewerVersion(current: string, latest: string): boolean {
 	const parseVersion = (version: string) => {
 		const clean = version.replace(/^v/, '').split('-')[0]; // Remove 'v' prefix and pre-release info
-		return clean.split('.').map(num => parseInt(num) || 0);
+		return clean.split('.').map(number_ => Number.parseInt(number_) || 0);
 	};
 
 	const currentParts = parseVersion(current);
@@ -30,7 +30,9 @@ function isNewerVersion(current: string, latest: string): boolean {
 
 		if (latestPart > currentPart) {
 			return true;
-		} else if (latestPart < currentPart) {
+		}
+
+		if (latestPart < currentPart) {
 			return false;
 		}
 	}
@@ -50,6 +52,7 @@ function getCurrentVersion(): string {
 		if (shouldLog('warn')) {
 			logError(`Failed to read current version: ${error}`);
 		}
+
 		return '0.0.0';
 	}
 }
@@ -57,7 +60,7 @@ function getCurrentVersion(): string {
 /**
  * Fetch the latest version from npm registry
  */
-async function fetchLatestVersion(): Promise<string | null> {
+async function fetchLatestVersion(): Promise<string | undefined> {
 	try {
 		const response = await fetch(
 			'https://registry.npmjs.org/@goldensheepai/codemonkey/latest',
@@ -68,7 +71,7 @@ async function fetchLatestVersion(): Promise<string | null> {
 					'User-Agent': 'codemonkey-update-checker',
 				},
 				// Add timeout
-				signal: AbortSignal.timeout(10000), // 10 second timeout
+				signal: AbortSignal.timeout(10_000), // 10 second timeout
 			},
 		);
 
@@ -82,7 +85,8 @@ async function fetchLatestVersion(): Promise<string | null> {
 		if (shouldLog('warn')) {
 			logError(`Failed to fetch latest version: ${error}`);
 		}
-		return null;
+
+		return undefined;
 	}
 }
 

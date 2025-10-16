@@ -1,8 +1,8 @@
-import fs from 'fs';
-import path from 'path';
-import {homedir} from 'os';
+import fs from 'node:fs';
+import path from 'node:path';
+import {homedir} from 'node:os';
 
-interface FeedbackEntry {
+type FeedbackEntry = {
 	id: string;
 	timestamp: string;
 	category: string;
@@ -11,14 +11,14 @@ interface FeedbackEntry {
 	email?: string;
 	version: string;
 	platform: string;
-}
+};
 
-interface FeedbackStats {
+type FeedbackStats = {
 	totalFeedback: number;
 	averageRating: number;
 	categoryBreakdown: Record<string, number>;
 	ratingDistribution: Record<number, number>;
-}
+};
 
 const FEEDBACK_DIR = path.join(homedir(), '.codemonkey-feedback');
 const FEEDBACK_FILE = path.join(FEEDBACK_DIR, 'feedback.jsonl');
@@ -32,7 +32,7 @@ function ensureFeedbackDir(): void {
 
 // Generate unique ID for feedback entry
 function generateId(): string {
-	return `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+	return `feedback_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 }
 
 // Get package version
@@ -151,7 +151,7 @@ export function getFeedbackStats(): FeedbackStats {
 }
 
 // Get recent feedback (last N entries)
-export function getRecentFeedback(limit: number = 10): FeedbackEntry[] {
+export function getRecentFeedback(limit = 10): FeedbackEntry[] {
 	const allFeedback = readAllFeedback();
 	return allFeedback
 		.sort(
@@ -184,23 +184,24 @@ export function exportFeedbackSummary(): string {
 	}
 
 	summary += `\n## Category Breakdown\n`;
-	Object.entries(stats.categoryBreakdown)
-		.sort(([, a], [, b]) => b - a)
-		.forEach(([category, count]) => {
-			const percentage = ((count / stats.totalFeedback) * 100).toFixed(1);
-			summary += `- ${category}: ${count} (${percentage}%)\n`;
-		});
+	for (const [category, count] of Object.entries(stats.categoryBreakdown).sort(
+		([, a], [, b]) => b - a,
+	)) {
+		const percentage = ((count / stats.totalFeedback) * 100).toFixed(1);
+		summary += `- ${category}: ${count} (${percentage}%)\n`;
+	}
 
 	summary += `\n## Recent Feedback\n`;
-	recentFeedback.forEach((entry, index) => {
+	for (const [index, entry] of recentFeedback.entries()) {
 		summary += `\n### ${index + 1}. ${entry.category} - ${entry.rating}⭐\n`;
 		summary += `**Date:** ${new Date(entry.timestamp).toLocaleDateString()}\n`;
 		summary += `**Message:** ${entry.message}\n`;
 		if (entry.email) {
 			summary += `**Contact:** ${entry.email}\n`;
 		}
+
 		summary += `**Version:** ${entry.version} (${entry.platform})\n`;
-	});
+	}
 
 	return summary;
 }

@@ -1,3 +1,4 @@
+import type React from 'react';
 import {readFileTool} from './read-file.js';
 import {createFileTool} from './create-file.js';
 import {insertLinesTool} from './insert-lines.js';
@@ -8,7 +9,6 @@ import {executeBashTool} from './execute-bash.js';
 import {webSearchTool} from './web-search.js';
 import {fetchUrlTool} from './fetch-url.js';
 import {searchFilesTool} from './search-files.js';
-import React from 'react';
 import type {ToolHandler, Tool, ToolDefinition} from '@/types/index.js';
 
 export const toolDefinitions: ToolDefinition[] = [

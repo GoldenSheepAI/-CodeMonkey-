@@ -1,15 +1,15 @@
-import type {Command} from '@/types/index.js';
-import {ToolManager} from '@/tools/tool-manager.js';
-import {getToolManager} from '@/message-handler.js';
 import React from 'react';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {Box, Text} from 'ink';
+import type {Command} from '@/types/index.js';
+import {type ToolManager} from '@/tools/tool-manager.js';
+import {getToolManager} from '@/message-handler.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {useTheme} from '@/hooks/useTheme.js';
 
-interface MCPProps {
-	toolManager: ToolManager | null;
-}
+type MCPProps = {
+	readonly toolManager: ToolManager | undefined;
+};
 
 export function MCP({toolManager}: MCPProps) {
 	const boxWidth = useTerminalWidth();
@@ -32,7 +32,7 @@ export function MCP({toolManager}: MCPProps) {
 			{connectedServers.length === 0 ? (
 				<>
 					<Box marginBottom={1}>
-						<Text color={colors.white} bold>
+						<Text bold color={colors.white}>
 							No MCP servers connected
 						</Text>
 					</Box>
@@ -97,12 +97,12 @@ export function MCP({toolManager}: MCPProps) {
 export const mcpCommand: Command = {
 	name: 'mcp',
 	description: 'Show connected MCP servers and their tools',
-	handler: async (_args: string[], _messages, _metadata) => {
+	async handler(_args: string[], _messages, _metadata) {
 		const toolManager = getToolManager();
 
 		return React.createElement(MCP, {
 			key: `mcp-${Date.now()}`,
-			toolManager: toolManager,
+			toolManager,
 		});
 	},
 };

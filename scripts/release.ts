@@ -10,7 +10,7 @@ import {readFileSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 
 const args = process.argv.slice(2);
-const versionType = args[0] || 'patch'; // major, minor, patch
+const versionType = args[0] || 'patch'; // Major, minor, patch
 
 function exec(command: string): string {
 	return execSync(command, {encoding: 'utf-8'}).trim();
@@ -38,7 +38,7 @@ function updateChangelog(newVersion: string) {
 			`# Changelog\n${newEntry}`,
 		);
 		writeFileSync(changelogPath, updated);
-	} catch (error) {
+	} catch {
 		console.log('⚠️  No CHANGELOG.md found, skipping...');
 	}
 }

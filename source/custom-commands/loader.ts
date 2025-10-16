@@ -1,15 +1,15 @@
-import {existsSync, readdirSync, statSync} from 'fs';
-import {join, basename} from 'path';
-import type {CustomCommand} from '@/types/index.js';
+import {existsSync, readdirSync, statSync} from 'node:fs';
+import {join, basename} from 'node:path';
 import {parseCommandFile} from './parser.js';
+import type {CustomCommand} from '@/types/index.js';
 import {logError} from '@/utils/message-queue.js';
 
 export class CustomCommandLoader {
-	private commands: Map<string, CustomCommand> = new Map();
-	private aliases: Map<string, string> = new Map(); // alias -> command name
-	private projectRoot: string;
-	private commandsDir: string;
-	private legacyCommandsDir: string;
+	private readonly commands = new Map<string, CustomCommand>();
+	private readonly aliases = new Map<string, string>(); // Alias -> command name
+	private readonly projectRoot: string;
+	private readonly commandsDir: string;
+	private readonly legacyCommandsDir: string;
 
 	constructor(projectRoot: string = process.cwd()) {
 		this.projectRoot = projectRoot;
@@ -111,7 +111,7 @@ export class CustomCommandLoader {
 	 * Get all available commands
 	 */
 	getAllCommands(): CustomCommand[] {
-		return Array.from(this.commands.values());
+		return [...this.commands.values()];
 	}
 
 	/**

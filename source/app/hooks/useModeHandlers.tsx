@@ -1,4 +1,5 @@
-import {LLMClient, Message} from '@/types/core.js';
+import React from 'react';
+import {type LLMClient, type Message} from '@/types/core.js';
 import {createLLMClient} from '@/client-factory.js';
 import {
 	updateLastUsed,
@@ -7,15 +8,14 @@ import {
 } from '@/config/preferences.js';
 import SuccessMessage from '@/components/success-message.js';
 import ErrorMessage from '@/components/error-message.js';
-import React from 'react';
 import type {ThemePreset} from '@/types/ui.js';
 
-interface UseModeHandlersProps {
-	client: LLMClient | null;
+type UseModeHandlersProps = {
+	client: LLMClient | undefined;
 	currentModel: string;
 	currentProvider: string;
 	currentTheme: ThemePreset;
-	setClient: (client: LLMClient | null) => void;
+	setClient: (client: LLMClient | undefined) => void;
 	setCurrentModel: (model: string) => void;
 	setCurrentProvider: (provider: string) => void;
 	setCurrentTheme: (theme: ThemePreset) => void;
@@ -26,7 +26,7 @@ interface UseModeHandlersProps {
 	setIsRecommendationsMode: (mode: boolean) => void;
 	addToChatQueue: (component: React.ReactNode) => void;
 	componentKeyCounter: number;
-}
+};
 
 export function useModeHandlers({
 	client,
@@ -72,11 +72,12 @@ export function useModeHandlers({
 			addToChatQueue(
 				<SuccessMessage
 					key={`model-changed-${componentKeyCounter}`}
+					hideBox
 					message={`Model changed to: ${selectedModel}. Chat history cleared.`}
-					hideBox={true}
 				/>,
 			);
 		}
+
 		setIsModelSelectionMode(false);
 	};
 
@@ -100,8 +101,8 @@ export function useModeHandlers({
 					addToChatQueue(
 						<ErrorMessage
 							key={`provider-forced-${componentKeyCounter}`}
+							hideBox
 							message={`${selectedProvider} is not available. Please ensure it's properly configured in agents.config.json.`}
-							hideBox={true}
 						/>,
 					);
 					return; // Don't change anything
@@ -125,8 +126,8 @@ export function useModeHandlers({
 				addToChatQueue(
 					<SuccessMessage
 						key={`provider-changed-${componentKeyCounter}`}
+						hideBox
 						message={`Provider changed to: ${actualProvider}, model: ${newModel}. Chat history cleared.`}
-						hideBox={true}
 					/>,
 				);
 			} catch (error) {
@@ -134,12 +135,13 @@ export function useModeHandlers({
 				addToChatQueue(
 					<ErrorMessage
 						key={`provider-error-${componentKeyCounter}`}
+						hideBox
 						message={`Failed to change provider to ${selectedProvider}: ${error}`}
-						hideBox={true}
 					/>,
 				);
 			}
 		}
+
 		setIsProviderSelectionMode(false);
 	};
 
@@ -166,8 +168,8 @@ export function useModeHandlers({
 		addToChatQueue(
 			<SuccessMessage
 				key={`theme-changed-${componentKeyCounter}`}
+				hideBox
 				message={`Theme changed to: ${selectedTheme}.`}
-				hideBox={true}
 			/>,
 		);
 

@@ -1,11 +1,11 @@
 import {ChatOpenAI} from '@langchain/openai';
-import {Agent, fetch, RequestInfo, RequestInit} from 'undici';
+import {Agent, fetch, type RequestInfo, type RequestInit} from 'undici';
 import {
 	AIMessage,
 	HumanMessage,
 	SystemMessage,
 	ToolMessage,
-	BaseMessage,
+	type BaseMessage,
 } from '@langchain/core/messages';
 import type {
 	Message,
@@ -21,11 +21,15 @@ import {XMLToolCallParser} from './tool-calling/xml-parser.js';
  */
 function convertToLangChainMessage(message: Message): BaseMessage {
 	switch (message.role) {
-		case 'user':
+		case 'user': {
 			return new HumanMessage(message.content || '');
-		case 'system':
+		}
+
+		case 'system': {
 			return new SystemMessage(message.content || '');
-		case 'assistant':
+		}
+
+		case 'assistant': {
 			if (message.tool_calls && message.tool_calls.length > 0) {
 				return new AIMessage({
 					content: message.content || '',
@@ -36,15 +40,21 @@ function convertToLangChainMessage(message: Message): BaseMessage {
 					})),
 				});
 			}
+
 			return new AIMessage(message.content || '');
-		case 'tool':
+		}
+
+		case 'tool': {
 			return new ToolMessage({
 				content: message.content || '',
 				tool_call_id: message.tool_call_id || '',
 				name: message.name || '',
 			});
-		default:
+		}
+
+		default: {
 			throw new Error(`Unsupported message role: ${message.role}`);
+		}
 	}
 }
 
@@ -73,10 +83,10 @@ function convertFromLangChainMessage(message: AIMessage): Message {
 export class LangGraphClient implements LLMClient {
 	private chatModel: ChatOpenAI;
 	private currentModel: string;
-	private availableModels: string[];
-	private providerConfig: LangChainProviderConfig;
-	private modelInfoCache: Map<string, any> = new Map();
-	private undiciAgent: Agent;
+	private readonly availableModels: string[];
+	private readonly providerConfig: LangChainProviderConfig;
+	private readonly modelInfoCache = new Map<string, any>();
+	private readonly undiciAgent: Agent;
 
 	constructor(providerConfig: LangChainProviderConfig) {
 		this.providerConfig = providerConfig;
@@ -89,7 +99,7 @@ export class LangGraphClient implements LLMClient {
 				? 0
 				: socketTimeout || requestTimeout === -1
 				? 0
-				: requestTimeout || 120000;
+				: requestTimeout || 120_000;
 
 		this.undiciAgent = new Agent({
 			connect: {
@@ -114,7 +124,7 @@ export class LangGraphClient implements LLMClient {
 	private createChatModel(): ChatOpenAI {
 		const {config, requestTimeout} = this.providerConfig;
 
-		const customFetch = (url: RequestInfo, options: RequestInit) => {
+		const customFetch = async (url: RequestInfo, options: RequestInit) => {
 			return fetch(url, {
 				...options,
 				dispatcher: this.undiciAgent,
@@ -136,8 +146,8 @@ export class LangGraphClient implements LLMClient {
 		} else if (requestTimeout) {
 			chatConfig.timeout = requestTimeout;
 		} else {
-			// default
-			chatConfig.timeout = 120000; // 2 minutes
+			// Default
+			chatConfig.timeout = 120_000; // 2 minutes
 		}
 
 		return new ChatOpenAI(chatConfig);
@@ -159,6 +169,7 @@ export class LangGraphClient implements LLMClient {
 			if (modelData && modelData.context_length) {
 				return modelData.context_length;
 			}
+
 			return 0;
 		}
 
@@ -202,7 +213,7 @@ export class LangGraphClient implements LLMClient {
 					result = (await modelWithTools.invoke(
 						langchainMessages,
 					)) as AIMessage;
-				} catch (bindError) {
+				} catch {
 					// Tool binding failed, fall back to base model
 					result = (await this.chatModel.invoke(
 						langchainMessages,
@@ -222,7 +233,7 @@ export class LangGraphClient implements LLMClient {
 					convertedMessage.tool_calls.length === 0) &&
 				convertedMessage.content
 			) {
-				const content = convertedMessage.content as string;
+				const {content} = convertedMessage;
 
 				if (XMLToolCallParser.hasToolCalls(content)) {
 					const parsedToolCalls = XMLToolCallParser.parseToolCalls(content);
@@ -262,7 +273,7 @@ export class LangGraphClient implements LLMClient {
 				return;
 			}
 
-			const message = result.choices[0].message;
+			const {message} = result.choices[0];
 
 			// If there are tool calls, yield them with preserved content
 			if (message.tool_calls && message.tool_calls.length > 0) {
@@ -297,7 +308,6 @@ export class LangGraphClient implements LLMClient {
 			}
 		} catch (error) {
 			logError(`LangGraph stream error: ${error}`);
-			return;
 		}
 	}
 

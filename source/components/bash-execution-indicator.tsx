@@ -1,9 +1,9 @@
 import {memo, useState, useEffect} from 'react';
 import {Box, Text} from 'ink';
 import Spinner from 'ink-spinner';
+import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {useTheme} from '@/hooks/useTheme.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
-import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import type {BashExecutionIndicatorProps} from '@/types/index.js';
 
 export default memo(function BashExecutionIndicator({

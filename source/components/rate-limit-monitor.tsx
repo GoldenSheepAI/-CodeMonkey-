@@ -1,16 +1,16 @@
 import React, {memo, useState, useEffect} from 'react';
 import {Box, Text} from 'ink';
+import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {useTheme} from '@/hooks/useTheme.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
-import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 
-interface RateLimitMonitorProps {
-	provider: string;
-	remainingRequests: number;
-	maxRequests: number;
-	resetTime?: Date;
-	onRateLimitReached?: () => void;
-}
+type RateLimitMonitorProps = {
+	readonly provider: string;
+	readonly remainingRequests: number;
+	readonly maxRequests: number;
+	readonly resetTime?: Date;
+	readonly onRateLimitReached?: () => void;
+};
 
 export default memo(function RateLimitMonitor({
 	provider,
@@ -71,7 +71,9 @@ export default memo(function RateLimitMonitor({
 		updateTimer();
 		const interval = setInterval(updateTimer, 1000);
 
-		return () => clearInterval(interval);
+		return () => {
+			clearInterval(interval);
+		};
 	}, [resetTime]);
 
 	// Trigger rate limit callback
@@ -97,10 +99,10 @@ export default memo(function RateLimitMonitor({
 		>
 			{/* Provider and Status */}
 			<Box justifyContent="space-between" marginBottom={1}>
-				<Text color={colors.primary} bold>
+				<Text bold color={colors.primary}>
 					{provider}
 				</Text>
-				<Text color={statusColor} bold>
+				<Text bold color={statusColor}>
 					{remainingRequests === 0
 						? '🚫 RATE LIMITED'
 						: remainingPercentage < 10
@@ -136,7 +138,7 @@ export default memo(function RateLimitMonitor({
 			{/* Status Messages */}
 			{remainingRequests === 0 && (
 				<Box marginTop={1}>
-					<Text color={colors.error} bold>
+					<Text bold color={colors.error}>
 						🚫 Rate limit reached! All requests are being rejected with HTTP
 						429.
 					</Text>

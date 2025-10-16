@@ -7,14 +7,14 @@
 export {ErrorDetector} from './error-detector.js';
 export {FixGenerator} from './fix-generator.js';
 
-export interface CoRectConfig {
+export type CoRectConfig = {
 	autoFix?: boolean;
 	confidence?: number;
 	maxAttempts?: number;
-}
+};
 
 export class CoRect {
-	constructor(private config: CoRectConfig = {}) {
+	constructor(private readonly config: CoRectConfig = {}) {
 		this.config = {
 			autoFix: false,
 			confidence: 0.8,

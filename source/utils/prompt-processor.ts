@@ -1,5 +1,5 @@
-import {readFileSync, existsSync} from 'fs';
-import {join} from 'path';
+import {readFileSync, existsSync} from 'node:fs';
+import {join} from 'node:path';
 import {promptPath} from '@/config/index.js';
 import type {Tool} from '@/types/index.js';
 
@@ -7,7 +7,7 @@ import type {Tool} from '@/types/index.js';
  * Process the main prompt template by injecting dynamic tool documentation
  */
 export function processPromptTemplate(tools: Tool[]): string {
-	let systemPrompt = 'You are a helpful AI assistant.'; // fallback
+	let systemPrompt = 'You are a helpful AI assistant.'; // Fallback
 
 	// Load base prompt
 	if (existsSync(promptPath)) {
@@ -68,16 +68,16 @@ function generateToolDocumentation(tools: Tool[]): string {
 
 	if (builtInTools.length > 0) {
 		sections.push('Built-in Tools:\n');
-		builtInTools.forEach(tool => {
+		for (const tool of builtInTools) {
 			sections.push(formatToolDocumentation(tool));
-		});
+		}
 	}
 
 	if (mcpTools.length > 0) {
 		sections.push('\nMCP Tools:\n');
-		mcpTools.forEach(tool => {
+		for (const tool of mcpTools) {
 			sections.push(formatToolDocumentation(tool));
-		});
+		}
 	}
 
 	// Add XML format examples for all models
@@ -85,19 +85,21 @@ function generateToolDocumentation(tools: Tool[]): string {
 		sections.push('\nXML Format Examples:\n');
 
 		// Show tool examples in XML format
-		tools.forEach(tool => {
-			const params = tool.function.parameters?.properties || {};
-			const paramNames = Object.keys(params).slice(0, 2); // Show max 2 params per example
+		for (const tool of tools) {
+			const parameters = tool.function.parameters?.properties || {};
+			const parameterNames = Object.keys(parameters).slice(0, 2); // Show max 2 params per example
 
-			sections.push(`${tool.function.name}:`);
-			sections.push('```xml');
-			sections.push(`<${tool.function.name}>`);
-			paramNames.forEach(paramName => {
-				sections.push(`<${paramName}>value</${paramName}>`);
-			});
-			sections.push(`</${tool.function.name}>`);
-			sections.push('```\n');
-		});
+			sections.push(
+				`${tool.function.name}:`,
+				'```xml',
+				`<${tool.function.name}>`,
+			);
+			for (const parameterName of parameterNames) {
+				sections.push(`<${parameterName}>value</${parameterName}>`);
+			}
+
+			sections.push(`</${tool.function.name}>`, '```\n');
+		}
 	}
 
 	return sections.join('\n');
@@ -114,13 +116,13 @@ function formatToolDocumentation(tool: Tool): string {
 	if (parameters.properties && Object.keys(parameters.properties).length > 0) {
 		doc += 'Parameters:\n';
 		Object.entries(parameters.properties).forEach(
-			([paramName, schema]: [string, any]) => {
-				const required = parameters.required?.includes(paramName)
+			([parameterName, schema]: [string, any]) => {
+				const required = parameters.required?.includes(parameterName)
 					? ' (required)'
 					: ' (optional)';
 				const description =
 					schema.description || schema.type || 'No description';
-				doc += `- ${paramName}${required}: ${description}\n`;
+				doc += `- ${parameterName}${required}: ${description}\n`;
 			},
 		);
 		doc += '\n';

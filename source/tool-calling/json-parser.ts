@@ -1,6 +1,6 @@
+import {XMLToolCallParser} from './xml-parser.js';
 import type {ToolCall} from '@/types/index.js';
 import {logError} from '@/utils/message-queue.js';
-import {XMLToolCallParser} from './xml-parser.js';
 
 // XML validation functions removed - XMLToolCallParser handles XML parsing
 
@@ -22,8 +22,8 @@ export function parseToolCallsFromContent(content: string): ToolCall[] {
 	}
 
 	// Handle markdown code blocks
-	const codeBlockMatch = trimmedContent.match(
-		/^```(?:json)?\s*\n?([\s\S]*?)\n?```$/,
+	const codeBlockMatch = /^```(?:json)?\s*\n?([\s\S]*?)\n?```$/.exec(
+		trimmedContent,
 	);
 	if (codeBlockMatch && codeBlockMatch[1]) {
 		trimmedContent = codeBlockMatch[1].trim();
@@ -50,14 +50,14 @@ export function parseToolCallsFromContent(content: string): ToolCall[] {
 				extractedCalls.push(toolCall);
 				return extractedCalls;
 			}
-		} catch (e) {
+		} catch {
 			logError('Tool call failed to parse from JSON code block.');
 		}
 	}
 
 	// Look for standalone JSON blocks in the content (multiline without code blocks)
 	const jsonBlockRegex =
-		/\{\s*\n\s*"name":\s*"([^"]+)",\s*\n\s*"arguments":\s*\{[\s\S]*?\}\s*\n\s*\}/g;
+		/{\s*\n\s*"name":\s*"([^"]+)",\s*\n\s*"arguments":\s*{[\s\S]*?}\s*\n\s*}/g;
 	let jsonMatch;
 	while ((jsonMatch = jsonBlockRegex.exec(content)) !== null) {
 		try {
@@ -72,7 +72,7 @@ export function parseToolCallsFromContent(content: string): ToolCall[] {
 				};
 				extractedCalls.push(toolCall);
 			}
-		} catch (e) {
+		} catch {
 			logError('Tool call failed to parse from JSON block.');
 		}
 	}
@@ -83,30 +83,30 @@ export function parseToolCallsFromContent(content: string): ToolCall[] {
 
 	// Look for embedded tool calls using regex patterns
 	const toolCallPatterns = [
-		/\{"name":\s*"([^"]+)",\s*"arguments":\s*(\{[^}]*\})\}/g,
-		/\{"name":\s*"([^"]+)",\s*"arguments":\s*(\{[^}]+\})\}/g,
-		/\{"name":\s*"([^"]+)",\s*"arguments":\s*"([^"]+)"\}/g,
+		/{"name":\s*"([^"]+)",\s*"arguments":\s*({[^}]*})}/g,
+		/{"name":\s*"([^"]+)",\s*"arguments":\s*({[^}]+})}/g,
+		/{"name":\s*"([^"]+)",\s*"arguments":\s*"([^"]+)"}/g,
 	];
 
 	for (const pattern of toolCallPatterns) {
 		let match;
 		while ((match = pattern.exec(content)) !== null) {
-			const [, name, argsStr] = match;
+			const [, name, argsString] = match;
 			try {
 				let args;
-				if (argsStr && argsStr.startsWith('{')) {
-					args = JSON.parse(argsStr || '{}');
-				} else {
-					args = argsStr || '';
-				}
+				args =
+					argsString && argsString.startsWith('{')
+						? JSON.parse(argsString || '{}')
+						: argsString || '';
+
 				extractedCalls.push({
 					id: `call_${Date.now()}_${extractedCalls.length}`,
 					function: {
 						name: name || '',
-						arguments: args as {[key: string]: any},
+						arguments: args as Record<string, any>,
 					},
 				});
-			} catch (e) {
+			} catch {
 				logError('Tool call failed to parse from content.');
 			}
 		}
@@ -171,7 +171,7 @@ export function cleanContentFromToolCalls(
 					// This code block contains only a tool call, remove the entire block
 					return '';
 				}
-			} catch (e) {
+			} catch {
 				// Not valid JSON, keep the code block
 			}
 
@@ -184,10 +184,10 @@ export function cleanContentFromToolCalls(
 
 	// Remove JSON blocks that were parsed as tool calls (for non-code-block cases)
 	const toolCallPatterns = [
-		/\{\s*\n\s*"name":\s*"([^"]+)",\s*\n\s*"arguments":\s*\{[\s\S]*?\}\s*\n\s*\}/g, // Multiline JSON blocks
-		/\{"name":\s*"([^"]+)",\s*"arguments":\s*(\{[^}]*\})\}/g,
-		/\{"name":\s*"([^"]+)",\s*"arguments":\s*(\{[^}]+\})\}/g,
-		/\{"name":\s*"([^"]+)",\s*"arguments":\s*"([^"]+)"\}/g,
+		/{\s*\n\s*"name":\s*"([^"]+)",\s*\n\s*"arguments":\s*{[\s\S]*?}\s*\n\s*}/g, // Multiline JSON blocks
+		/{"name":\s*"([^"]+)",\s*"arguments":\s*({[^}]*})}/g,
+		/{"name":\s*"([^"]+)",\s*"arguments":\s*({[^}]+})}/g,
+		/{"name":\s*"([^"]+)",\s*"arguments":\s*"([^"]+)"}/g,
 	];
 
 	for (const pattern of toolCallPatterns) {

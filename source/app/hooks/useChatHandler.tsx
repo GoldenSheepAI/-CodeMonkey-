@@ -1,5 +1,12 @@
-import {LLMClient, Message, ToolCall, ToolResult} from '@/types/core.js';
-import {ToolManager} from '@/tools/tool-manager.js';
+import React from 'react';
+import {ThinkingStats} from './useAppState.js';
+import {
+	type LLMClient,
+	type Message,
+	type ToolCall,
+	type ToolResult,
+} from '@/types/core.js';
+import {type ToolManager} from '@/tools/tool-manager.js';
 import {toolDefinitions} from '@/tools/index.js';
 import {processPromptTemplate} from '@/utils/prompt-processor.js';
 import {
@@ -11,8 +18,6 @@ import UserMessage from '@/components/user-message.js';
 import AssistantMessage from '@/components/assistant-message.js';
 import ErrorMessage from '@/components/error-message.js';
 import ToolMessage from '@/components/tool-message.js';
-import {ThinkingStats} from './useAppState.js';
-import React from 'react';
 
 // Helper function to filter out invalid tool calls and deduplicate by ID and function
 const filterValidToolCalls = (toolCalls: any[]): any[] => {
@@ -51,9 +56,9 @@ const filterValidToolCalls = (toolCalls: any[]): any[] => {
 	});
 };
 
-interface UseChatHandlerProps {
-	client: LLMClient | null;
-	toolManager: ToolManager | null;
+type UseChatHandlerProps = {
+	client: LLMClient | undefined;
+	toolManager: ToolManager | undefined;
 	messages: Message[];
 	setMessages: (messages: Message[]) => void;
 	getMessageTokens?: (message: Message) => number;
@@ -63,16 +68,16 @@ interface UseChatHandlerProps {
 
 	addToChatQueue: (component: React.ReactNode) => void;
 	componentKeyCounter: number;
-	abortController: AbortController | null;
-	setAbortController: (controller: AbortController | null) => void;
+	abortController: AbortController | undefined;
+	setAbortController: (controller: AbortController | undefined) => void;
 	developmentMode?: 'normal' | 'auto-accept' | 'plan';
 	onStartToolConfirmationFlow: (
 		toolCalls: any[],
 		updatedMessages: Message[],
-		assistantMsg: Message,
+		assistantMessage: Message,
 		systemMessage: Message,
 	) => void;
-}
+};
 
 export function useChatHandler({
 	client,
@@ -110,10 +115,11 @@ export function useChatHandler({
 					if (typeof parsedArgs === 'string') {
 						try {
 							parsedArgs = JSON.parse(parsedArgs);
-						} catch (e) {
+						} catch {
 							// If parsing fails, use as-is
 						}
 					}
+
 					const formattedResult = await formatter(parsedArgs, result.content);
 
 					if (React.isValidElement(formattedResult)) {
@@ -130,20 +136,20 @@ export function useChatHandler({
 								key={`tool-result-${
 									result.tool_call_id
 								}-${componentKeyCounter}-${Date.now()}`}
+								hideBox
 								title={`⚒ ${result.name}`}
 								message={String(formattedResult)}
-								hideBox={true}
 							/>,
 						);
 					}
-				} catch (formatterError) {
+				} catch {
 					// If formatter fails, show raw result
 					addToChatQueue(
 						<ToolMessage
 							key={`tool-result-${result.tool_call_id}-${componentKeyCounter}`}
+							hideBox
 							title={`⚒ ${result.name}`}
 							message={result.content}
-							hideBox={true}
 						/>,
 					);
 				}
@@ -152,9 +158,9 @@ export function useChatHandler({
 				addToChatQueue(
 					<ToolMessage
 						key={`tool-result-${result.tool_call_id}-${componentKeyCounter}`}
+						hideBox
 						title={`⚒ ${result.name}`}
 						message={result.content}
-						hideBox={true}
 					/>,
 				);
 			}
@@ -184,7 +190,9 @@ export function useChatHandler({
 					}, 100); // Check every 100ms
 
 					// Clear interval when next() completes
-					nextPromise.finally(() => clearInterval(checkInterval));
+					nextPromise.finally(() => {
+						clearInterval(checkInterval);
+					});
 				});
 
 				const result = (await Promise.race([
@@ -285,28 +293,28 @@ export function useChatHandler({
 			const validToolCalls = filterValidToolCalls(allToolCalls);
 
 			// Add assistant message to conversation history
-			const assistantMsg: Message = {
+			const assistantMessage: Message = {
 				role: 'assistant',
 				content: cleanedContent,
 				tool_calls: validToolCalls.length > 0 ? validToolCalls : undefined,
 			};
-			setMessages([...messages, assistantMsg]);
+			setMessages([...messages, assistantMessage]);
 
 			// Update conversation state with assistant message
-			conversationStateManager.current.updateAssistantMessage(assistantMsg);
+			conversationStateManager.current.updateAssistantMessage(assistantMessage);
 
 			// Handle tool calls if present - this continues the loop
 			if (validToolCalls && validToolCalls.length > 0) {
 				// In Plan Mode, block file modification tools
 				if (developmentMode === 'plan') {
-					const fileModificationTools = [
+					const fileModificationTools = new Set([
 						'create_file',
 						'delete_lines',
 						'insert_lines',
 						'replace_lines',
-					];
+					]);
 					const blockedTools = validToolCalls.filter(tc =>
-						fileModificationTools.includes(tc.function.name),
+						fileModificationTools.has(tc.function.name),
 					);
 
 					if (blockedTools.length > 0) {
@@ -325,8 +333,8 @@ export function useChatHandler({
 							addToChatQueue(
 								<ErrorMessage
 									key={`plan-mode-blocked-${error.tool_call_id}-${Date.now()}`}
+									hideBox
 									message={error.content}
-									hideBox={true}
 								/>,
 							);
 						}
@@ -341,7 +349,7 @@ export function useChatHandler({
 
 						const updatedMessagesWithError = [
 							...messages,
-							assistantMsg,
+							assistantMessage,
 							...toolMessages,
 						];
 						setMessages(updatedMessagesWithError);
@@ -378,7 +386,7 @@ export function useChatHandler({
 								if (typeof parsedArgs === 'string') {
 									try {
 										parsedArgs = JSON.parse(parsedArgs);
-									} catch (e) {
+									} catch {
 										// If parsing fails, use as-is
 									}
 								}
@@ -387,7 +395,7 @@ export function useChatHandler({
 								if (!validationResult.valid) {
 									validationFailed = true;
 								}
-							} catch (error) {
+							} catch {
 								// Validation threw an error - treat as validation failure
 								validationFailed = true;
 							}
@@ -426,7 +434,7 @@ export function useChatHandler({
 								if (typeof parsedArgs === 'string') {
 									try {
 										parsedArgs = JSON.parse(parsedArgs);
-									} catch (e) {
+									} catch {
 										// If parsing fails, use as-is
 									}
 								}
@@ -452,8 +460,8 @@ export function useChatHandler({
 									addToChatQueue(
 										<ErrorMessage
 											key={`validation-error-${toolCall.id}-${Date.now()}`}
+											hideBox
 											message={validationResult.error}
-											hideBox={true}
 										/>,
 									);
 
@@ -507,7 +515,7 @@ export function useChatHandler({
 
 						const updatedMessagesWithTools = [
 							...messages,
-							assistantMsg,
+							assistantMessage,
 							...toolMessages,
 						];
 						setMessages(updatedMessagesWithTools);
@@ -526,7 +534,7 @@ export function useChatHandler({
 					onStartToolConfirmationFlow(
 						toolsNeedingConfirmation,
 						messages,
-						assistantMsg,
+						assistantMessage,
 						systemMessage,
 					);
 				}
@@ -540,8 +548,8 @@ export function useChatHandler({
 				addToChatQueue(
 					<ErrorMessage
 						key={`cancelled-${componentKeyCounter}`}
+						hideBox
 						message="Operation was cancelled by user"
-						hideBox={true}
 					/>,
 				);
 			} else {
@@ -555,7 +563,7 @@ export function useChatHandler({
 		} finally {
 			setIsThinking(false);
 			setIsCancelling(false);
-			setAbortController(null);
+			setAbortController(undefined);
 		}
 	};
 
@@ -588,9 +596,13 @@ export function useChatHandler({
 		// Initialize per-message stats with existing conversation context
 		// const systemTokens = Math.ceil(systemPrompt.length / 4); // Comment out, will calculate later
 		const existingConversationTokens = getMessageTokens
-			? updatedMessages.reduce((total, msg) => total + getMessageTokens(msg), 0)
+			? updatedMessages.reduce(
+					(total, message_) => total + getMessageTokens(message_),
+					0,
+			  )
 			: updatedMessages.reduce(
-					(total, msg) => total + Math.ceil((msg.content?.length || 0) / 4),
+					(total, message_) =>
+						total + Math.ceil((message_.content?.length || 0) / 4),
 					0,
 			  );
 
@@ -619,8 +631,8 @@ export function useChatHandler({
 				addToChatQueue(
 					<ErrorMessage
 						key={`cancelled-${componentKeyCounter}`}
+						hideBox
 						message="Operation was cancelled by user"
-						hideBox={true}
 					/>,
 				);
 			} else {
@@ -634,7 +646,7 @@ export function useChatHandler({
 		} finally {
 			setIsThinking(false);
 			setIsCancelling(false);
-			setAbortController(null);
+			setAbortController(undefined);
 		}
 	};
 

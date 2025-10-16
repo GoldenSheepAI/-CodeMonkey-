@@ -1,12 +1,12 @@
-import {Command} from '@/types/index.js';
+import {existsSync, mkdirSync, writeFileSync} from 'node:fs';
+import {join} from 'node:path';
 import React from 'react';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {Box, Text} from 'ink';
+import {type Command} from '@/types/index.js';
 import {colors} from '@/config/index.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import ErrorMessage from '@/components/error-message.js';
-import {existsSync, mkdirSync, writeFileSync} from 'fs';
-import {join} from 'path';
 import {ProjectAnalyzer} from '@/init/project-analyzer.js';
 import {AgentsTemplateGenerator} from '@/init/agents-template-generator.js';
 import {ExistingRulesExtractor} from '@/init/existing-rules-extractor.js';
@@ -15,8 +15,8 @@ function InitSuccess({
 	created,
 	analysis,
 }: {
-	created: string[];
-	analysis?: {
+	readonly created: string[];
+	readonly analysis?: {
 		projectType: string;
 		primaryLanguage: string;
 		frameworks: string[];
@@ -37,7 +37,7 @@ function InitSuccess({
 			marginBottom={1}
 		>
 			<Box marginBottom={1}>
-				<Text color={colors.primary} bold>
+				<Text bold color={colors.primary}>
 					✓ CodeMonkey 🐒 project initialized successfully!
 				</Text>
 			</Box>
@@ -45,7 +45,7 @@ function InitSuccess({
 			{analysis && (
 				<>
 					<Box marginBottom={1}>
-						<Text color={colors.white} bold>
+						<Text bold color={colors.white}>
 							Project Analysis:
 						</Text>
 					</Box>
@@ -66,7 +66,7 @@ function InitSuccess({
 			)}
 
 			<Box marginBottom={1}>
-				<Text color={colors.white} bold>
+				<Text bold color={colors.white}>
 					Files Created:
 				</Text>
 			</Box>
@@ -89,7 +89,7 @@ function InitSuccess({
 	);
 }
 
-function InitError({message}: {message: string}) {
+function InitError({message}: {readonly message: string}) {
 	return <ErrorMessage message={`✗ ${message}`} />;
 }
 
@@ -150,7 +150,7 @@ If no filename provided, suggest which files need tests.`,
 	};
 
 	// Add language/framework-specific commands
-	const additionalCommands: {[key: string]: string} = {};
+	const additionalCommands: Record<string, string> = {};
 
 	if (primaryLanguage === 'JavaScript' || primaryLanguage === 'TypeScript') {
 		additionalCommands['refactor.md'] = `---
@@ -213,7 +213,7 @@ export const initCommand: Command = {
 	name: 'init',
 	description:
 		'Initialize CodeMonkey configuration and analyze project structure',
-	handler: async (_args: string[], _messages, _metadata) => {
+	async handler(_args: string[], _messages, _metadata) {
 		const cwd = process.cwd();
 		const created: string[] = [];
 

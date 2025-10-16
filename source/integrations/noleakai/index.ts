@@ -9,16 +9,16 @@ export {SecurityScanner} from './scanner.js';
 export {SECURITY_PATTERNS} from './patterns.js';
 export {Redactor} from './redactor.js';
 
-export interface SecurityScan {
+export type SecurityScan = {
 	id: string;
 	content: string;
 	timestamp: Date;
 	findings: SecurityFinding[];
 	severity: 'low' | 'medium' | 'high' | 'critical';
 	status: 'clean' | 'flagged' | 'redacted';
-}
+};
 
-export interface SecurityFinding {
+export type SecurityFinding = {
 	type: 'pii' | 'sensitive' | 'malicious' | 'credential' | 'api_key';
 	pattern: string;
 	line: number;
@@ -26,20 +26,22 @@ export interface SecurityFinding {
 	confidence: number;
 	severity: 'low' | 'medium' | 'high' | 'critical';
 	suggestion: string;
-}
+};
 
-export interface RedactionRule {
+export type RedactionRule = {
 	pattern: RegExp;
 	replacement: string;
 	description: string;
 	severity: 'low' | 'medium' | 'high' | 'critical';
-}
+};
 
-export interface NoleakaiConfig {
+export type NoleakaiConfig = {
 	enableScanning: boolean;
 	enableRedaction: boolean;
 	strictMode: boolean;
 	customPatterns: RedactionRule[];
-	scanTypes: ('pii' | 'sensitive' | 'malicious' | 'credential' | 'api_key')[];
+	scanTypes: Array<
+		'pii' | 'sensitive' | 'malicious' | 'credential' | 'api_key'
+	>;
 	redactionMarker: string;
-}
+};

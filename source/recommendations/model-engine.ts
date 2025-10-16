@@ -1,9 +1,9 @@
-import {
-	SystemCapabilities,
-	ModelEntry,
-	ModelRecommendation,
-} from '@/types/index.js';
 import {modelDatabase} from './model-database.js';
+import {
+	type SystemCapabilities,
+	type ModelEntry,
+	type ModelRecommendation,
+} from '@/types/index.js';
 
 export class ModelMatchingEngine {
 	private static instance: ModelMatchingEngine;
@@ -12,6 +12,7 @@ export class ModelMatchingEngine {
 		if (!ModelMatchingEngine.instance) {
 			ModelMatchingEngine.instance = new ModelMatchingEngine();
 		}
+
 		return ModelMatchingEngine.instance;
 	}
 
@@ -56,7 +57,7 @@ export class ModelMatchingEngine {
 
 	getTopRecommendations(
 		systemCapabilities: SystemCapabilities,
-		count: number = 5,
+		count = 5,
 	): ModelRecommendation[] {
 		const compatible = this.getCompatibleModels(systemCapabilities);
 		return compatible
@@ -66,22 +67,22 @@ export class ModelMatchingEngine {
 
 	getBestLocalModel(
 		systemCapabilities: SystemCapabilities,
-	): ModelRecommendation | null {
+	): ModelRecommendation | undefined {
 		const localModels = this.getCompatibleModels(systemCapabilities).filter(
 			rec => rec.model.local && rec.compatibility !== 'incompatible',
 		);
 
-		return localModels.length > 0 ? localModels[0] : null;
+		return localModels.length > 0 ? localModels[0] : undefined;
 	}
 
 	getBestApiModel(
 		systemCapabilities: SystemCapabilities,
-	): ModelRecommendation | null {
+	): ModelRecommendation | undefined {
 		const apiModels = this.getCompatibleModels(systemCapabilities).filter(
 			rec => rec.model.api && rec.compatibility !== 'incompatible',
 		);
 
-		return apiModels.length > 0 ? apiModels[0] : null;
+		return apiModels.length > 0 ? apiModels[0] : undefined;
 	}
 
 	private assessModelCompatibility(
@@ -194,6 +195,7 @@ export class ModelMatchingEngine {
 					model.api ? 'Try API access instead.' : ''
 				}`;
 			}
+
 			return 'Requires internet connection for API access';
 		}
 
@@ -236,14 +238,21 @@ export class ModelMatchingEngine {
 		compatibility: ModelRecommendation['compatibility'],
 	): number {
 		switch (compatibility) {
-			case 'perfect':
+			case 'perfect': {
 				return 4;
-			case 'good':
+			}
+
+			case 'good': {
 				return 3;
-			case 'marginal':
+			}
+
+			case 'marginal': {
 				return 2;
-			case 'incompatible':
+			}
+
+			case 'incompatible': {
 				return 1;
+			}
 		}
 	}
 
@@ -251,7 +260,7 @@ export class ModelMatchingEngine {
 		// Weight heavily in favor of agentic capabilities (coding ability is most important)
 		// Then local feasibility, and finally cost
 		return (
-			model.quality.agentic * 3.0 +
+			model.quality.agentic * 3 +
 			model.quality.local * 0.8 +
 			model.quality.cost * 0.5
 		);

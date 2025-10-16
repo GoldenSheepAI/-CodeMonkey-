@@ -1,11 +1,11 @@
 import {Text, Box} from 'ink';
 import {memo, useMemo} from 'react';
-import {useTheme} from '@/hooks/useTheme.js';
-import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
-import type {AssistantMessageProps} from '@/types/index.js';
 import chalk from 'chalk';
 import {highlight} from 'cli-highlight';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
+import {useTheme} from '@/hooks/useTheme.js';
+import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
+import type {AssistantMessageProps} from '@/types/index.js';
 
 // Basic markdown parser for terminal
 export function parseMarkdown(text: string, themeColors: any): string {
@@ -53,7 +53,7 @@ export function parseMarkdown(text: string, themeColors: any): string {
 	});
 
 	// Links [text](url)
-	result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, url) => {
+	result = result.replace(/\[([^\]]+)]\(([^)]+)\)/g, (_match, text, url) => {
 		return (
 			chalk.hex(themeColors.info).underline(text) +
 			' ' +
@@ -67,10 +67,10 @@ export function parseMarkdown(text: string, themeColors: any): string {
 	});
 
 	// List items (- item or * item or 1. item)
-	result = result.replace(/^[\s]*[-*]\s+(.+)$/gm, (_match, text) => {
+	result = result.replace(/^\s*[-*]\s+(.+)$/gm, (_match, text) => {
 		return chalk.hex(themeColors.white)(`• ${text}`);
 	});
-	result = result.replace(/^[\s]*\d+\.\s+(.+)$/gm, (_match, text) => {
+	result = result.replace(/^\s*\d+\.\s+(.+)$/gm, (_match, text) => {
 		return chalk.hex(themeColors.white)(text);
 	});
 
@@ -94,18 +94,16 @@ function wrapText(text: string, maxWidth: number): string[] {
 		for (const word of words) {
 			// Strip ANSI codes for length calculation
 			const testLine = currentLine ? `${currentLine} ${word}` : word;
-			const testLineLength = testLine.replace(/\u001b\[[0-9;]*m/g, '').length;
+			const testLineLength = testLine.replace(/\u001B\[[\d;]*m/g, '').length;
 
 			if (testLineLength <= maxWidth) {
 				currentLine = testLine;
+			} else if (currentLine) {
+				lines.push(currentLine);
+				currentLine = word;
 			} else {
-				if (currentLine) {
-					lines.push(currentLine);
-					currentLine = word;
-				} else {
-					// Word is longer than max width, break it
-					lines.push(word);
-				}
+				// Word is longer than max width, break it
+				lines.push(word);
 			}
 		}
 

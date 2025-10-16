@@ -5,7 +5,7 @@ import React, {
 	useMemo,
 	useState,
 } from 'react';
-import {Completion} from '@/types/index.js';
+import {type Completion} from '@/types/index.js';
 
 export type UIState = {
 	showClearMessage: boolean;
@@ -58,7 +58,11 @@ export function useUIState(): UIState {
 }
 
 // Provider to expose a single shared UI state instance to the subtree
-export function UIStateProvider({children}: {children: React.ReactNode}) {
+export function UIStateProvider({
+	children,
+}: {
+	readonly children: React.ReactNode;
+}) {
 	const state = useUIState();
 	return React.createElement(UIStateContext.Provider, {value: state}, children);
 }
@@ -69,5 +73,6 @@ export function useUIStateContext(): UIState {
 	if (!ctx) {
 		throw new Error('useUIStateContext must be used within a UIStateProvider');
 	}
+
 	return ctx;
 }

@@ -1,6 +1,6 @@
-import fs from 'fs/promises';
-import path from 'path';
-import os from 'os';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
 import {logError} from './utils/message-queue.js';
 
 const HISTORY_FILE = path.join(os.homedir(), '.nano-coder-history');
@@ -9,7 +9,7 @@ const ENTRY_SEPARATOR = '\n---ENTRY_SEPARATOR---\n';
 
 class PromptHistory {
 	private history: string[] = [];
-	private currentIndex: number = -1;
+	private currentIndex = -1;
 
 	async loadHistory(): Promise<void> {
 		try {
@@ -23,6 +23,7 @@ class PromptHistory {
 				// Legacy format - assume single lines only
 				this.history = content.split('\n').filter(line => line.trim() !== '');
 			}
+
 			this.currentIndex = -1;
 		} catch {
 			// File doesn't exist yet, start with empty history
@@ -66,8 +67,8 @@ class PromptHistory {
 		this.saveHistory(); // Fire and forget
 	}
 
-	getPrevious(): string | null {
-		if (this.history.length === 0) return null;
+	getPrevious(): string | undefined {
+		if (this.history.length === 0) return undefined;
 
 		if (this.currentIndex === -1) {
 			this.currentIndex = this.history.length - 1;
@@ -78,16 +79,16 @@ class PromptHistory {
 		return this.history[this.currentIndex] ?? null;
 	}
 
-	getNext(): string | null {
-		if (this.history.length === 0 || this.currentIndex === -1) return null;
+	getNext(): string | undefined {
+		if (this.history.length === 0 || this.currentIndex === -1) return undefined;
 
 		if (this.currentIndex < this.history.length - 1) {
 			this.currentIndex++;
 			return this.history[this.currentIndex] ?? null;
-		} else {
-			this.currentIndex = -1;
-			return '';
 		}
+
+		this.currentIndex = -1;
+		return '';
 	}
 
 	resetIndex(): void {

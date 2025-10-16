@@ -1,11 +1,11 @@
 import React, {useState, useCallback} from 'react';
-import {Command} from '@/types/index.js';
+import {type Command} from '@/types/index.js';
 import FeedbackDisplay from '@/components/feedback-display.js';
 import SuccessMessage from '@/components/success-message.js';
 
-interface FeedbackComponentProps {
-	onComplete: () => void;
-}
+type FeedbackComponentProps = {
+	readonly onComplete: () => void;
+};
 
 function FeedbackComponent({onComplete}: FeedbackComponentProps) {
 	const [isCompleted, setIsCompleted] = useState(false);
@@ -54,7 +54,7 @@ function FeedbackComponent({onComplete}: FeedbackComponentProps) {
 export const feedbackCommand: Command = {
 	name: 'feedback',
 	description: 'Submit beta feedback to help improve CodeMonkey',
-	handler: async (_args: string[], _messages, _metadata) => {
+	async handler(_args: string[], _messages, _metadata) {
 		const handleComplete = () => {
 			// Component will auto-unmount when this resolves
 		};

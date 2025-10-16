@@ -1,33 +1,36 @@
-import {useState, useCallback} from 'react';
-import {LLMClient, Message, DevelopmentMode} from '@/types/core.js';
-import {ToolManager} from '@/tools/tool-manager.js';
-import {CustomCommandLoader} from '@/custom-commands/loader.js';
-import {CustomCommandExecutor} from '@/custom-commands/executor.js';
+import React, {useState, useCallback} from 'react';
+import {
+	type LLMClient,
+	type Message,
+	type DevelopmentMode,
+} from '@/types/core.js';
+import {type ToolManager} from '@/tools/tool-manager.js';
+import {type CustomCommandLoader} from '@/custom-commands/loader.js';
+import {type CustomCommandExecutor} from '@/custom-commands/executor.js';
 import {loadPreferences} from '@/config/preferences.js';
 import {defaultTheme} from '@/config/themes.js';
 import type {ThemePreset} from '@/types/ui.js';
 import type {UpdateInfo} from '@/types/index.js';
-import React from 'react';
 
-export interface ThinkingStats {
+export type ThinkingStats = {
 	tokenCount: number;
 	contextSize: number;
 	totalTokensUsed: number;
 	tokensPerSecond?: number;
-}
+};
 
-export interface ConversationContext {
+export type ConversationContext = {
 	updatedMessages: Message[];
 	assistantMsg: Message;
 	systemMessage: Message;
-}
+};
 
 export function useAppState() {
 	// Initialize theme from preferences
 	const preferences = loadPreferences();
 	const initialTheme = preferences.selectedTheme || defaultTheme;
 
-	const [client, setClient] = useState<LLMClient | null>(null);
+	const [client, setClient] = useState<LLMClient | undefined>(undefined);
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [displayMessages, setDisplayMessages] = useState<Message[]>([]);
 	const [messageTokenCache, setMessageTokenCache] = useState<
@@ -37,25 +40,28 @@ export function useAppState() {
 	const [currentProvider, setCurrentProvider] =
 		useState<string>('openai-compatible');
 	const [currentTheme, setCurrentTheme] = useState<ThemePreset>(initialTheme);
-	const [toolManager, setToolManager] = useState<ToolManager | null>(null);
-	const [customCommandLoader, setCustomCommandLoader] =
-		useState<CustomCommandLoader | null>(null);
-	const [customCommandExecutor, setCustomCommandExecutor] =
-		useState<CustomCommandExecutor | null>(null);
+	const [toolManager, setToolManager] = useState<ToolManager | undefined>(undefined);
+	const [customCommandLoader, setCustomCommandLoader] = useState<
+		CustomCommandLoader | undefined
+	>(undefined);
+	const [customCommandExecutor, setCustomCommandExecutor] = useState<
+		CustomCommandExecutor | undefined
+	>(undefined);
 	const [customCommandCache, setCustomCommandCache] = useState<
 		Map<string, any>
 	>(new Map());
 	const [startChat, setStartChat] = useState<boolean>(false);
 	const [mcpInitialized, setMcpInitialized] = useState<boolean>(false);
-	const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
+	const [updateInfo, setUpdateInfo] = useState<UpdateInfo | undefined>(undefined);
 
 	// Thinking indicator state
 	const [isThinking, setIsThinking] = useState<boolean>(false);
 	const [isCancelling, setIsCancelling] = useState<boolean>(false);
 
 	// Cancellation state
-	const [abortController, setAbortController] =
-		useState<AbortController | null>(null);
+	const [abortController, setAbortController] = useState<
+		AbortController | undefined
+	>(undefined);
 
 	// Mode states
 	const [isModelSelectionMode, setIsModelSelectionMode] =
@@ -80,8 +86,9 @@ export function useAppState() {
 	const [pendingToolCalls, setPendingToolCalls] = useState<any[]>([]);
 	const [currentToolIndex, setCurrentToolIndex] = useState<number>(0);
 	const [completedToolResults, setCompletedToolResults] = useState<any[]>([]);
-	const [currentConversationContext, setCurrentConversationContext] =
-		useState<ConversationContext | null>(null);
+	const [currentConversationContext, setCurrentConversationContext] = useState<
+		ConversationContext | undefined
+	>(undefined);
 
 	// Chat queue for components
 	const [chatComponents, setChatComponents] = useState<React.ReactNode[]>([]);
@@ -100,8 +107,8 @@ export function useAppState() {
 				});
 			}
 
-			setChatComponents(prevComponents => {
-				const newComponents = [...prevComponents, componentWithKey];
+			setChatComponents(previousComponents => {
+				const newComponents = [...previousComponents, componentWithKey];
 				// Keep reasonable limit in memory for performance
 				return newComponents.length > 50
 					? newComponents.slice(-50)
@@ -121,7 +128,7 @@ export function useAppState() {
 			}
 
 			const tokens = Math.ceil((message.content?.length || 0) / 4);
-			setMessageTokenCache(prev => new Map(prev).set(cacheKey, tokens));
+			setMessageTokenCache(previous => new Map(previous).set(cacheKey, tokens));
 			return tokens;
 		},
 		[messageTokenCache],
@@ -147,7 +154,7 @@ export function useAppState() {
 		setPendingToolCalls([]);
 		setCurrentToolIndex(0);
 		setCompletedToolResults([]);
-		setCurrentConversationContext(null);
+		setCurrentConversationContext(undefined);
 	};
 
 	return {

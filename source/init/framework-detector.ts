@@ -1,7 +1,7 @@
-import {readFileSync, existsSync} from 'fs';
-import {join} from 'path';
+import {readFileSync, existsSync} from 'node:fs';
+import {join} from 'node:path';
 
-export interface FrameworkInfo {
+export type FrameworkInfo = {
 	name: string;
 	version?: string;
 	category:
@@ -13,22 +13,22 @@ export interface FrameworkInfo {
 		| 'build'
 		| 'other';
 	confidence: 'high' | 'medium' | 'low';
-}
+};
 
-export interface BuildInfo {
-	scripts?: {[script: string]: string};
+export type BuildInfo = {
+	scripts?: Record<string, string>;
 	buildCommand?: string;
 	testCommand?: string;
 	devCommand?: string;
 	startCommand?: string;
-}
+};
 
-export interface ProjectDependencies {
+export type ProjectDependencies = {
 	frameworks: FrameworkInfo[];
 	buildTools: string[];
 	testingFrameworks: string[];
 	buildInfo: BuildInfo;
-}
+};
 
 export class FrameworkDetector {
 	private static readonly FRAMEWORK_PATTERNS = {
@@ -76,7 +76,7 @@ export class FrameworkDetector {
 		tauri: {name: 'Tauri', category: 'desktop' as const},
 	};
 
-	constructor(private projectPath: string) {}
+	constructor(private readonly projectPath: string) {}
 
 	/**
 	 * Detect frameworks and dependencies in the project
@@ -103,7 +103,8 @@ export class FrameworkDetector {
 				uniqueFrameworks.set(framework.name, framework);
 			}
 		}
-		result.frameworks = Array.from(uniqueFrameworks.values());
+
+		result.frameworks = [...uniqueFrameworks.values()];
 
 		// Deduplicate build tools and testing frameworks
 		result.buildTools = [...new Set(result.buildTools)];
@@ -156,7 +157,7 @@ export class FrameworkDetector {
 					}
 				}
 			}
-		} catch (error) {
+		} catch {
 			// Ignore parsing errors
 		}
 	}
@@ -165,14 +166,14 @@ export class FrameworkDetector {
 	 * Check requirements.txt for Python dependencies
 	 */
 	private checkRequirementsTxt(result: ProjectDependencies): void {
-		const reqPath = join(this.projectPath, 'requirements.txt');
+		const requestPath = join(this.projectPath, 'requirements.txt');
 
-		if (!existsSync(reqPath)) {
+		if (!existsSync(requestPath)) {
 			return;
 		}
 
 		try {
-			const content = readFileSync(reqPath, 'utf-8');
+			const content = readFileSync(requestPath, 'utf-8');
 			const lines = content
 				.split('\n')
 				.filter(line => line.trim() && !line.startsWith('#'));
@@ -184,7 +185,7 @@ export class FrameworkDetector {
 					result.frameworks.push(framework);
 				}
 			}
-		} catch (error) {
+		} catch {
 			// Ignore parsing errors
 		}
 	}
@@ -203,7 +204,7 @@ export class FrameworkDetector {
 			const content = readFileSync(cargoPath, 'utf-8');
 
 			// Simple TOML parsing for dependencies section
-			const depsMatch = content.match(/\[dependencies\]([\s\S]*?)(?:\[|$)/);
+			const depsMatch = /\[dependencies]([\s\S]*?)(?:\[|$)/.exec(content);
 			if (depsMatch) {
 				const depsSection = depsMatch[1];
 				const lines = depsSection
@@ -211,7 +212,7 @@ export class FrameworkDetector {
 					.filter(line => line.trim() && !line.startsWith('#'));
 
 				for (const line of lines) {
-					const match = line.match(/^([^=]+)\s*=/);
+					const match = /^([^=]+)\s*=/.exec(line);
 					if (match) {
 						const depName = match[1].trim();
 						const framework = this.matchFramework(depName, '');
@@ -230,6 +231,7 @@ export class FrameworkDetector {
 					confidence: 'high',
 				});
 			}
+
 			if (content.includes('warp')) {
 				result.frameworks.push({
 					name: 'Warp',
@@ -237,6 +239,7 @@ export class FrameworkDetector {
 					confidence: 'high',
 				});
 			}
+
 			if (content.includes('rocket')) {
 				result.frameworks.push({
 					name: 'Rocket',
@@ -244,7 +247,7 @@ export class FrameworkDetector {
 					confidence: 'high',
 				});
 			}
-		} catch (error) {
+		} catch {
 			// Ignore parsing errors
 		}
 	}
@@ -270,6 +273,7 @@ export class FrameworkDetector {
 					confidence: 'high',
 				});
 			}
+
 			if (content.includes('gorilla/mux')) {
 				result.frameworks.push({
 					name: 'Gorilla Mux',
@@ -277,6 +281,7 @@ export class FrameworkDetector {
 					confidence: 'high',
 				});
 			}
+
 			if (content.includes('echo')) {
 				result.frameworks.push({
 					name: 'Echo',
@@ -284,7 +289,7 @@ export class FrameworkDetector {
 					confidence: 'high',
 				});
 			}
-		} catch (error) {
+		} catch {
 			// Ignore parsing errors
 		}
 	}
@@ -295,7 +300,7 @@ export class FrameworkDetector {
 	private matchFramework(
 		depName: string,
 		version: string,
-	): FrameworkInfo | null {
+	): FrameworkInfo | undefined {
 		const pattern =
 			FrameworkDetector.FRAMEWORK_PATTERNS[
 				depName as keyof typeof FrameworkDetector.FRAMEWORK_PATTERNS
@@ -331,43 +336,43 @@ export class FrameworkDetector {
 			}
 		}
 
-		return null;
+		return undefined;
 	}
 
 	/**
 	 * Get build commands based on detected frameworks and package.json
 	 */
-	public getBuildCommands(): {[key: string]: string} {
+	public getBuildCommands(): Record<string, string> {
 		const deps = this.detectDependencies();
-		const commands: {[key: string]: string} = {};
+		const commands: Record<string, string> = {};
 
 		if (deps.buildInfo.scripts) {
-			const scripts = deps.buildInfo.scripts;
+			const {scripts} = deps.buildInfo;
 
 			// Standard npm/yarn commands
-			if (scripts.build) commands['Build'] = 'npm run build';
-			if (scripts.test) commands['Test'] = 'npm run test';
-			if (scripts.dev) commands['Development'] = 'npm run dev';
-			if (scripts.start) commands['Start'] = 'npm run start';
-			if (scripts.lint) commands['Lint'] = 'npm run lint';
+			if (scripts.build) commands.Build = 'npm run build';
+			if (scripts.test) commands.Test = 'npm run test';
+			if (scripts.dev) commands.Development = 'npm run dev';
+			if (scripts.start) commands.Start = 'npm run start';
+			if (scripts.lint) commands.Lint = 'npm run lint';
 		}
 
 		// Add language-specific commands
 		if (existsSync(join(this.projectPath, 'Cargo.toml'))) {
-			commands['Build'] = 'cargo build';
-			commands['Test'] = 'cargo test';
-			commands['Run'] = 'cargo run';
+			commands.Build = 'cargo build';
+			commands.Test = 'cargo test';
+			commands.Run = 'cargo run';
 		}
 
 		if (existsSync(join(this.projectPath, 'go.mod'))) {
-			commands['Build'] = 'go build';
-			commands['Test'] = 'go test ./...';
-			commands['Run'] = 'go run .';
+			commands.Build = 'go build';
+			commands.Test = 'go test ./...';
+			commands.Run = 'go run .';
 		}
 
 		if (existsSync(join(this.projectPath, 'requirements.txt'))) {
-			commands['Install'] = 'pip install -r requirements.txt';
-			commands['Test'] = 'python -m pytest';
+			commands.Install = 'pip install -r requirements.txt';
+			commands.Test = 'python -m pytest';
 		}
 
 		return commands;

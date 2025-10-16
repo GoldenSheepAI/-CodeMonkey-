@@ -1,95 +1,95 @@
-import {ReactNode} from 'react';
-import {ToolCall, LLMClient} from './core.js';
-import {CustomCommand} from './commands.js';
+import {type ReactNode} from 'react';
+import {type ToolCall, type LLMClient} from './core.js';
+import {type CustomCommand} from './commands.js';
 
-export interface AssistantMessageProps {
+export type AssistantMessageProps = {
 	message: string;
 	model: string;
-}
+};
 
-export interface BashExecutionIndicatorProps {
+export type BashExecutionIndicatorProps = {
 	command: string;
-}
+};
 
-export interface ChatQueueProps {
+export type ChatQueueProps = {
 	staticComponents?: ReactNode[];
 	queuedComponents?: ReactNode[];
 	displayCount?: number;
 	forceAllStatic?: boolean; // Force all messages to Static (e.g., during tool confirmation)
-}
+};
 
-export interface ChatProps {
+export type ChatProps = {
 	onSubmit?: (message: string) => void;
 	placeholder?: string;
 	customCommands?: string[];
 	disabled?: boolean;
 	onCancel?: () => void;
-}
+};
 
 export type Completion = {name: string; isCustom: boolean};
 
-export interface CustomCommandsProps {
+export type CustomCommandsProps = {
 	commands: CustomCommand[];
-}
+};
 
-export interface ModelSelectorProps {
-	client: LLMClient | null;
+export type ModelSelectorProps = {
+	client: LLMClient | undefined;
 	currentModel: string;
 	onModelSelect: (model: string) => void;
 	onCancel: () => void;
-}
+};
 
-export interface ModelOption {
+export type ModelOption = {
 	value: string;
 	label: string;
 	description?: string;
-}
+};
 
-export interface ProviderSelectorProps {
+export type ProviderSelectorProps = {
 	currentProvider: string;
 	onProviderSelect: (provider: string) => void;
 	onCancel: () => void;
-}
+};
 
-export interface ProviderOption {
+export type ProviderOption = {
 	value: string;
 	label: string;
 	available: boolean;
-}
+};
 
-export interface StatusProps {
+export type StatusProps = {
 	conversationContext: any;
 	currentProvider: string;
 	currentModel: string;
 	updateInfo?: any;
-}
+};
 
-export interface ToolConfirmationProps {
+export type ToolConfirmationProps = {
 	toolCall: ToolCall;
 	onConfirm: (confirmed: boolean) => void;
 	onCancel: () => void;
-}
+};
 
-export interface ConfirmationOption {
+export type ConfirmationOption = {
 	key: string;
 	label: string;
 	action: () => void;
-}
+};
 
-export interface ToolExecutionIndicatorProps {
+export type ToolExecutionIndicatorProps = {
 	toolName: string;
 	currentIndex: number;
 	totalTools: number;
-}
+};
 
-export interface UserMessageProps {
+export type UserMessageProps = {
 	message: string;
-}
+};
 
-export interface MCPProps {
+export type MCPProps = {
 	mcpServers: any[];
-}
+};
 
-export interface DebugProps {
+export type DebugProps = {
 	messages: any[];
-}
+};

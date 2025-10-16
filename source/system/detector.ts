@@ -1,20 +1,23 @@
 import {exec} from 'node:child_process';
 import {promisify} from 'node:util';
 import * as si from 'systeminformation';
-import {SystemCapabilities} from '@/types/index.js';
+import {type SystemCapabilities} from '@/types/index.js';
 
 const execAsync = promisify(exec);
 
 export class SystemDetector {
 	private static instance: SystemDetector;
-	private cachedCapabilities: SystemCapabilities | null = null;
-	private lastDetection: number = 0;
-	private readonly CACHE_DURATION = 30_000; // 30 seconds
+	private cachedCapabilities: SystemCapabilities | undefined = undefined;
+	private lastDetection = 0;
+	private get CACHE_DURATION() {
+		return 30_000;
+	} // 30 seconds
 
 	static getInstance(): SystemDetector {
 		if (!SystemDetector.instance) {
 			SystemDetector.instance = new SystemDetector();
 		}
+
 		return SystemDetector.instance;
 	}
 
@@ -132,9 +135,9 @@ export class SystemDetector {
 				}),
 			);
 
-			const successful = results.filter(
-				r => r.status === 'fulfilled',
-			) as PromiseFulfilledResult<number>[];
+			const successful = results.filter(r => r.status === 'fulfilled') as Array<
+				PromiseFulfilledResult<number>
+			>;
 
 			if (successful.length === 0) {
 				return {connected: false};
@@ -158,7 +161,7 @@ export class SystemDetector {
 	}
 
 	clearCache(): void {
-		this.cachedCapabilities = null;
+		this.cachedCapabilities = undefined;
 		this.lastDetection = 0;
 	}
 }

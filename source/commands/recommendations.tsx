@@ -2,30 +2,34 @@ import React, {useState, useEffect} from 'react';
 import {Box, Text, useInput, useFocus} from 'ink';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {Tabs, Tab} from 'ink-tab';
-import {Command, SystemCapabilities} from '@/types/index.js';
+import {type Command, type SystemCapabilities} from '@/types/index.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {useTheme} from '@/hooks/useTheme.js';
 import {systemDetector} from '@/system/detector.js';
 import {
 	recommendationEngine,
-	ModelRecommendationEnhanced,
+	type ModelRecommendationEnhanced,
 } from '@/recommendations/recommendation-engine.js';
 
-interface RecommendationsDisplayProps {
-	onCancel?: () => void;
-}
+type RecommendationsDisplayProps = {
+	readonly onCancel?: () => void;
+};
 
 function RecommendationsDisplay({onCancel}: RecommendationsDisplayProps) {
 	const boxWidth = useTerminalWidth();
 	const {colors} = useTheme();
-	const [systemCaps, setSystemCaps] = useState<SystemCapabilities | null>(null);
+	const [systemCaps, setSystemCaps] = useState<SystemCapabilities | undefined>(
+		undefined,
+	);
 	const [models, setModels] = useState<ModelRecommendationEnhanced[]>([]);
-	const [topLocalModel, setTopLocalModel] =
-		useState<ModelRecommendationEnhanced | null>(null);
-	const [topApiModel, setTopApiModel] =
-		useState<ModelRecommendationEnhanced | null>(null);
+	const [topLocalModel, setTopLocalModel] = useState<
+		ModelRecommendationEnhanced | undefined
+	>(undefined);
+	const [topApiModel, setTopApiModel] = useState<
+		ModelRecommendationEnhanced | undefined
+	>(undefined);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | undefined>(undefined);
 	const [currentModelIndex, setCurrentModelIndex] = useState(0);
 	const [activeTab, setActiveTab] = useState<'local' | 'api'>('local');
 	const [searchQuery, setSearchQuery] = useState('');
@@ -75,10 +79,10 @@ function RecommendationsDisplay({onCancel}: RecommendationsDisplayProps) {
 				onCancel();
 			}
 		} else if (key.upArrow) {
-			setCurrentModelIndex(prev => Math.max(0, prev - 1));
+			setCurrentModelIndex(previous => Math.max(0, previous - 1));
 		} else if (key.downArrow) {
-			setCurrentModelIndex(prev =>
-				Math.min(currentTabModels.length - 1, prev + 1),
+			setCurrentModelIndex(previous =>
+				Math.min(currentTabModels.length - 1, previous + 1),
 			);
 		} else if (key.leftArrow && !searchMode) {
 			setActiveTab('local');
@@ -86,12 +90,13 @@ function RecommendationsDisplay({onCancel}: RecommendationsDisplayProps) {
 			setActiveTab('api');
 		} else if (key.backspace || key.delete) {
 			if (searchMode) {
-				setSearchQuery(prev => {
-					const newQuery = prev.slice(0, -1);
+				setSearchQuery(previous => {
+					const newQuery = previous.slice(0, -1);
 					// Exit search mode if query becomes empty
 					if (newQuery === '') {
 						setSearchMode(false);
 					}
+
 					return newQuery;
 				});
 				setCurrentModelIndex(0);
@@ -101,7 +106,8 @@ function RecommendationsDisplay({onCancel}: RecommendationsDisplayProps) {
 			if (!searchMode) {
 				setSearchMode(true);
 			}
-			setSearchQuery(prev => prev + input);
+
+			setSearchQuery(previous => previous + input);
 			setCurrentModelIndex(0);
 		}
 		// Consume all other input by doing nothing
@@ -135,14 +141,14 @@ function RecommendationsDisplay({onCancel}: RecommendationsDisplayProps) {
 					if (!canRun) return 0; // Can't run = score of 0
 
 					return (
-						model.model.quality.agentic * 3.0 + model.model.quality.local * 1.5
+						model.model.quality.agentic * 3 + model.model.quality.local * 1.5
 					);
 				};
 
 				// API model scoring: agentic is most important, then cost (value for money)
 				const getApiScore = (model: ModelRecommendationEnhanced) => {
 					return (
-						model.model.quality.agentic * 3.0 + model.model.quality.cost * 1.2
+						model.model.quality.agentic * 3 + model.model.quality.cost * 1.2
 					);
 				};
 
@@ -251,11 +257,11 @@ function RecommendationsDisplay({onCancel}: RecommendationsDisplayProps) {
 				colors={colors}
 				currentModelIndex={currentModelIndex}
 				activeTab={activeTab}
-				onTabChange={setActiveTab}
 				systemCaps={systemCaps}
 				searchMode={searchMode}
 				searchQuery={searchQuery}
 				currentTabModels={currentTabModels}
+				onTabChange={setActiveTab}
 			/>
 
 			<Box marginTop={1} flexDirection="column">
@@ -268,12 +274,12 @@ function RecommendationsDisplay({onCancel}: RecommendationsDisplayProps) {
 				)}
 
 				<Box marginBottom={1}>
-					<Text color={colors.secondary} dimColor>
+					<Text dimColor color={colors.secondary}>
 						💡 Add providers to agents.config.json to use these models.
 					</Text>
 				</Box>
 
-				<Text color={colors.secondary} dimColor>
+				<Text dimColor color={colors.secondary}>
 					{searchMode
 						? 'Type to search | Backspace to delete | ↑/↓: Navigate | Esc: Exit search'
 						: 'Type to search | ↑/↓: Navigate | ←/→: Switch tabs | Esc: Close'}
@@ -287,8 +293,8 @@ function SystemSummary({
 	systemCaps,
 	colors,
 }: {
-	systemCaps: SystemCapabilities;
-	colors: any;
+	readonly systemCaps: SystemCapabilities;
+	readonly colors: any;
 }) {
 	const gpuText = systemCaps.gpu.available
 		? `${systemCaps.gpu.type} GPU${
@@ -305,13 +311,13 @@ function SystemSummary({
 	return (
 		<Box
 			flexDirection="column"
-			borderStyle={'round'}
+			borderStyle="round"
 			borderColor={colors.secondary}
 			padding={1}
-			width={'50%'}
+			width="50%"
 		>
 			<Box marginBottom={1}>
-				<Text color={colors.primary} bold underline>
+				<Text bold underline color={colors.primary}>
 					Your System:
 				</Text>
 			</Box>
@@ -329,20 +335,20 @@ function QuickStartSection({
 	topApiModel,
 	colors,
 }: {
-	topLocalModel: ModelRecommendationEnhanced | null;
-	topApiModel: ModelRecommendationEnhanced | null;
-	colors: any;
+	readonly topLocalModel: ModelRecommendationEnhanced | undefined;
+	readonly topApiModel: ModelRecommendationEnhanced | undefined;
+	readonly colors: any;
 }) {
 	return (
 		<Box
 			flexDirection="column"
-			borderStyle={'round'}
+			borderStyle="round"
 			borderColor={colors.secondary}
 			padding={1}
-			width={'50%'}
+			width="50%"
 		>
 			<Box marginBottom={1}>
-				<Text color={colors.success} bold underline>
+				<Text bold underline color={colors.success}>
 					Quick Start:
 				</Text>
 			</Box>
@@ -383,15 +389,15 @@ function ModelsTabView({
 	searchQuery,
 	currentTabModels,
 }: {
-	models: ModelRecommendationEnhanced[];
-	colors: any;
-	currentModelIndex: number;
-	activeTab: 'local' | 'api';
-	onTabChange: (tab: 'local' | 'api') => void;
-	systemCaps: SystemCapabilities;
-	searchMode: boolean;
-	searchQuery: string;
-	currentTabModels: ModelRecommendationEnhanced[];
+	readonly models: ModelRecommendationEnhanced[];
+	readonly colors: any;
+	readonly currentModelIndex: number;
+	readonly activeTab: 'local' | 'api';
+	readonly onTabChange: (tab: 'local' | 'api') => void;
+	readonly systemCaps: SystemCapabilities;
+	readonly searchMode: boolean;
+	readonly searchQuery: string;
+	readonly currentTabModels: ModelRecommendationEnhanced[];
 }) {
 	// Check if model can run locally on this system
 	const canRunLocally = (model: ModelRecommendationEnhanced) => {
@@ -406,12 +412,12 @@ function ModelsTabView({
 		const canRun = canRunLocally(model);
 		if (!canRun) return 0; // Can't run = score of 0
 
-		return model.model.quality.agentic * 3.0 + model.model.quality.local * 1.5;
+		return model.model.quality.agentic * 3 + model.model.quality.local * 1.5;
 	};
 
 	// API model scoring: agentic is most important, then cost (value for money)
 	const getApiScore = (model: ModelRecommendationEnhanced) => {
-		return model.model.quality.agentic * 3.0 + model.model.quality.cost * 1.2;
+		return model.model.quality.agentic * 3 + model.model.quality.cost * 1.2;
 	};
 
 	// Separate models into local and API, then sort by appropriate score
@@ -435,23 +441,25 @@ function ModelsTabView({
 		return (
 			<Box
 				flexDirection="column"
-				borderStyle={'round'}
+				borderStyle="round"
 				borderColor={colors.secondary}
 				padding={1}
 			>
 				<Box marginBottom={1}>
-					<Text color={colors.primary} bold underline>
+					<Text bold underline color={colors.primary}>
 						{searchMode ? 'Search Mode' : 'Model Database'}
 					</Text>
 				</Box>
 				{!searchMode && (
 					<Tabs
-						onChange={name => onTabChange(name as 'local' | 'api')}
 						defaultValue={activeTab}
 						colors={{
 							activeTab: {
 								color: colors.success,
 							},
+						}}
+						onChange={name => {
+							onTabChange(name as 'local' | 'api');
 						}}
 					>
 						<Tab name="local">Local Models</Tab>
@@ -472,23 +480,25 @@ function ModelsTabView({
 	return (
 		<Box
 			flexDirection="column"
-			borderStyle={'round'}
+			borderStyle="round"
 			borderColor={colors.secondary}
 			padding={1}
 		>
 			<Box marginBottom={1}>
-				<Text color={colors.primary} bold underline>
+				<Text bold underline color={colors.primary}>
 					{searchMode ? 'Search Mode' : 'Model Database'}
 				</Text>
 			</Box>
 			{!searchMode && (
 				<Tabs
-					onChange={name => onTabChange(name as 'local' | 'api')}
 					defaultValue={activeTab}
 					colors={{
 						activeTab: {
 							color: colors.success,
 						},
+					}}
+					onChange={name => {
+						onTabChange(name as 'local' | 'api');
 					}}
 				>
 					<Tab name="local">Local Models</Tab>
@@ -498,14 +508,14 @@ function ModelsTabView({
 
 			<Box flexDirection="column" marginTop={1}>
 				<Box marginBottom={1}>
-					<Text color={colors.secondary} dimColor>
+					<Text dimColor color={colors.secondary}>
 						Model {currentModelIndex + 1} of {currentModels.length}
 					</Text>
 				</Box>
 				<ModelItem
+					showScore
 					model={currentModel}
 					colors={colors}
-					showScore={true}
 					localScore={getLocalScore(currentModel)}
 					apiScore={getApiScore(currentModel)}
 					isLocalTab={activeTab === 'local'}
@@ -527,14 +537,14 @@ function ModelItem({
 	systemCaps,
 	searchMode,
 }: {
-	model: ModelRecommendationEnhanced;
-	colors: any;
-	showScore?: boolean;
-	localScore?: number;
-	apiScore?: number;
-	isLocalTab?: boolean;
-	systemCaps?: SystemCapabilities;
-	searchMode?: boolean;
+	readonly model: ModelRecommendationEnhanced;
+	readonly colors: any;
+	readonly showScore?: boolean;
+	readonly localScore?: number;
+	readonly apiScore?: number;
+	readonly isLocalTab?: boolean;
+	readonly systemCaps?: SystemCapabilities;
+	readonly searchMode?: boolean;
 }) {
 	// Access type from local/api flags
 	const accessTypes = [];
@@ -563,7 +573,7 @@ function ModelItem({
 			};
 		if (normalizedScore >= 6.5)
 			return {color: colors.primary, label: 'Good', score: normalizedScore};
-		if (normalizedScore >= 5.0)
+		if (normalizedScore >= 5)
 			return {color: colors.warning, label: 'Decent', score: normalizedScore};
 		return {color: colors.error, label: 'Poor', score: normalizedScore};
 	};
@@ -597,9 +607,11 @@ function ModelItem({
 					`Cannot run locally - requires ${required}GB RAM (you have ${available}GB)`,
 				);
 			}
+
 			if (model.model.quality.agentic < 5) {
 				weaknesses.push('Limited agentic coding capabilities');
 			}
+
 			if (model.model.quality.local < 5 && canRunLocally) {
 				weaknesses.push(
 					'Difficult to run locally - requires significant resources',
@@ -610,6 +622,7 @@ function ModelItem({
 			if (model.model.quality.agentic < 5) {
 				weaknesses.push('Limited agentic coding capabilities');
 			}
+
 			if (model.model.quality.cost < 5) {
 				weaknesses.push('Expensive API pricing');
 			}
@@ -623,7 +636,7 @@ function ModelItem({
 	return (
 		<Box flexDirection="column" marginBottom={1}>
 			<Box>
-				<Text color={colors.primary} bold underline>
+				<Text bold underline color={colors.primary}>
 					{model.model.name}
 				</Text>
 			</Box>
@@ -650,7 +663,7 @@ function ModelItem({
 							{localScoreInfo && (
 								<Text color={colors.white}>
 									<Text bold>Local Quality: </Text>
-									<Text color={localScoreInfo.color} bold>
+									<Text bold color={localScoreInfo.color}>
 										{localScoreInfo.label}
 									</Text>
 									<Text dimColor> ({localScoreInfo.score.toFixed(1)}/10)</Text>
@@ -659,7 +672,7 @@ function ModelItem({
 							{apiScoreInfo && (
 								<Text color={colors.white}>
 									<Text bold>API Quality: </Text>
-									<Text color={apiScoreInfo.color} bold>
+									<Text bold color={apiScoreInfo.color}>
 										{apiScoreInfo.label}
 									</Text>
 									<Text dimColor> ({apiScoreInfo.score.toFixed(1)}/10)</Text>
@@ -675,7 +688,7 @@ function ModelItem({
 									: 'via API'}
 								:{' '}
 							</Text>
-							<Text color={(localScoreInfo || apiScoreInfo)!.color} bold>
+							<Text bold color={(localScoreInfo || apiScoreInfo)!.color}>
 								{(localScoreInfo || apiScoreInfo)!.label}
 							</Text>
 							<Text dimColor>
@@ -686,7 +699,7 @@ function ModelItem({
 					) : null}
 				</Box>
 				<Box flexDirection="column">
-					<Text color={colors.success} bold>
+					<Text bold color={colors.success}>
 						Strengths:
 					</Text>
 					{model.recommendation.split('\n').map((line, i) => (
@@ -697,7 +710,7 @@ function ModelItem({
 				</Box>
 				{weaknesses.length > 0 && (
 					<Box flexDirection="column" marginTop={1}>
-						<Text color={colors.error} bold>
+						<Text bold color={colors.error}>
 							Weaknesses:
 						</Text>
 						{weaknesses.map((line, i) => (
@@ -718,7 +731,7 @@ export {RecommendationsDisplay};
 export const recommendationsCommand: Command = {
 	name: 'recommendations',
 	description: 'Get AI model recommendations based on your system',
-	handler: async (_args: string[], _messages, _metadata) => {
+	async handler(_args: string[], _messages, _metadata) {
 		// This command is handled specially in app.tsx
 		// This handler exists only for registration purposes
 		return React.createElement(React.Fragment);

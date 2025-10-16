@@ -1,19 +1,24 @@
-import {readFileSync, readdirSync, statSync, existsSync} from 'fs';
-import {join, relative, basename} from 'path';
+import {readFileSync, readdirSync, statSync, existsSync} from 'node:fs';
+import {join, relative, basename} from 'node:path';
 
-export interface ScanResult {
+export type ScanResult = {
 	files: string[];
 	directories: string[];
 	totalFiles: number;
 	scannedFiles: number;
-}
+};
 
 export class FileScanner {
 	private gitignorePatterns: string[] = [];
-	private maxFiles = 1000; // Prevent scanning massive codebases
-	private maxDepth = 10; // Prevent infinite recursion
+	private get maxFiles() {
+		return 1000;
+	} // Prevent scanning massive codebases
 
-	constructor(private rootPath: string) {
+	private get maxDepth() {
+		return 10;
+	} // Prevent infinite recursion
+
+	constructor(private readonly rootPath: string) {
 		this.loadGitignore();
 	}
 
@@ -40,7 +45,7 @@ export class FileScanner {
 						.replace(/\?/g, '.') // ? -> .
 						.replace(/\/$/, ''); // Remove trailing slash
 				});
-		} catch (error) {
+		} catch {
 			// Ignore gitignore parsing errors
 		}
 	}
@@ -141,14 +146,13 @@ export class FileScanner {
 					}
 
 					result.totalFiles++;
-				} catch (error) {
+				} catch {
 					// Skip files we can't stat (permission issues, etc.)
 					continue;
 				}
 			}
-		} catch (error) {
+		} catch {
 			// Skip directories we can't read
-			return;
 		}
 	}
 
@@ -168,7 +172,7 @@ export class FileScanner {
 	/**
 	 * Get key project files
 	 */
-	public getProjectFiles(): {[key: string]: string[]} {
+	public getProjectFiles(): Record<string, string[]> {
 		return {
 			config: this.getFilesByPattern([
 				'package.json',

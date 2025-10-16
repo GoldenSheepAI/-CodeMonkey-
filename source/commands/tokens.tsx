@@ -1,8 +1,8 @@
 import React from 'react';
-import {Command} from '@/types/index.js';
+import {Box} from 'ink';
+import {type Command} from '@/types/index.js';
 import TokenDisplay from '@/components/token-display.js';
 import RateLimitMonitor from '@/components/rate-limit-monitor.js';
-import {Box} from 'ink';
 
 // Mock data for demonstration - in real implementation this would come from context tracker
 function getTokenStats() {
@@ -12,7 +12,7 @@ function getTokenStats() {
 		totalTokens: 2140,
 		estimatedCost: 0.0128,
 		contextLength: 1850,
-		maxContextLength: 32768,
+		maxContextLength: 32_768,
 		remainingRequests: 47,
 		maxRequests: 100,
 		provider: 'Groq',
@@ -28,7 +28,7 @@ function TokenStatsDisplay() {
 		provider: stats.provider,
 		remainingRequests: stats.remainingRequests || 0,
 		maxRequests: stats.maxRequests || 100,
-		resetTime: new Date(Date.now() + 3600000), // 1 hour from now
+		resetTime: new Date(Date.now() + 3_600_000), // 1 hour from now
 	};
 
 	return (
@@ -62,7 +62,7 @@ export const tokensCommand: Command = {
 	name: 'tokens',
 	description:
 		'Show detailed token usage, context length, and rate limit status',
-	handler: async (_args: string[], _messages, _metadata) => {
+	async handler(_args: string[], _messages, _metadata) {
 		return React.createElement(TokenStatsDisplay, {
 			key: `tokens-${Date.now()}`,
 		});

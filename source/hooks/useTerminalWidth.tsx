@@ -13,7 +13,9 @@ export const useTerminalWidth = () => {
 		const handleResize = () => {
 			const newWidth = calculateBoxWidth(process.stdout.columns || 80);
 			// Only update if width actually changed
-			setBoxWidth(prevWidth => (prevWidth !== newWidth ? newWidth : prevWidth));
+			setBoxWidth(previousWidth =>
+				previousWidth !== newWidth ? newWidth : previousWidth,
+			);
 		};
 
 		// Listen for terminal resize events

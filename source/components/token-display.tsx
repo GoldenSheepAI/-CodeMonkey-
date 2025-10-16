@@ -1,22 +1,22 @@
 import React, {memo, useMemo} from 'react';
 import {Box, Text} from 'ink';
+import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {useTheme} from '@/hooks/useTheme.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
-import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 
-interface TokenDisplayProps {
-	inputTokens: number;
-	outputTokens: number;
-	totalTokens: number;
-	estimatedCost?: number;
-	contextLength: number;
-	maxContextLength: number;
-	remainingRequests?: number;
-	maxRequests?: number;
-	provider: string;
-	model: string;
-	compact?: boolean;
-}
+type TokenDisplayProps = {
+	readonly inputTokens: number;
+	readonly outputTokens: number;
+	readonly totalTokens: number;
+	readonly estimatedCost?: number;
+	readonly contextLength: number;
+	readonly maxContextLength: number;
+	readonly remainingRequests?: number;
+	readonly maxRequests?: number;
+	readonly provider: string;
+	readonly model: string;
+	readonly compact?: boolean;
+};
 
 export default memo(function TokenDisplay({
 	inputTokens,
@@ -74,7 +74,7 @@ export default memo(function TokenDisplay({
 			: colors.success;
 
 	// Format numbers with commas
-	const formatNumber = (num: number) => num.toLocaleString();
+	const formatNumber = (number_: number) => number_.toLocaleString();
 
 	if (compact) {
 		return (
@@ -109,11 +109,11 @@ export default memo(function TokenDisplay({
 		>
 			{/* Provider and Model Info */}
 			<Box justifyContent="space-between" marginBottom={1}>
-				<Text color={colors.primary} bold>
+				<Text bold color={colors.primary}>
 					{provider} • {model}
 				</Text>
 				{estimatedCost && (
-					<Text color={colors.info} bold>
+					<Text bold color={colors.info}>
 						💰 ${estimatedCost.toFixed(4)}
 					</Text>
 				)}
@@ -162,7 +162,7 @@ export default memo(function TokenDisplay({
 					</Box>
 					{remainingRequests === 0 && (
 						<Box marginTop={1}>
-							<Text color={colors.error} bold>
+							<Text bold color={colors.error}>
 								⚠️ Rate limit reached! Please wait before making new requests.
 							</Text>
 						</Box>

@@ -1,24 +1,24 @@
-import type {Command, LogLevel} from '@/types/index.js';
-import {getLogLevel, setLogLevel} from '@/config/logging.js';
 import React from 'react';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {Box, Text} from 'ink';
+import {getLogLevel, setLogLevel} from '@/config/logging.js';
+import type {Command, LogLevel} from '@/types/index.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {useTheme} from '@/hooks/useTheme.js';
 import {getColors} from '@/config/index.js';
 
-interface DebugProps {
-	currentLevel: LogLevel;
-	newLevel?: LogLevel;
-	action: 'changed' | 'set' | 'show' | 'invalid';
-	invalidArg?: string;
-}
+type DebugProps = {
+	readonly currentLevel: LogLevel;
+	readonly newLevel?: LogLevel;
+	readonly action: 'changed' | 'set' | 'show' | 'invalid';
+	readonly invalidArg?: string;
+};
 
 function getLogLevelDescription(level: LogLevel): React.ReactNode {
 	const colors = getColors();
 
 	switch (level) {
-		case 'silent':
+		case 'silent': {
 			return (
 				<>
 					Silent mode:{' '}
@@ -28,7 +28,9 @@ function getLogLevelDescription(level: LogLevel): React.ReactNode {
 					.
 				</>
 			);
-		case 'normal':
+		}
+
+		case 'normal': {
 			return (
 				<>
 					Normal mode:{' '}
@@ -38,7 +40,9 @@ function getLogLevelDescription(level: LogLevel): React.ReactNode {
 					.
 				</>
 			);
-		case 'verbose':
+		}
+
+		case 'verbose': {
 			return (
 				<>
 					Verbose mode:{' '}
@@ -48,8 +52,11 @@ function getLogLevelDescription(level: LogLevel): React.ReactNode {
 					.
 				</>
 			);
-		default:
+		}
+
+		default: {
 			return <></>;
+		}
 	}
 }
 
@@ -135,31 +142,38 @@ function Debug({currentLevel, newLevel, action, invalidArg}: DebugProps) {
 export const debugCommand: Command = {
 	name: 'debug',
 	description: 'Toggle debug/verbose logging output',
-	handler: async (args: string[], _messages, _metadata) => {
+	async handler(args: string[], _messages, _metadata) {
 		const currentLevel = getLogLevel();
 
 		// If no argument provided, cycle through levels
 		if (args.length === 0) {
 			let newLevel: LogLevel;
 			switch (currentLevel) {
-				case 'silent':
+				case 'silent': {
 					newLevel = 'normal';
 					break;
-				case 'normal':
+				}
+
+				case 'normal': {
 					newLevel = 'verbose';
 					break;
-				case 'verbose':
+				}
+
+				case 'verbose': {
 					newLevel = 'silent';
 					break;
-				default:
+				}
+
+				default: {
 					newLevel = 'normal';
+				}
 			}
 
 			setLogLevel(newLevel);
 			return React.createElement(Debug, {
 				key: `debug-changed-${Date.now()}`,
-				currentLevel: currentLevel,
-				newLevel: newLevel,
+				currentLevel,
+				newLevel,
 				action: 'changed',
 			});
 		}
@@ -174,7 +188,7 @@ export const debugCommand: Command = {
 			setLogLevel(requestedLevel as LogLevel);
 			return React.createElement(Debug, {
 				key: `debug-set-${Date.now()}`,
-				currentLevel: currentLevel,
+				currentLevel,
 				newLevel: requestedLevel as LogLevel,
 				action: 'set',
 			});
@@ -184,7 +198,7 @@ export const debugCommand: Command = {
 		if (args[0]) {
 			return React.createElement(Debug, {
 				key: `debug-invalid-${Date.now()}`,
-				currentLevel: currentLevel,
+				currentLevel,
 				action: 'invalid',
 				invalidArg: args[0],
 			});
@@ -193,7 +207,7 @@ export const debugCommand: Command = {
 		// Show current level and available options
 		return React.createElement(Debug, {
 			key: `debug-show-${Date.now()}`,
-			currentLevel: currentLevel,
+			currentLevel,
 			action: 'show',
 		});
 	},

@@ -1,7 +1,7 @@
-import React from 'react';
 import {resolve} from 'node:path';
 import {readFile, writeFile, access} from 'node:fs/promises';
 import {constants} from 'node:fs';
+import React from 'react';
 import {highlight} from 'cli-highlight';
 import {Text, Box} from 'ink';
 import type {ToolHandler, ToolDefinition} from '@/types/index.js';
@@ -10,11 +10,11 @@ import {getColors} from '@/config/index.js';
 import {getLanguageFromExtension} from '@/utils/programming-language-helper.js';
 import ToolMessage from '@/components/tool-message.js';
 
-interface InsertLinesArgs {
+type InsertLinesArgs = {
 	path: string;
 	line_number: number;
 	content: string;
-}
+};
 
 const handler: ToolHandler = async (args: InsertLinesArgs): Promise<string> => {
 	const {path, line_number, content} = args;
@@ -48,10 +48,10 @@ const handler: ToolHandler = async (args: InsertLinesArgs): Promise<string> => {
 
 	// Generate full file contents to show the model the current file state
 	let fileContext = '\n\nUpdated file contents:\n';
-	for (let i = 0; i < newLines.length; i++) {
-		const lineNumStr = String(i + 1).padStart(4, ' ');
-		const line = newLines[i] || '';
-		fileContext += `${lineNumStr}: ${line}\n`;
+	for (const [i, newLine] of newLines.entries()) {
+		const lineNumberString = String(i + 1).padStart(4, ' ');
+		const line = newLine || '';
+		fileContext += `${lineNumberString}: ${line}\n`;
 	}
 
 	return `Successfully inserted ${insertLines.length} line${
@@ -103,7 +103,7 @@ async function formatInsertLinesPreview(
 			const contextElements: React.ReactElement[] = [];
 
 			for (let i = showStart; i <= showEnd; i++) {
-				const lineNumStr = String(i + 1).padStart(4, ' ');
+				const lineNumberString = String(i + 1).padStart(4, ' ');
 				const line = lines[i] || '';
 				const isInsertedLine =
 					i + 1 >= lineNumber && i + 1 < lineNumber + insertLines.length;
@@ -123,13 +123,13 @@ async function formatInsertLinesPreview(
 							color={themeColors.diffAddedText}
 							wrap="wrap"
 						>
-							{lineNumStr} + {displayLine}
+							{lineNumberString} + {displayLine}
 						</Text>,
 					);
 				} else {
 					contextElements.push(
 						<Text key={`context-${i}`} color={themeColors.secondary}>
-							{lineNumStr} {displayLine}
+							{lineNumberString} {displayLine}
 						</Text>,
 					);
 				}
@@ -162,7 +162,7 @@ async function formatInsertLinesPreview(
 				</Box>
 			);
 
-			return <ToolMessage message={messageContent} hideBox={true} />;
+			return <ToolMessage hideBox message={messageContent} />;
 		}
 
 		// Preview mode - show what will be inserted
@@ -183,7 +183,7 @@ async function formatInsertLinesPreview(
 
 		// Show context before
 		for (let i = showStart; i < lineNumber - 1; i++) {
-			const lineNumStr = String(i + 1).padStart(4, ' ');
+			const lineNumberString = String(i + 1).padStart(4, ' ');
 			const line = lines[i] || '';
 			let displayLine: string;
 			try {
@@ -194,15 +194,15 @@ async function formatInsertLinesPreview(
 
 			contextBefore.push(
 				<Text key={`before-${i}`} color={themeColors.secondary}>
-					{lineNumStr} {displayLine}
+					{lineNumberString} {displayLine}
 				</Text>,
 			);
 		}
 
 		// Show inserted lines
-		for (let i = 0; i < insertLines.length; i++) {
-			const lineNumStr = String(lineNumber + i).padStart(4, ' ');
-			const line = insertLines[i] || '';
+		for (const [i, insertLine] of insertLines.entries()) {
+			const lineNumberString = String(lineNumber + i).padStart(4, ' ');
+			const line = insertLine || '';
 			let displayLine: string;
 			try {
 				displayLine = highlight(line, {language, theme: 'default'});
@@ -217,14 +217,17 @@ async function formatInsertLinesPreview(
 					color={themeColors.diffAddedText}
 					wrap="wrap"
 				>
-					{lineNumStr} + {displayLine}
+					{lineNumberString} + {displayLine}
 				</Text>,
 			);
 		}
 
 		// Show context after
 		for (let i = lineNumber - 1; i <= showEnd; i++) {
-			const lineNumStr = String(i + insertLines.length + 1).padStart(4, ' ');
+			const lineNumberString = String(i + insertLines.length + 1).padStart(
+				4,
+				' ',
+			);
 			const line = lines[i] || '';
 			let displayLine: string;
 			try {
@@ -235,7 +238,7 @@ async function formatInsertLinesPreview(
 
 			contextAfter.push(
 				<Text key={`after-${i}`} color={themeColors.secondary}>
-					{lineNumStr} {displayLine}
+					{lineNumberString} {displayLine}
 				</Text>,
 			);
 		}
@@ -268,7 +271,7 @@ async function formatInsertLinesPreview(
 			</Box>
 		);
 
-		return <ToolMessage message={messageContent} hideBox={true} />;
+		return <ToolMessage hideBox message={messageContent} />;
 	} catch (error) {
 		const errorContent = (
 			<Box flexDirection="column">
@@ -288,7 +291,7 @@ async function formatInsertLinesPreview(
 			</Box>
 		);
 
-		return <ToolMessage message={errorContent} hideBox={true} />;
+		return <ToolMessage hideBox message={errorContent} />;
 	}
 }
 
@@ -317,6 +320,7 @@ const validator = async (
 				error: `⚒ File "${path}" does not exist`,
 			};
 		}
+
 		return {
 			valid: false,
 			error: `⚒ Cannot access file "${path}": ${error.message}`,

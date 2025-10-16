@@ -1,4 +1,4 @@
-import {readFileSync} from 'fs';
+import {readFileSync} from 'node:fs';
 import {logError} from '@/utils/message-queue.js';
 import type {
 	CustomCommandMetadata,
@@ -11,7 +11,7 @@ import type {
 function parseEnhancedFrontmatter(frontmatter: string): CustomCommandMetadata {
 	const metadata: CustomCommandMetadata = {};
 	const lines = frontmatter.split('\n');
-	let currentKey: string | null = null;
+	let currentKey: string | undefined = undefined;
 	let currentValue: string[] = [];
 	let isMultiline = false;
 	let indentLevel = 0;
@@ -19,34 +19,47 @@ function parseEnhancedFrontmatter(frontmatter: string): CustomCommandMetadata {
 	const processKeyValue = (key: string, value: string) => {
 		const trimmedValue = value.trim();
 
-		if (key === 'description') {
-			metadata.description = trimmedValue.replace(/^["']|["']$/g, '');
-		} else if (key === 'aliases') {
-			// Support both array syntax and YAML dash syntax
-			if (trimmedValue.startsWith('[') && trimmedValue.endsWith(']')) {
-				// JSON-style array: [alias1, alias2]
-				const content = trimmedValue.slice(1, -1);
-				metadata.aliases = content
-					.split(',')
-					.map(s => s.trim().replace(/^["']|["']$/g, ''))
-					.filter(s => s.length > 0);
-			} else {
-				// Single value or will be handled by dash parsing below
-				metadata.aliases = [trimmedValue.replace(/^["']|["']$/g, '')];
+		switch (key) {
+			case 'description': {
+				metadata.description = trimmedValue.replace(/^["']|["']$/g, '');
+
+				break;
 			}
-		} else if (key === 'parameters') {
-			// Support both array syntax and YAML dash syntax
-			if (trimmedValue.startsWith('[') && trimmedValue.endsWith(']')) {
-				// JSON-style array: [param1, param2]
-				const content = trimmedValue.slice(1, -1);
-				metadata.parameters = content
-					.split(',')
-					.map(s => s.trim().replace(/^["']|["']$/g, ''))
-					.filter(s => s.length > 0);
-			} else {
-				// Single value or will be handled by dash parsing below
-				metadata.parameters = [trimmedValue.replace(/^["']|["']$/g, '')];
+
+			case 'aliases': {
+				// Support both array syntax and YAML dash syntax
+				if (trimmedValue.startsWith('[') && trimmedValue.endsWith(']')) {
+					// JSON-style array: [alias1, alias2]
+					const content = trimmedValue.slice(1, -1);
+					metadata.aliases = content
+						.split(',')
+						.map(s => s.trim().replace(/^["']|["']$/g, ''))
+						.filter(s => s.length > 0);
+				} else {
+					// Single value or will be handled by dash parsing below
+					metadata.aliases = [trimmedValue.replace(/^["']|["']$/g, '')];
+				}
+
+				break;
 			}
+
+			case 'parameters': {
+				// Support both array syntax and YAML dash syntax
+				if (trimmedValue.startsWith('[') && trimmedValue.endsWith(']')) {
+					// JSON-style array: [param1, param2]
+					const content = trimmedValue.slice(1, -1);
+					metadata.parameters = content
+						.split(',')
+						.map(s => s.trim().replace(/^["']|["']$/g, ''))
+						.filter(s => s.length > 0);
+				} else {
+					// Single value or will be handled by dash parsing below
+					metadata.parameters = [trimmedValue.replace(/^["']|["']$/g, '')];
+				}
+
+				break;
+			}
+			// No default
 		}
 	};
 
@@ -73,6 +86,7 @@ function parseEnhancedFrontmatter(frontmatter: string): CustomCommandMetadata {
 				if (!metadata.parameters) metadata.parameters = [];
 				metadata.parameters.push(arrayItem);
 			}
+
 			continue;
 		}
 
@@ -103,7 +117,7 @@ function parseEnhancedFrontmatter(frontmatter: string): CustomCommandMetadata {
 				const multilineContent = currentValue.join('\n').trim();
 				processKeyValue(currentKey, multilineContent);
 				isMultiline = false;
-				currentKey = null;
+				currentKey = undefined;
 				currentValue = [];
 				indentLevel = 0;
 				// Re-process this line as a regular key-value pair
@@ -148,7 +162,7 @@ export function parseCommandFile(filePath: string): ParsedCustomCommand {
 
 	// Check for frontmatter
 	const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
-	const match = fileContent.match(frontmatterRegex);
+	const match = frontmatterRegex.exec(fileContent);
 
 	if (match && match[1] && match[2]) {
 		// Parse YAML frontmatter

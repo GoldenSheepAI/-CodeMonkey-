@@ -1,19 +1,19 @@
-import {
-	SystemCapabilities,
-	ModelEntry,
-	ModelRecommendation,
-} from '@/types/index.js';
 import {modelDatabase} from './model-database.js';
 import {modelMatchingEngine} from './model-engine.js';
+import {
+	type SystemCapabilities,
+	ModelEntry,
+	type ModelRecommendation,
+} from '@/types/index.js';
 
-export interface ModelRecommendationEnhanced extends ModelRecommendation {
+export type ModelRecommendationEnhanced = {
 	recommendedProvider: string; // Best provider to use for this model
-}
+} & ModelRecommendation;
 
-export interface RecommendationResult {
-	quickStart: ModelRecommendationEnhanced | null;
+export type RecommendationResult = {
+	quickStart: ModelRecommendationEnhanced | undefined;
 	allModels: ModelRecommendationEnhanced[];
-}
+};
 
 export class RecommendationEngine {
 	private static instance: RecommendationEngine;
@@ -22,6 +22,7 @@ export class RecommendationEngine {
 		if (!RecommendationEngine.instance) {
 			RecommendationEngine.instance = new RecommendationEngine();
 		}
+
 		return RecommendationEngine.instance;
 	}
 
@@ -68,7 +69,7 @@ export class RecommendationEngine {
 		modelRec: ModelRecommendation,
 		systemCapabilities: SystemCapabilities,
 	): ModelRecommendationEnhanced {
-		const model = modelRec.model;
+		const {model} = modelRec;
 
 		// Determine best access method based on system capabilities
 		const canUseLocal =
@@ -107,11 +108,11 @@ export class RecommendationEngine {
 		return models.sort((a, b) => {
 			// Calculate quality scores - prioritize agentic capabilities heavily
 			const aQuality =
-				a.model.quality.agentic * 3.0 +
+				a.model.quality.agentic * 3 +
 				a.model.quality.local * 0.8 +
 				a.model.quality.cost * 0.5;
 			const bQuality =
-				b.model.quality.agentic * 3.0 +
+				b.model.quality.agentic * 3 +
 				b.model.quality.local * 0.8 +
 				b.model.quality.cost * 0.5;
 
@@ -172,15 +173,17 @@ export class RecommendationEngine {
 	/**
 	 * Get a simple quick start recommendation
 	 */
-	getQuickStartRecommendation(systemCapabilities: SystemCapabilities): {
-		model: string;
-		provider: string;
-		reasoning: string;
-	} | null {
+	getQuickStartRecommendation(systemCapabilities: SystemCapabilities):
+		| {
+				model: string;
+				provider: string;
+				reasoning: string;
+		  }
+		| undefined {
 		const result = this.getRecommendations(systemCapabilities);
 
 		if (!result.quickStart) {
-			return null;
+			return undefined;
 		}
 
 		const model = result.quickStart;

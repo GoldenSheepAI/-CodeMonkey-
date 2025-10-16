@@ -1,20 +1,20 @@
-import {basename, extname} from 'path';
+import {basename, extname} from 'node:path';
 
-export interface LanguageInfo {
+export type LanguageInfo = {
 	name: string;
 	extensions: string[];
 	percentage: number;
 	files: string[];
-}
+};
 
-export interface DetectedLanguages {
-	primary: LanguageInfo | null;
+export type DetectedLanguages = {
+	primary: LanguageInfo | undefined;
 	secondary: LanguageInfo[];
 	all: LanguageInfo[];
-}
+};
 
 export class LanguageDetector {
-	private static readonly LANGUAGE_MAP: {[ext: string]: string} = {
+	private static readonly LANGUAGE_MAP: Record<string, string> = {
 		// JavaScript/TypeScript ecosystem
 		'.js': 'JavaScript',
 		'.jsx': 'JavaScript',
@@ -104,7 +104,7 @@ export class LanguageDetector {
 	 * Detect languages from file list
 	 */
 	public static detectLanguages(files: string[]): DetectedLanguages {
-		const languageCounts: {[language: string]: string[]} = {};
+		const languageCounts: Record<string, string[]> = {};
 		const totalFiles = files.length;
 
 		// Count files by language
@@ -127,6 +127,7 @@ export class LanguageDetector {
 				if (!languageCounts[language]) {
 					languageCounts[language] = [];
 				}
+
 				languageCounts[language].push(file);
 			}
 		}
@@ -142,7 +143,7 @@ export class LanguageDetector {
 			.sort((a, b) => b.files.length - a.files.length);
 
 		// Determine primary and secondary languages
-		const primary = languageInfos.length > 0 ? languageInfos[0] : null;
+		const primary = languageInfos.length > 0 ? languageInfos[0] : undefined;
 		const secondary = languageInfos
 			.slice(1)
 			.filter(lang => lang.percentage >= 5) // At least 5% of files
@@ -168,7 +169,7 @@ export class LanguageDetector {
 	 * Get language category (for grouping related languages)
 	 */
 	public static getLanguageCategory(language: string): string {
-		const categories: {[category: string]: string[]} = {
+		const categories: Record<string, string[]> = {
 			'Web Frontend': [
 				'JavaScript',
 				'TypeScript',
@@ -219,6 +220,7 @@ export class LanguageDetector {
 			) {
 				return 'Web Application';
 			}
+
 			return 'Node.js Application';
 		}
 
@@ -231,9 +233,11 @@ export class LanguageDetector {
 		if (primary === 'Swift') {
 			return 'iOS Application';
 		}
+
 		if (primary === 'Kotlin' && hasSecondary('XML')) {
 			return 'Android Application';
 		}
+
 		if (primary === 'Dart') {
 			return 'Flutter Application';
 		}
@@ -242,9 +246,11 @@ export class LanguageDetector {
 		if (primary === 'Rust') {
 			return 'Rust Application';
 		}
+
 		if (primary === 'C' || primary === 'C++') {
 			return 'C/C++ Application';
 		}
+
 		if (primary === 'Go') {
 			return 'Go Application';
 		}
@@ -253,12 +259,15 @@ export class LanguageDetector {
 		if (primary === 'Java') {
 			return 'Java Application';
 		}
+
 		if (primary === 'C#') {
 			return 'C# Application';
 		}
+
 		if (primary === 'PHP') {
 			return 'PHP Application';
 		}
+
 		if (primary === 'Ruby') {
 			return 'Ruby Application';
 		}

@@ -2,23 +2,23 @@
  * ToknXR Type Definitions
  */
 
-export interface TokenUsage {
+export type TokenUsage = {
 	model: string;
 	inputTokens: number;
 	outputTokens: number;
 	totalTokens: number;
 	timestamp: Date;
 	sessionId?: string;
-}
+};
 
-export interface CostEstimate {
+export type CostEstimate = {
 	estimatedTokens: number;
 	estimatedCost: number;
 	provider: string;
 	model: string;
-}
+};
 
-export interface UsageRecord {
+export type UsageRecord = {
 	id: string;
 	timestamp: number;
 	provider: string;
@@ -29,9 +29,9 @@ export interface UsageRecord {
 	cost: number;
 	command: string;
 	success: boolean;
-}
+};
 
-export interface AnalyticsSummary {
+export type AnalyticsSummary = {
 	totalCost: number;
 	totalTokens: number;
 	requestCount: number;
@@ -44,16 +44,16 @@ export interface AnalyticsSummary {
 			requests: number;
 		}
 	>;
-}
+};
 
-export interface CostBreakdown {
+export type CostBreakdown = {
 	inputCost: number;
 	outputCost: number;
 	totalCost: number;
 	currency: string;
-}
+};
 
-export interface UsageStats {
+export type UsageStats = {
 	totalTokens: number;
 	totalCost: number;
 	averageCostPerToken: number;
@@ -62,9 +62,9 @@ export interface UsageStats {
 		start: Date;
 		end: Date;
 	};
-}
+};
 
-export interface ToknxrConfig {
+export type ToknxrConfig = {
 	enableTracking: boolean;
 	enableAnalytics: boolean;
 	currency: string;
@@ -76,4 +76,4 @@ export interface ToknxrConfig {
 		}
 	>;
 	databasePath?: string;
-}
+};

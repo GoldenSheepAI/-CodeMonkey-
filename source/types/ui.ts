@@ -1,4 +1,4 @@
-export interface Colors {
+export type Colors = {
 	white: string;
 	black: string;
 	primary: string;
@@ -13,13 +13,13 @@ export interface Colors {
 	diffRemoved: string;
 	diffAddedText: string;
 	diffRemovedText: string;
-}
+};
 
-export interface Theme {
+export type Theme = {
 	name: string;
 	displayName: string;
 	colors: Colors;
-}
+};
 
 export type ThemePreset =
 	| 'tokyo-night'

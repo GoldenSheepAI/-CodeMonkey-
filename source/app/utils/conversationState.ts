@@ -1,6 +1,6 @@
 import type {Message, ToolCall} from '@/types/core.js';
 
-export interface ConversationProgress {
+export type ConversationProgress = {
 	originalTask: string;
 	currentStep: number;
 	totalEstimatedSteps: number;
@@ -10,19 +10,21 @@ export interface ConversationProgress {
 	lastToolCall?: ToolCall;
 	isRepeatingAction: boolean;
 	contextSummary?: string;
-}
+};
 
-export interface ConversationState {
+export type ConversationState = {
 	progress: ConversationProgress;
 	lastAssistantMessage?: Message;
 	conversationStartTime: number;
 	toolExecutionCount: number;
 	recentToolCalls: ToolCall[];
-}
+};
 
 export class ConversationStateManager {
-	private state: ConversationState | null = null;
-	private maxRecentToolCalls = 5;
+	private state: ConversationState | undefined = undefined;
+	private get maxRecentToolCalls() {
+		return 5;
+	}
 
 	/**
 	 * Initialize conversation state from the first user message
@@ -98,15 +100,16 @@ export class ConversationStateManager {
 	generateContinuationContext(): string {
 		if (!this.state) return '';
 
-		const progress = this.state.progress;
+		const {progress} = this.state;
 		let context = `[Task Progress: Step ${progress.currentStep} of ~${progress.totalEstimatedSteps}]\n`;
 		context += `[Original Task: "${progress.originalTask}"]\n\n`;
 
 		if (progress.completedActions.length > 0) {
 			context += `Recent actions completed:\n`;
-			progress.completedActions.slice(-3).forEach((action, i) => {
+			for (const [i, action] of progress.completedActions.slice(-3).entries()) {
 				context += `${i + 1}. ${action}\n`;
-			});
+			}
+
 			context += '\n';
 		}
 
@@ -125,7 +128,7 @@ export class ConversationStateManager {
 	/**
 	 * Get current state
 	 */
-	getState(): ConversationState | null {
+	getState(): ConversationState | undefined {
 		return this.state;
 	}
 
@@ -133,7 +136,7 @@ export class ConversationStateManager {
 	 * Reset state
 	 */
 	reset(): void {
-		this.state = null;
+		this.state = undefined;
 	}
 
 	/**
@@ -150,6 +153,7 @@ export class ConversationStateManager {
 		) {
 			return 5;
 		}
+
 		if (
 			taskLower.includes('fix') ||
 			taskLower.includes('debug') ||
@@ -157,6 +161,7 @@ export class ConversationStateManager {
 		) {
 			return 4;
 		}
+
 		if (
 			taskLower.includes('analyze') ||
 			taskLower.includes('understand') ||
@@ -164,6 +169,7 @@ export class ConversationStateManager {
 		) {
 			return 3;
 		}
+
 		if (
 			taskLower.includes('read') ||
 			taskLower.includes('show') ||
@@ -184,9 +190,9 @@ export class ConversationStateManager {
 
 		const recent = this.state!.recentToolCalls.slice(-2);
 		return recent.some(
-			prevCall =>
-				prevCall.function.name === toolCall.function.name &&
-				JSON.stringify(prevCall.function.arguments) ===
+			previousCall =>
+				previousCall.function.name === toolCall.function.name &&
+				JSON.stringify(previousCall.function.arguments) ===
 					JSON.stringify(toolCall.function.arguments),
 		);
 	}
@@ -199,19 +205,28 @@ export class ConversationStateManager {
 		const args = toolCall.function.arguments;
 
 		switch (toolName) {
-			case 'read_file':
+			case 'read_file': {
 				return `Read file: ${args.filename || args.path || 'unknown'}`;
+			}
+
 			case 'write_file':
-			case 'create_file':
+			case 'create_file': {
 				return `Created/wrote file: ${args.filename || args.path || 'unknown'}`;
-			case 'edit_file':
+			}
+
+			case 'edit_file': {
 				return `Edited file: ${args.filename || args.path || 'unknown'}`;
-			case 'execute_bash':
-				return `Executed command: ${(args.command || '').substring(0, 50)}${
+			}
+
+			case 'execute_bash': {
+				return `Executed command: ${(args.command || '').slice(0, 50)}${
 					args.command?.length > 50 ? '...' : ''
 				}`;
-			default:
+			}
+
+			default: {
 				return `Used ${toolName}`;
+			}
 		}
 	}
 
@@ -221,7 +236,7 @@ export class ConversationStateManager {
 	private generateNextStepSuggestion(): string {
 		if (!this.state) return '';
 
-		const progress = this.state.progress;
+		const {progress} = this.state;
 		const lastTool = progress.lastToolCall;
 
 		if (!lastTool) {
@@ -232,29 +247,38 @@ export class ConversationStateManager {
 
 		// Suggest logical next steps based on last tool
 		switch (lastTool.function.name) {
-			case 'read_file':
+			case 'read_file': {
 				suggestions.push(
 					'Based on the file contents, determine what changes or analysis are needed.',
 				);
 				break;
-			case 'execute_bash':
+			}
+
+			case 'execute_bash': {
 				suggestions.push(
 					'Review the command output and decide on the next action.',
 				);
 				break;
+			}
+
 			case 'create_file':
-			case 'write_file':
+			case 'write_file': {
 				suggestions.push(
 					'Consider testing or verifying the file you just created.',
 				);
 				break;
-			case 'edit_file':
+			}
+
+			case 'edit_file': {
 				suggestions.push(
 					'Consider testing the changes or making additional modifications.',
 				);
 				break;
-			default:
+			}
+
+			default: {
 				suggestions.push('Use the tool result to inform your next action.');
+			}
 		}
 
 		// Add progress-based suggestions

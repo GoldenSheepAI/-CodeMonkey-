@@ -1,6 +1,6 @@
-import {existsSync, readFileSync, writeFileSync} from 'fs';
-import {join} from 'path';
-import {homedir} from 'os';
+import {existsSync, readFileSync, writeFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {homedir} from 'node:os';
 import {shouldLog} from './logging.js';
 import {logError} from '@/utils/message-queue.js';
 
@@ -12,13 +12,22 @@ export function loadPreferences(): UserPreferences {
 	if (existsSync(PREFERENCES_PATH)) {
 		try {
 			const data = readFileSync(PREFERENCES_PATH, 'utf-8');
-			return JSON.parse(data);
-		} catch (error) {
+			try {
+				return JSON.parse(data);
+			} catch (parseError) {
+				if (shouldLog('warn')) {
+					logError(`Failed to parse preferences file: ${parseError}`);
+				}
+				// Return empty preferences if parsing fails
+				return {};
+			}
+		} catch (readError) {
 			if (shouldLog('warn')) {
-				logError(`Failed to load preferences: ${error}`);
+				logError(`Failed to read preferences file: ${readError}`);
 			}
 		}
 	}
+
 	return {};
 }
 
@@ -41,6 +50,7 @@ export function updateLastUsed(provider: string, model: string): void {
 	if (!preferences.providerModels) {
 		preferences.providerModels = {};
 	}
+
 	preferences.providerModels[provider] = model;
 
 	savePreferences(preferences);

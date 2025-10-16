@@ -1,29 +1,29 @@
-import React from 'react';
+import type React from 'react';
 
-export interface Message {
+export type Message = {
 	role: 'user' | 'assistant' | 'system' | 'tool';
 	content: string;
 	tool_calls?: ToolCall[];
 	tool_call_id?: string;
 	name?: string;
-}
+};
 
-export interface ToolCall {
+export type ToolCall = {
 	id: string;
 	function: {
 		name: string;
-		arguments: {[key: string]: any};
+		arguments: Record<string, any>;
 	};
-}
+};
 
-export interface ToolResult {
+export type ToolResult = {
 	tool_call_id: string;
 	role: 'tool';
 	name: string;
 	content: string;
-}
+};
 
-export interface Tool {
+export type Tool = {
 	type: 'function';
 	function: {
 		name: string;
@@ -34,11 +34,11 @@ export interface Tool {
 			required: string[];
 		};
 	};
-}
+};
 
 export type ToolHandler = (input: any) => Promise<string>;
 
-export interface ToolDefinition {
+export type ToolDefinition = {
 	handler: ToolHandler;
 	config: Tool;
 	formatter?: (
@@ -53,9 +53,9 @@ export interface ToolDefinition {
 	validator?: (
 		args: any,
 	) => Promise<{valid: true} | {valid: false; error: string}>;
-}
+};
 
-export interface LLMClient {
+export type LLMClient = {
 	getCurrentModel(): string;
 	setModel(model: string): void;
 	getContextSize(): number;
@@ -63,12 +63,12 @@ export interface LLMClient {
 	chat(messages: Message[], tools: Tool[]): Promise<any>;
 	chatStream(messages: Message[], tools: Tool[]): AsyncIterable<any>;
 	clearContext(): Promise<void>;
-}
+};
 
-export interface ToolExecutionResult {
+export type ToolExecutionResult = {
 	executed: boolean;
 	results: ToolResult[];
-}
+};
 
 export type DevelopmentMode = 'normal' | 'auto-accept' | 'plan';
 

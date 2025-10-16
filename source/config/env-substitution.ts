@@ -2,23 +2,23 @@ import {shouldLog} from './logging.js';
 import {logError} from '@/utils/message-queue.js';
 
 // Check if a string contains environment variable references
-export function isEnvVarReference(str: string): boolean {
-	if (typeof str !== 'string') {
+export function isEnvVarReference(string_: string): boolean {
+	if (typeof string_ !== 'string') {
 		return false;
 	}
 
-	return /\$\{[A-Z_][A-Z0-9_]*(?::-[^}]*)?\}|\$[A-Z_][A-Z0-9_]*/g.test(str);
+	return /\${[A-Z_][A-Z\d_]*(?::-[^}]*)?}|\$[A-Z_][A-Z\d_]*/g.test(string_);
 }
 
 // Expand environment variable references in a string
-export function expandEnvVar(str: string): string {
-	if (typeof str !== 'string') {
-		return str;
+export function expandEnvVar(string_: string): string {
+	if (typeof string_ !== 'string') {
+		return string_;
 	}
 
-	const regex = /\$\{([A-Z_][A-Z0-9_]*)(?::-(.*?))?\}|\$([A-Z_][A-Z0-9_]*)/g;
+	const regex = /\${([A-Z_][A-Z\d_]*)(?::-(.*?))?}|\$([A-Z_][A-Z\d_]*)/g;
 
-	return str.replace(
+	return string_.replace(
 		regex,
 		(match, bracedVarName, defaultValue, unbracedVarName) => {
 			const varName = bracedVarName || unbracedVarName;
@@ -59,8 +59,8 @@ export function substituteEnvVars(value: any): any {
 
 	if (typeof value === 'object') {
 		const result: any = {};
-		for (const [key, val] of Object.entries(value)) {
-			result[key] = substituteEnvVars(val);
+		for (const [key, value_] of Object.entries(value)) {
+			result[key] = substituteEnvVars(value_);
 		}
 
 		return result;

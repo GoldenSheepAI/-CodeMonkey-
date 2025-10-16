@@ -14,6 +14,12 @@ const handler: ToolHandler = async (args: {
 	command: string;
 }): Promise<string> => {
 	return new Promise((resolve, reject) => {
+		// Add timeout to prevent hanging indefinitely
+		const timeout = setTimeout(() => {
+			proc.kill('SIGKILL');
+			reject(new Error('Command execution timed out after 60 seconds'));
+		}, 60000); // 60 second timeout
+
 		const proc = spawn('sh', ['-c', args.command]);
 		let stdout = '';
 		let stderr = '';
@@ -26,7 +32,9 @@ const handler: ToolHandler = async (args: {
 			stderr += data.toString();
 		});
 
-		proc.on('close', () => {
+		proc.on('close', (code, signal) => {
+			clearTimeout(timeout);
+			
 			let fullOutput = '';
 			if (stderr) {
 				fullOutput = `STDERR:
@@ -37,9 +45,16 @@ ${stdout}`;
 				fullOutput = stdout;
 			}
 
+			// Handle different exit scenarios
+			if (signal) {
+				fullOutput += `\n[Process terminated by signal: ${signal}]`;
+			} else if (code !== 0) {
+				fullOutput += `\n[Exit code: ${code}]`;
+			}
+
 			// Limit the context for LLM to first 4000 characters
 			const llmContext =
-				fullOutput.length > 4000 ? fullOutput.substring(0, 4000) : fullOutput;
+				fullOutput.length > 4000 ? fullOutput.slice(0, 4000) : fullOutput;
 
 			// Return as JSON string to maintain compatibility with ToolHandler type
 			resolve(
@@ -51,6 +66,7 @@ ${stdout}`;
 		});
 
 		proc.on('error', error => {
+			clearTimeout(timeout);
 			reject(new Error(`Error executing command: ${error.message}`));
 		});
 	});
@@ -58,7 +74,7 @@ ${stdout}`;
 
 // Create a component that will re-render when theme changes
 const ExecuteBashFormatter = React.memo(
-	({args, result}: {args: any; result?: string}) => {
+	({args, result}: {readonly args: any; readonly result?: string}) => {
 		const {colors} = React.useContext(ThemeContext)!;
 		const command = args.command || 'unknown';
 
@@ -73,15 +89,16 @@ const ExecuteBashFormatter = React.memo(
 		}
 
 		// Parse the result if it's a JSON string
-		let parsedResult: {fullOutput: string; llmContext: string} | null = null;
+		let parsedResult: {fullOutput: string; llmContext: string} | undefined =
+			undefined;
 		if (result) {
 			try {
 				parsedResult = JSON.parse(result);
-			} catch (e) {
-				// If parsing fails, treat as plain string
+			} catch (error) {
+				// If parsing fails, treat as plain string and create proper structure
 				parsedResult = {
 					fullOutput: result,
-					llmContext: result.length > 4000 ? result.substring(0, 4000) : result,
+					llmContext: result.length > 4000 ? result.slice(0, 4000) : result,
 				};
 			}
 		}
@@ -117,8 +134,8 @@ const ExecuteBashFormatter = React.memo(
 			</Box>
 		);
 
-		return <ToolMessage message={messageContent} hideBox={true} />;
-	},
+		return <ToolMessage hideBox message={messageContent} />;
+	}
 );
 
 const formatter = async (
@@ -143,12 +160,12 @@ const validator = async (args: {
 
 	// Check for extremely dangerous commands
 	const dangerousPatterns = [
-		/rm\s+-rf\s+\/(?!\w)/i, // rm -rf / (but allow /path)
+		/rm\s+-rf\s+\/(?!\w)/i, // Rm -rf / (but allow /path)
 		/mkfs/i, // Format filesystem
 		/dd\s+if=/i, // Direct disk write
 		/:(){:|:&};:/i, // Fork bomb
 		/>\s*\/dev\/sd[a-z]/i, // Writing to raw disk devices
-		/chmod\s+-R\s+000/i, // Remove all permissions recursively
+		/chmod\s+-r\s+000/i, // Remove all permissions recursively
 	];
 
 	for (const pattern of dangerousPatterns) {

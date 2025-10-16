@@ -5,7 +5,7 @@ export type EditMode =
 	| 'move'
 	| 'find_replace';
 
-export interface EditArgs {
+export type EditArgs = {
 	path: string;
 	mode: EditMode;
 	line_number?: number;
@@ -15,26 +15,26 @@ export interface EditArgs {
 	old_text?: string;
 	new_text?: string;
 	replace_all?: boolean;
-}
+};
 
-export interface EditResult {
+export type EditResult = {
 	success: boolean;
 	message: string;
 	context?: string;
-}
+};
 
-export interface LineChange {
+export type LineChange = {
 	lineNum: number;
 	lineContent: string;
 	startPos: number;
-}
+};
 
-export interface ValidationResult {
+export type ValidationResult = {
 	isValid: boolean;
 	error?: string;
-}
+};
 
-export interface BashToolResult {
+export type BashToolResult = {
 	fullOutput: string;
 	llmContext: string;
-}
+};

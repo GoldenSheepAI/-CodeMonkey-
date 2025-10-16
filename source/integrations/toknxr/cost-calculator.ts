@@ -7,7 +7,7 @@
 import type {TokenUsage, CostBreakdown, ToknxrConfig} from './types.js';
 
 export class CostCalculator {
-	private config: ToknxrConfig;
+	private readonly config: ToknxrConfig;
 
 	constructor(config: ToknxrConfig) {
 		this.config = config;

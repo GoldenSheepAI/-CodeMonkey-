@@ -1,5 +1,5 @@
-import type {CustomCommand} from '@/types/index.js';
 import {substituteTemplateVariables} from './parser.js';
+import type {CustomCommand} from '@/types/index.js';
 
 export class CustomCommandExecutor {
 	/**
@@ -11,17 +11,19 @@ export class CustomCommandExecutor {
 
 		if (command.metadata.parameters && command.metadata.parameters.length > 0) {
 			// Map arguments to parameters
-			command.metadata.parameters.forEach((param: string, index: number) => {
-				variables[param] = args[index] || '';
-			});
+			command.metadata.parameters.forEach(
+				(parameter: string, index: number) => {
+					variables[parameter] = args[index] || '';
+				},
+			);
 
 			// Also provide all args as a single variable
-			variables['args'] = args.join(' ');
+			variables.args = args.join(' ');
 		}
 
 		// Add some default context variables
-		variables['cwd'] = process.cwd();
-		variables['command'] = command.fullName;
+		variables.cwd = process.cwd();
+		variables.command = command.fullName;
 
 		// Substitute variables in the command content
 		const promptContent = substituteTemplateVariables(

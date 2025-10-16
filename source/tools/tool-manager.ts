@@ -1,11 +1,11 @@
-import React from 'react';
-import type {Tool, ToolHandler, MCPInitResult} from '@/types/index.js';
+import type React from 'react';
 import {
 	tools as staticTools,
 	toolRegistry as staticToolRegistry,
 	toolFormatters as staticToolFormatters,
 	toolValidators as staticToolValidators,
 } from './index.js';
+import type {Tool, ToolHandler, MCPInitResult} from '@/types/index.js';
 import {MCPClient} from '@/mcp/mcp-client.js';
 import {MCPToolAdapter} from '@/mcp/mcp-tool-adapter.js';
 
@@ -13,10 +13,10 @@ import {MCPToolAdapter} from '@/mcp/mcp-tool-adapter.js';
  * Manages both static tools and dynamic MCP tools
  */
 export class ToolManager {
-	private mcpClient: MCPClient | null = null;
-	private mcpAdapter: MCPToolAdapter | null = null;
-	private toolRegistry: Record<string, ToolHandler> = {};
-	private toolFormatters: Record<
+	private mcpClient: MCPClient | undefined = undefined;
+	private mcpAdapter: MCPToolAdapter | undefined = undefined;
+	private readonly toolRegistry: Record<string, ToolHandler> = {};
+	private readonly toolFormatters: Record<
 		string,
 		(
 			args: any,
@@ -26,10 +26,12 @@ export class ToolManager {
 			| React.ReactElement
 			| Promise<React.ReactElement>
 	> = {};
-	private toolValidators: Record<
+
+	private readonly toolValidators: Record<
 		string,
 		(args: any) => Promise<{valid: true} | {valid: false; error: string}>
 	> = {};
+
 	private allTools: Tool[] = [];
 
 	constructor() {
@@ -62,6 +64,7 @@ export class ToolManager {
 
 			return results;
 		}
+
 		return [];
 	}
 
@@ -156,8 +159,8 @@ export class ToolManager {
 
 			// Reset to static tools only
 			this.allTools = [...staticTools];
-			this.mcpClient = null;
-			this.mcpAdapter = null;
+			this.mcpClient = undefined;
+			this.mcpAdapter = undefined;
 		}
 	}
 

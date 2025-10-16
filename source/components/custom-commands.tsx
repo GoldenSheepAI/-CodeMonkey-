@@ -4,9 +4,9 @@ import {useTheme} from '@/hooks/useTheme.js';
 import type {CustomCommand} from '@/types/index.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 
-interface CustomCommandsProps {
-	commands: CustomCommand[];
-}
+type CustomCommandsProps = {
+	readonly commands: CustomCommand[];
+};
 
 function formatCommand(cmd: CustomCommand): string {
 	const parts: string[] = [`/${cmd.fullName}`];
@@ -53,7 +53,7 @@ export default function CustomCommands({commands}: CustomCommandsProps) {
 			{commands.length === 0 ? (
 				<>
 					<Box marginBottom={1}>
-						<Text color={colors.white} bold>
+						<Text bold color={colors.white}>
 							No custom commands found
 						</Text>
 					</Box>

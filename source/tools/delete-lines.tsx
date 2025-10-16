@@ -1,7 +1,7 @@
-import React from 'react';
 import {resolve} from 'node:path';
 import {readFile, writeFile, access} from 'node:fs/promises';
 import {constants} from 'node:fs';
+import React from 'react';
 import {highlight} from 'cli-highlight';
 import {Text, Box} from 'ink';
 import type {ToolHandler, ToolDefinition} from '@/types/index.js';
@@ -10,11 +10,11 @@ import {getColors} from '@/config/index.js';
 import {getLanguageFromExtension} from '@/utils/programming-language-helper.js';
 import ToolMessage from '@/components/tool-message.js';
 
-interface DeleteLinesArgs {
+type DeleteLinesArgs = {
 	path: string;
 	line_number: number;
 	end_line?: number;
-}
+};
 
 const handler: ToolHandler = async (args: DeleteLinesArgs): Promise<string> => {
 	const {path, line_number, end_line} = args;
@@ -43,6 +43,7 @@ const handler: ToolHandler = async (args: DeleteLinesArgs): Promise<string> => {
 			`Line number ${line_number} is out of range (file has ${lines.length} lines)`,
 		);
 	}
+
 	if (endLine > lines.length) {
 		throw new Error(
 			`End line ${endLine} is out of range (file has ${lines.length} lines)`,
@@ -60,10 +61,10 @@ const handler: ToolHandler = async (args: DeleteLinesArgs): Promise<string> => {
 
 	// Generate full file contents to show the model the current file state
 	let fileContext = '\n\nUpdated file contents:\n';
-	for (let i = 0; i < newLines.length; i++) {
-		const lineNumStr = String(i + 1).padStart(4, ' ');
-		const line = newLines[i] || '';
-		fileContext += `${lineNumStr}: ${line}\n`;
+	for (const [i, newLine] of newLines.entries()) {
+		const lineNumberString = String(i + 1).padStart(4, ' ');
+		const line = newLine || '';
+		fileContext += `${lineNumberString}: ${line}\n`;
 	}
 
 	// Add a note about the deletion
@@ -102,6 +103,7 @@ async function formatDeleteLinesPreview(
 			`Invalid line_number: ${line_number}. Must be a positive integer.`,
 		);
 	}
+
 	if (endLine < lineNumber) {
 		throw new Error(
 			`end_line (${endLine}) cannot be less than line_number (${lineNumber}).`,
@@ -133,7 +135,7 @@ async function formatDeleteLinesPreview(
 
 			// Show context before the deletion point
 			for (let i = showStart; i < Math.min(lineNumber - 1, lines.length); i++) {
-				const lineNumStr = String(i + 1).padStart(4, ' ');
+				const lineNumberString = String(i + 1).padStart(4, ' ');
 				const line = lines[i] || '';
 				let displayLine: string;
 				try {
@@ -144,13 +146,13 @@ async function formatDeleteLinesPreview(
 
 				contextElements.push(
 					<Text key={`before-${i}`} color={themeColors.secondary}>
-						{lineNumStr} {displayLine}
+						{lineNumberString} {displayLine}
 					</Text>,
 				);
 			}
 
 			// Show a marker indicating where the deletion occurred
-			const deletionLineNum = lineNumber;
+			const deletionLineNumber = lineNumber;
 			contextElements.push(
 				<Text
 					key="deletion-marker"
@@ -158,8 +160,8 @@ async function formatDeleteLinesPreview(
 					color={themeColors.diffRemovedText}
 					wrap="wrap"
 				>
-					{String(deletionLineNum).padStart(4, ' ')} - [Deleted {linesToRemove}{' '}
-					line{linesToRemove > 1 ? 's' : ''}]
+					{String(deletionLineNumber).padStart(4, ' ')} - [Deleted{' '}
+					{linesToRemove} line{linesToRemove > 1 ? 's' : ''}]
 				</Text>,
 			);
 
@@ -169,8 +171,8 @@ async function formatDeleteLinesPreview(
 				i <= Math.min(showEnd, lines.length - 1);
 				i++
 			) {
-				const displayLineNum = i + linesToRemove + 1;
-				const lineNumStr = String(displayLineNum).padStart(4, ' ');
+				const displayLineNumber = i + linesToRemove + 1;
+				const lineNumberString = String(displayLineNumber).padStart(4, ' ');
 				const line = lines[i] || '';
 				let displayLine: string;
 				try {
@@ -181,7 +183,7 @@ async function formatDeleteLinesPreview(
 
 				contextElements.push(
 					<Text key={`after-${i}`} color={themeColors.secondary}>
-						{lineNumStr} {displayLine}
+						{lineNumberString} {displayLine}
 					</Text>,
 				);
 			}
@@ -217,7 +219,7 @@ async function formatDeleteLinesPreview(
 				</Box>
 			);
 
-			return <ToolMessage message={messageContent} hideBox={true} />;
+			return <ToolMessage hideBox message={messageContent} />;
 		}
 
 		// Preview mode - show what will be deleted
@@ -239,7 +241,7 @@ async function formatDeleteLinesPreview(
 
 		// Show context before
 		for (let i = showStart; i < lineNumber - 1; i++) {
-			const lineNumStr = String(i + 1).padStart(4, ' ');
+			const lineNumberString = String(i + 1).padStart(4, ' ');
 			const line = lines[i] || '';
 			let displayLine: string;
 			try {
@@ -250,14 +252,14 @@ async function formatDeleteLinesPreview(
 
 			contextBefore.push(
 				<Text key={`before-${i}`} color={themeColors.secondary}>
-					{lineNumStr} {displayLine}
+					{lineNumberString} {displayLine}
 				</Text>,
 			);
 		}
 
 		// Show deleted lines
 		for (let i = lineNumber - 1; i < endLine; i++) {
-			const lineNumStr = String(i + 1).padStart(4, ' ');
+			const lineNumberString = String(i + 1).padStart(4, ' ');
 			const line = lines[i] || '';
 			let displayLine: string;
 			try {
@@ -273,14 +275,14 @@ async function formatDeleteLinesPreview(
 					color={themeColors.diffRemovedText}
 					wrap="wrap"
 				>
-					{lineNumStr} - {displayLine}
+					{lineNumberString} - {displayLine}
 				</Text>,
 			);
 		}
 
 		// Show context after
 		for (let i = endLine; i <= showEnd; i++) {
-			const lineNumStr = String(i - linesToRemove + 1).padStart(4, ' ');
+			const lineNumberString = String(i - linesToRemove + 1).padStart(4, ' ');
 			const line = lines[i] || '';
 			let displayLine: string;
 			try {
@@ -291,7 +293,7 @@ async function formatDeleteLinesPreview(
 
 			contextAfter.push(
 				<Text key={`after-${i}`} color={themeColors.secondary}>
-					{lineNumStr} {displayLine}
+					{lineNumberString} {displayLine}
 				</Text>,
 			);
 		}
@@ -327,7 +329,7 @@ async function formatDeleteLinesPreview(
 			</Box>
 		);
 
-		return <ToolMessage message={messageContent} hideBox={true} />;
+		return <ToolMessage hideBox message={messageContent} />;
 	} catch (error) {
 		const errorContent = (
 			<Box flexDirection="column">
@@ -347,7 +349,7 @@ async function formatDeleteLinesPreview(
 			</Box>
 		);
 
-		return <ToolMessage message={errorContent} hideBox={true} />;
+		return <ToolMessage hideBox message={errorContent} />;
 	}
 }
 
@@ -376,6 +378,7 @@ const validator = async (
 				error: `⚒ File "${path}" does not exist`,
 			};
 		}
+
 		return {
 			valid: false,
 			error: `⚒ Cannot access file "${path}": ${error.message}`,

@@ -9,9 +9,9 @@ export default function InfoMessage({
 	hideTitle = false,
 	hideBox = false,
 }: {
-	message: string;
-	hideTitle?: boolean;
-	hideBox?: boolean;
+	readonly message: string;
+	readonly hideTitle?: boolean;
+	readonly hideBox?: boolean;
 }) {
 	const boxWidth = Math.min(useTerminalWidth(), 120);
 	const {colors} = useTheme();

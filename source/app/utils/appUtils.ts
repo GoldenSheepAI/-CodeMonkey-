@@ -35,7 +35,7 @@ export async function handleMessageSubmission(
 
 	// Handle bash commands (prefixed with !)
 	if (parsedInput.isBashCommand && parsedInput.bashCommand) {
-		const bashCommand = parsedInput.bashCommand;
+		const {bashCommand} = parsedInput;
 
 		// Set bash execution state to show spinner
 		setCurrentBashCommand(bashCommand);
@@ -51,13 +51,13 @@ export async function handleMessageSubmission(
 			let result: {fullOutput: string; llmContext: string};
 			try {
 				result = JSON.parse(resultString);
-			} catch (e) {
+			} catch {
 				// If parsing fails, treat as plain string
 				result = {
 					fullOutput: resultString,
 					llmContext:
 						resultString.length > 4000
-							? resultString.substring(0, 4000)
+							? resultString.slice(0, 4000)
 							: resultString,
 				};
 			}
@@ -122,7 +122,7 @@ ${result.fullOutput || '(No output)'}`;
 				.slice(commandName.length + 1)
 				.trim()
 				.split(/\s+/)
-				.filter(arg => arg);
+				.filter(Boolean);
 			const processedPrompt = await customCommandExecutor?.execute(
 				customCommand,
 				args,
@@ -134,29 +134,44 @@ ${result.fullOutput || '(No output)'}`;
 			}
 		} else {
 			// Handle special commands that need app state access
-			if (commandName === 'clear') {
-				await onClearMessages();
-				// Still show the clear command result
-			} else if (commandName === 'model') {
-				onEnterModelSelectionMode();
-				return;
-			} else if (commandName === 'provider') {
-				onEnterProviderSelectionMode();
-				return;
-			} else if (commandName === 'theme') {
-				onEnterThemeSelectionMode();
-				return;
-			} else if (commandName === 'recommendations') {
-				onEnterRecommendationsMode();
-				return;
-			} else if (commandName === 'status') {
-				onShowStatus();
-				return;
+			switch (commandName) {
+				case 'clear': {
+					await onClearMessages();
+					// Still show the clear command result
+
+					break;
+				}
+
+				case 'model': {
+					onEnterModelSelectionMode();
+					return;
+				}
+
+				case 'provider': {
+					onEnterProviderSelectionMode();
+					return;
+				}
+
+				case 'theme': {
+					onEnterThemeSelectionMode();
+					return;
+				}
+
+				case 'recommendations': {
+					onEnterRecommendationsMode();
+					return;
+				}
+
+				case 'status': {
+					onShowStatus();
+					return;
+				}
+				// No default
 			}
 
 			// Execute built-in command
 			const totalTokens = messages.reduce(
-				(sum, msg) => sum + options.getMessageTokens(msg),
+				(sum, message_) => sum + options.getMessageTokens(message_),
 				0,
 			);
 			const result = await commandRegistry.execute(message.slice(1), messages, {

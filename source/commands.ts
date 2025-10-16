@@ -1,15 +1,16 @@
-import {Command} from './types/index.js';
 import React from 'react';
+import {type Command} from './types/index.js';
 import ErrorMessage from './components/error-message.js';
 
 export class CommandRegistry {
-	private commands = new Map<string, Command>();
+	private readonly commands = new Map<string, Command>();
 
 	register(command: Command | Command[]): void {
 		if (Array.isArray(command)) {
-			command.forEach(cmd => this.register(cmd));
+			for (const cmd of command) this.register(cmd);
 			return;
 		}
+
 		this.commands.set(command.name, command);
 	}
 
@@ -18,18 +19,18 @@ export class CommandRegistry {
 	}
 
 	getAll(): Command[] {
-		return Array.from(this.commands.values());
+		return [...this.commands.values()];
 	}
 
 	getCompletions(prefix: string): string[] {
-		return Array.from(this.commands.keys())
+		return [...this.commands.keys()]
 			.filter(name => name.startsWith(prefix))
 			.sort();
 	}
 
 	async execute(
 		input: string,
-		messages: import('./types/index.js').Message[],
+		messages: Array<import('./types/index.js').Message>,
 		metadata: {provider: string; model: string; tokens: number},
 	): Promise<void | string | React.ReactNode> {
 		const parts = input.trim().split(/\s+/);
@@ -53,7 +54,7 @@ export class CommandRegistry {
 			});
 		}
 
-		return await command.handler(args, messages, metadata);
+		return command.handler(args, messages, metadata);
 	}
 }
 

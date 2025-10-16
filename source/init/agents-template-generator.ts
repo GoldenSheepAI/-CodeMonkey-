@@ -15,32 +15,30 @@ export class AgentsTemplateGenerator {
 		const sections: string[] = [];
 
 		// Header
-		sections.push('# AGENTS.md');
-		sections.push('');
 		sections.push(
+			'# AGENTS.md',
+			'',
 			`AI coding agent instructions for **${analysis.projectName}**`,
-		);
-		sections.push('');
-
-		// Project Overview
-		sections.push('## Project Overview');
-		sections.push('');
+			'',
+		'## Project Overview', '');
 		if (analysis.description) {
-			sections.push(analysis.description);
-			sections.push('');
+			sections.push(analysis.description, '');
 		}
+
 		sections.push(`**Project Type:** ${analysis.projectType}`);
 		if (analysis.languages.primary) {
 			sections.push(
 				`**Primary Language:** ${analysis.languages.primary.name} (${analysis.languages.primary.percentage}% of codebase)`,
 			);
 		}
+
 		if (analysis.languages.secondary.length > 0) {
 			const secondaryLangs = analysis.languages.secondary
 				.map(lang => `${lang.name} (${lang.percentage}%)`)
 				.join(', ');
 			sections.push(`**Secondary Languages:** ${secondaryLangs}`);
 		}
+
 		sections.push('');
 
 		// Architecture Summary
@@ -48,8 +46,7 @@ export class AgentsTemplateGenerator {
 			analysis.dependencies.frameworks.length > 0 ||
 			analysis.structure.importantDirectories.length > 0
 		) {
-			sections.push('## Architecture');
-			sections.push('');
+			sections.push('## Architecture', '');
 
 			if (analysis.dependencies.frameworks.length > 0) {
 				sections.push('**Key Frameworks & Libraries:**');
@@ -59,6 +56,7 @@ export class AgentsTemplateGenerator {
 						`- ${framework.name}${version} - ${framework.category}`,
 					);
 				}
+
 				sections.push('');
 			}
 
@@ -70,55 +68,52 @@ export class AgentsTemplateGenerator {
 				)) {
 					sections.push(`- \`${dir}/\` - ${this.getDirectoryDescription(dir)}`);
 				}
+
 				sections.push('');
 			}
 		}
 
 		// Key Files
 		if (Object.values(analysis.keyFiles).some(files => files.length > 0)) {
-			sections.push('## Key Files');
-			sections.push('');
+			sections.push('## Key Files', '');
 
 			if (analysis.keyFiles.config.length > 0) {
 				sections.push('**Configuration:**');
-				analysis.keyFiles.config.slice(0, 5).forEach(file => {
+				for (const file of analysis.keyFiles.config.slice(0, 5)) {
 					sections.push(`- \`${file}\` - ${this.getFileDescription(file)}`);
-				});
+				}
+
 				sections.push('');
 			}
 
 			if (analysis.keyFiles.documentation.length > 0) {
 				sections.push('**Documentation:**');
-				analysis.keyFiles.documentation.slice(0, 3).forEach(file => {
+				for (const file of analysis.keyFiles.documentation.slice(0, 3)) {
 					sections.push(`- \`${file}\``);
-				});
+				}
+
 				sections.push('');
 			}
 		}
 
 		// Build and Test Commands
 		if (Object.keys(analysis.buildCommands).length > 0) {
-			sections.push('## Development Commands');
-			sections.push('');
+			sections.push('## Development Commands', '');
 
 			for (const [action, command] of Object.entries(analysis.buildCommands)) {
-				sections.push(`**${action}:**`);
-				sections.push('```bash');
-				sections.push(command);
-				sections.push('```');
-				sections.push('');
+				sections.push(`**${action}:**`, '```bash', command, '```', '');
 			}
 		}
 
 		// Code Style Guidelines
 		const conventions = this.getCodingConventions(analysis);
 		if (conventions.length > 0) {
-			sections.push('## Code Style Guidelines');
-			sections.push('');
+			sections.push('## Code Style Guidelines', '');
 
 			for (const convention of conventions) {
 				sections.push(`- ${convention}`);
 			}
+
 			sections.push('');
 		}
 
@@ -127,31 +122,33 @@ export class AgentsTemplateGenerator {
 			analysis.dependencies.testingFrameworks.length > 0 ||
 			analysis.keyFiles.test.length > 0
 		) {
-			sections.push('## Testing');
-			sections.push('');
+			sections.push('## Testing', '');
 
 			if (analysis.dependencies.testingFrameworks.length > 0) {
 				sections.push(
 					`**Testing Frameworks:** ${analysis.dependencies.testingFrameworks.join(
 						', ',
 					)}`,
+					'',
 				);
-				sections.push('');
 			}
 
 			if (analysis.buildCommands.Test) {
-				sections.push('**Run Tests:**');
-				sections.push('```bash');
-				sections.push(analysis.buildCommands.Test);
-				sections.push('```');
+				sections.push(
+					'**Run Tests:**',
+					'```bash',
+					analysis.buildCommands.Test,
+					'```',
+				);
 				sections.push('');
 			}
 
 			if (analysis.keyFiles.test.length > 0) {
 				sections.push('**Test Files:**');
-				analysis.keyFiles.test.slice(0, 5).forEach(file => {
+				for (const file of analysis.keyFiles.test.slice(0, 5)) {
 					sections.push(`- \`${file}\``);
-				});
+				}
+
 				sections.push('');
 			}
 		}
@@ -161,28 +158,29 @@ export class AgentsTemplateGenerator {
 			const mergedRules =
 				ExistingRulesExtractor.mergeExistingRules(existingRules);
 			if (mergedRules.trim()) {
-				sections.push(mergedRules);
-				sections.push('');
+				sections.push(mergedRules, '');
 			}
 		}
 
 		// Special Considerations for AI
-		sections.push('## AI Coding Assistance Notes');
-		sections.push('');
-		sections.push('**Important Considerations:**');
+		sections.push(
+			'## AI Coding Assistance Notes',
+			'',
+			'**Important Considerations:**',
+		);
 
 		// Language-specific notes
 		if (analysis.languages.primary) {
 			const langNotes = this.getLanguageSpecificNotes(
 				analysis.languages.primary.name,
 			);
-			langNotes.forEach(note => sections.push(`- ${note}`));
+			for (const note of langNotes) sections.push(`- ${note}`);
 		}
 
 		// Framework-specific notes
 		for (const framework of analysis.dependencies.frameworks.slice(0, 3)) {
 			const frameworkNotes = this.getFrameworkSpecificNotes(framework.name);
-			frameworkNotes.forEach(note => sections.push(`- ${note}`));
+			for (const note of frameworkNotes) sections.push(`- ${note}`);
 		}
 
 		// General notes
@@ -194,25 +192,29 @@ export class AgentsTemplateGenerator {
 				'- Large codebase: Focus on specific areas when making changes',
 			);
 		}
+
 		if (analysis.keyFiles.build.length > 0) {
 			sections.push(
 				'- Check build configuration files before making structural changes',
 			);
 		}
+
 		sections.push('');
 
 		// Repository info
 		if (analysis.repository) {
-			sections.push('## Repository');
-			sections.push('');
-			sections.push(`**Source:** ${analysis.repository}`);
-			sections.push('');
+			sections.push(
+				'## Repository',
+				'',
+				`**Source:** ${analysis.repository}`,
+				'',
+			);
 		}
 
 		// Footer
-		sections.push('---');
-		sections.push('');
 		sections.push(
+			'---',
+			'',
 			'*This AGENTS.md file was generated by CodeMonkey 🐒. Update it as your project evolves.*',
 		);
 
@@ -225,7 +227,7 @@ export class AgentsTemplateGenerator {
 	private static getDirectoryDescription(dir: string): string {
 		const dirName = dir.split('/').pop()?.toLowerCase() || '';
 
-		const descriptions: {[key: string]: string} = {
+		const descriptions: Record<string, string> = {
 			src: 'Source code',
 			source: 'Source code',
 			app: 'Application code',
@@ -292,48 +294,76 @@ export class AgentsTemplateGenerator {
 
 			switch (lang) {
 				case 'JavaScript':
-				case 'TypeScript':
-					conventions.push('Use camelCase for variables and functions');
-					conventions.push('Use PascalCase for classes and components');
-					conventions.push('Prefer const/let over var');
-					conventions.push('Use async/await over callbacks when possible');
+				case 'TypeScript': {
+					conventions.push(
+						'Use camelCase for variables and functions',
+						'Use PascalCase for classes and components',
+					);
+					conventions.push(
+						'Prefer const/let over var',
+						'Use async/await over callbacks when possible',
+					);
 					if (
 						analysis.dependencies.frameworks.some(f => f.name.includes('React'))
 					) {
-						conventions.push('Use functional components with hooks');
-						conventions.push('Follow React naming conventions for components');
+						conventions.push(
+							'Use functional components with hooks',
+							'Follow React naming conventions for components',
+						);
 					}
-					break;
 
-				case 'Python':
-					conventions.push('Follow PEP 8 style guide');
-					conventions.push('Use snake_case for variables and functions');
-					conventions.push('Use PascalCase for classes');
-					conventions.push('Include docstrings for functions and classes');
+					break;
+				}
+
+				case 'Python': {
+					conventions.push(
+						'Follow PEP 8 style guide',
+						'Use snake_case for variables and functions',
+					);
+					conventions.push(
+						'Use PascalCase for classes',
+						'Include docstrings for functions and classes',
+					);
 					conventions.push('Use type hints where appropriate');
 					break;
+				}
 
-				case 'Rust':
-					conventions.push('Follow Rust naming conventions (snake_case)');
-					conventions.push('Use cargo fmt for code formatting');
-					conventions.push('Handle errors explicitly with Result<T, E>');
-					conventions.push('Prefer owned types over references when possible');
+				case 'Rust': {
+					conventions.push(
+						'Follow Rust naming conventions (snake_case)',
+						'Use cargo fmt for code formatting',
+					);
+					conventions.push(
+						'Handle errors explicitly with Result<T, E>',
+						'Prefer owned types over references when possible',
+					);
 					break;
+				}
 
-				case 'Go':
-					conventions.push('Follow Go naming conventions');
-					conventions.push('Use gofmt for formatting');
-					conventions.push('Handle errors explicitly');
-					conventions.push('Use interfaces for abstraction');
+				case 'Go': {
+					conventions.push(
+						'Follow Go naming conventions',
+						'Use gofmt for formatting',
+					);
+					conventions.push(
+						'Handle errors explicitly',
+						'Use interfaces for abstraction',
+					);
 					conventions.push('Keep functions and methods concise');
 					break;
+				}
 
-				case 'Java':
-					conventions.push('Follow Java naming conventions');
-					conventions.push('Use camelCase for methods and variables');
-					conventions.push('Use PascalCase for classes');
-					conventions.push('Include JavaDoc for public methods');
+				case 'Java': {
+					conventions.push(
+						'Follow Java naming conventions',
+						'Use camelCase for methods and variables',
+					);
+					conventions.push(
+						'Use PascalCase for classes',
+						'Include JavaDoc for public methods',
+					);
 					break;
+				}
 			}
 		}
 
@@ -346,39 +376,44 @@ export class AgentsTemplateGenerator {
 	private static getLanguageSpecificNotes(language: string): string[] {
 		switch (language) {
 			case 'JavaScript':
-			case 'TypeScript':
+			case 'TypeScript': {
 				return [
 					'Check package.json for available scripts before running commands',
 					'Be aware of Node.js version requirements',
 					'Consider impact on bundle size when adding dependencies',
 				];
+			}
 
-			case 'Python':
+			case 'Python': {
 				return [
 					'Check virtual environment setup before running commands',
 					'Be mindful of Python version compatibility',
 					'Follow import organization (stdlib, third-party, local)',
 				];
+			}
 
-			case 'Rust':
+			case 'Rust': {
 				return [
 					'Run cargo check before cargo build for faster feedback',
 					'Consider memory safety and ownership when suggesting changes',
 					'Use cargo clippy for additional linting',
 				];
+			}
 
-			case 'Go':
+			case 'Go': {
 				return [
 					'Run go mod tidy after adding dependencies',
 					'Consider goroutine usage for concurrent operations',
 					'Follow Go idioms for error handling',
 				];
+			}
 
-			default:
+			default: {
 				return [
 					'Check project documentation for specific conventions',
 					'Test changes thoroughly before committing',
 				];
+			}
 		}
 	}
 
@@ -387,32 +422,37 @@ export class AgentsTemplateGenerator {
 	 */
 	private static getFrameworkSpecificNotes(framework: string): string[] {
 		switch (framework) {
-			case 'React':
+			case 'React': {
 				return [
 					'Follow React hooks best practices',
 					'Consider component reusability when creating new components',
 				];
+			}
 
-			case 'Next.js':
+			case 'Next.js': {
 				return [
 					'Be aware of SSR/SSG implications when making changes',
 					'Check routing structure before adding new pages',
 				];
+			}
 
-			case 'Django':
+			case 'Django': {
 				return [
 					'Run migrations after model changes',
 					'Follow Django project structure conventions',
 				];
+			}
 
-			case 'Express.js':
+			case 'Express.js': {
 				return [
 					'Consider middleware order when adding new routes',
 					'Use proper error handling middleware',
 				];
+			}
 
-			default:
+			default: {
 				return [];
+			}
 		}
 	}
 }

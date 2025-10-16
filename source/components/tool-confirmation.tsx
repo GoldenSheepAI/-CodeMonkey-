@@ -8,16 +8,16 @@ import {toolFormatters} from '@/tools/index.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {getToolManager} from '@/message-handler.js';
 
-interface ToolConfirmationProps {
-	toolCall: ToolCall;
-	onConfirm: (confirmed: boolean) => void;
-	onCancel: () => void;
-}
+type ToolConfirmationProps = {
+	readonly toolCall: ToolCall;
+	readonly onConfirm: (confirmed: boolean) => void;
+	readonly onCancel: () => void;
+};
 
-interface ConfirmationOption {
+type ConfirmationOption = {
 	label: string;
 	value: boolean;
-}
+};
 
 export default function ToolConfirmation({
 	toolCall,
@@ -27,14 +27,14 @@ export default function ToolConfirmation({
 	const boxWidth = useTerminalWidth();
 	const {colors} = useTheme();
 	const [formatterPreview, setFormatterPreview] = React.useState<
-		React.ReactElement | string | null
-	>(null);
+		React.ReactElement | string | undefined
+	>(undefined);
 	const [isLoadingPreview, setIsLoadingPreview] = React.useState(false);
 	const [hasFormatterError, setHasFormatterError] = React.useState(false);
 	const [hasValidationError, setHasValidationError] = React.useState(false);
-	const [validationError, setValidationError] = React.useState<string | null>(
-		null,
-	);
+	const [validationError, setValidationError] = React.useState<
+		string | undefined
+	>(undefined);
 
 	// Get MCP tool info for display
 	const toolManager = getToolManager();
@@ -55,7 +55,7 @@ export default function ToolConfirmation({
 						if (typeof parsedArgs === 'string') {
 							try {
 								parsedArgs = JSON.parse(parsedArgs);
-							} catch (e) {
+							} catch {
 								// If parsing fails, use as-is
 							}
 						}
@@ -71,12 +71,14 @@ export default function ToolConfirmation({
 						}
 					} catch (error) {
 						console.error('Error running validator:', error);
-						const errorMsg = `Validation error: ${
+						const errorMessage = `Validation error: ${
 							error instanceof Error ? error.message : String(error)
 						}`;
-						setValidationError(errorMsg);
+						setValidationError(errorMessage);
 						setHasValidationError(true);
-						setFormatterPreview(<Text color={colors.error}>{errorMsg}</Text>);
+						setFormatterPreview(
+							<Text color={colors.error}>{errorMessage}</Text>,
+						);
 						return;
 					}
 				}
@@ -91,10 +93,11 @@ export default function ToolConfirmation({
 					if (typeof parsedArgs === 'string') {
 						try {
 							parsedArgs = JSON.parse(parsedArgs);
-						} catch (e) {
+						} catch {
 							// If parsing fails, use as-is
 						}
 					}
+
 					const preview = await formatter(parsedArgs);
 					setFormatterPreview(preview);
 				} catch (error) {

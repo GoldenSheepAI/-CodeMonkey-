@@ -2,15 +2,15 @@ import {TokenCounter} from '@/integrations/toknxr/token-counter.js';
 import type {TokenUsage} from '@/integrations/toknxr/types.js';
 import {logError, logInfo} from '@/utils/message-queue.js';
 
-interface ContextEntry {
+type ContextEntry = {
 	id: string;
 	role: 'user' | 'assistant' | 'system';
 	content: string;
 	tokens: number;
 	timestamp: Date;
-}
+};
 
-interface SessionMetrics {
+type SessionMetrics = {
 	totalInputTokens: number;
 	totalOutputTokens: number;
 	totalCost: number;
@@ -18,11 +18,11 @@ interface SessionMetrics {
 	contextLength: number;
 	remainingRequests?: number;
 	maxRequests?: number;
-}
+};
 
 export class ContextTracker {
 	private context: ContextEntry[] = [];
-	private tokenCounter: TokenCounter;
+	private readonly tokenCounter: TokenCounter;
 	private sessionMetrics: SessionMetrics;
 	private maxContextLength: number;
 	private currentModel: string;
@@ -30,15 +30,15 @@ export class ContextTracker {
 
 	// Model-specific context limits
 	private static readonly CONTEXT_LIMITS: Record<string, number> = {
-		'gpt-4o': 128000,
-		'gpt-4-turbo': 128000,
+		'gpt-4o': 128_000,
+		'gpt-4-turbo': 128_000,
 		'gpt-4': 8192,
-		'gpt-3.5-turbo': 16385,
-		'claude-3-5-sonnet-20241022': 200000,
-		'claude-3-haiku-20240307': 200000,
-		'llama-3.3-70b-versatile': 32768,
-		'qwen2.5-coder': 32768,
-		'deepseek-coder': 16384,
+		'gpt-3.5-turbo': 16_385,
+		'claude-3-5-sonnet-20241022': 200_000,
+		'claude-3-haiku-20240307': 200_000,
+		'llama-3.3-70b-versatile': 32_768,
+		'qwen2.5-coder': 32_768,
+		'deepseek-coder': 16_384,
 		'llama3.2': 8192,
 	};
 
@@ -47,11 +47,11 @@ export class ContextTracker {
 		string,
 		{input: number; output: number}
 	> = {
-		'gpt-4o': {input: 2.5, output: 10.0},
-		'gpt-4-turbo': {input: 10.0, output: 30.0},
-		'gpt-4': {input: 30.0, output: 60.0},
+		'gpt-4o': {input: 2.5, output: 10},
+		'gpt-4-turbo': {input: 10, output: 30},
+		'gpt-4': {input: 30, output: 60},
 		'gpt-3.5-turbo': {input: 0.5, output: 1.5},
-		'claude-3-5-sonnet-20241022': {input: 3.0, output: 15.0},
+		'claude-3-5-sonnet-20241022': {input: 3, output: 15},
 		'claude-3-haiku-20240307': {input: 0.25, output: 1.25},
 		'llama-3.3-70b-versatile': {input: 0.59, output: 0.79}, // Groq pricing
 		// Local models are free
@@ -90,7 +90,7 @@ export class ContextTracker {
 		);
 
 		const entry: ContextEntry = {
-			id: `${role}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+			id: `${role}_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
 			role,
 			content,
 			tokens,
@@ -117,8 +117,8 @@ export class ContextTracker {
 		// Calculate cost
 		const pricing = ContextTracker.MODEL_PRICING[this.currentModel];
 		if (pricing) {
-			const inputCost = (usage.inputTokens / 1000000) * pricing.input;
-			const outputCost = (usage.outputTokens / 1000000) * pricing.output;
+			const inputCost = (usage.inputTokens / 1_000_000) * pricing.input;
+			const outputCost = (usage.outputTokens / 1_000_000) * pricing.output;
 			this.sessionMetrics.totalCost += inputCost + outputCost;
 		}
 
@@ -301,6 +301,7 @@ export class ContextTracker {
 		for (const entry of this.context) {
 			totalTokens += entry.tokens;
 		}
+
 		this.sessionMetrics.contextLength = totalTokens;
 	}
 }

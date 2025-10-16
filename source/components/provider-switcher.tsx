@@ -1,22 +1,22 @@
+import {readFileSync, writeFileSync} from 'node:fs';
+import {join} from 'node:path';
 import React, {useState, useCallback} from 'react';
 import {Box, Text} from 'ink';
 import SelectInput from 'ink-select-input';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {useTheme} from '@/hooks/useTheme.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
-import {readFileSync, writeFileSync} from 'fs';
-import {join} from 'path';
 
-interface Provider {
+type Provider = {
 	name: string;
 	enabled: boolean;
 	description?: string;
 	apiKey?: string;
-}
+};
 
-interface ProviderSwitcherProps {
-	onComplete?: () => void;
-}
+type ProviderSwitcherProps = {
+	readonly onComplete?: () => void;
+};
 
 export default function ProviderSwitcher({onComplete}: ProviderSwitcherProps) {
 	const boxWidth = useTerminalWidth();
@@ -39,7 +39,7 @@ export default function ProviderSwitcher({onComplete}: ProviderSwitcherProps) {
 		if (active) {
 			currentProvider = active.name;
 		}
-	} catch (error) {
+	} catch {
 		setStatus('error');
 		setMessage('Could not read agents.config.json');
 	}
@@ -168,7 +168,7 @@ export default function ProviderSwitcher({onComplete}: ProviderSwitcherProps) {
 				</Box>
 
 				<Box marginBottom={1}>
-					<Text color={colors.white} dimColor>
+					<Text dimColor color={colors.white}>
 						Select a provider (only one can be active at a time):
 					</Text>
 				</Box>
@@ -176,7 +176,7 @@ export default function ProviderSwitcher({onComplete}: ProviderSwitcherProps) {
 				<SelectInput items={items} onSelect={handleSelect} />
 
 				<Box marginTop={1}>
-					<Text color={colors.white} dimColor>
+					<Text dimColor color={colors.white}>
 						Tip: Edit agents.config.json to add API keys
 					</Text>
 				</Box>

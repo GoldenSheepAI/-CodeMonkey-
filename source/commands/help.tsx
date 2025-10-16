@@ -1,11 +1,11 @@
-import {Command} from '@/types/index.js';
-import {commandRegistry} from '@/commands.js';
-import fs from 'fs';
-import path from 'path';
-import {fileURLToPath} from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import React from 'react';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
 import {Box, Text} from 'ink';
+import {commandRegistry} from '@/commands.js';
+import {type Command} from '@/types/index.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {useTheme} from '@/hooks/useTheme.js';
 
@@ -19,8 +19,8 @@ function Help({
 	version,
 	commands,
 }: {
-	version: string;
-	commands: Array<{name: string; description: string}>;
+	readonly version: string;
+	readonly commands: Array<{name: string; description: string}>;
 }) {
 	const boxWidth = useTerminalWidth();
 	const {colors} = useTheme();
@@ -38,7 +38,7 @@ function Help({
 			marginBottom={1}
 		>
 			<Box marginBottom={1}>
-				<Text color={colors.primary} bold>
+				<Text bold color={colors.primary}>
 					CodeMonkey 🐒 – {version}
 				</Text>
 			</Box>
@@ -58,7 +58,7 @@ function Help({
 			</Box>
 
 			<Box marginTop={1}>
-				<Text color={colors.primary} bold>
+				<Text bold color={colors.primary}>
 					Common Tasks:
 				</Text>
 			</Box>
@@ -71,7 +71,7 @@ function Help({
 			<Text color={colors.white}> • Run commands {'>'} /help</Text>
 
 			<Box marginTop={1}>
-				<Text color={colors.primary} bold>
+				<Text bold color={colors.primary}>
 					Commands:
 				</Text>
 			</Box>
@@ -92,13 +92,13 @@ function Help({
 export const helpCommand: Command = {
 	name: 'help',
 	description: 'Show available commands',
-	handler: async (_args: string[], _messages, _metadata) => {
+	async handler(_args: string[], _messages, _metadata) {
 		const commands = commandRegistry.getAll();
 
 		return React.createElement(Help, {
 			key: `help-${Date.now()}`,
 			version: packageJson.version,
-			commands: commands,
+			commands,
 		});
 	},
 };

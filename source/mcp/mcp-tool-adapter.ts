@@ -1,12 +1,12 @@
+import {type MCPClient} from './mcp-client.js';
 import type {ToolHandler} from '@/types/index.js';
-import {MCPClient} from './mcp-client.js';
 import {logError} from '@/utils/message-queue.js';
 
 /**
  * Creates tool handlers for MCP tools that integrate with the existing tool system
  */
 export class MCPToolAdapter {
-	private mcpClient: MCPClient;
+	private readonly mcpClient: MCPClient;
 
 	constructor(mcpClient: MCPClient) {
 		this.mcpClient = mcpClient;
@@ -40,6 +40,7 @@ export class MCPToolAdapter {
 					`Warning: MCP tool "${toolName}" conflicts with existing tool. MCP tool will override.`,
 				);
 			}
+
 			toolRegistry[toolName] = this.createToolHandler(toolName);
 		}
 	}

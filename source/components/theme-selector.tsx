@@ -2,22 +2,22 @@ import {useState, useEffect} from 'react';
 import {Box, Text, useInput} from 'ink';
 import SelectInput from 'ink-select-input';
 import {TitledBox, titleStyles} from '@mishieck/ink-titled-box';
+import Gradient from 'ink-gradient';
+import BigText from 'ink-big-text';
 import {useTheme} from '@/hooks/useTheme.js';
 import {useTerminalWidth} from '@/hooks/useTerminalWidth.js';
 import {themes} from '@/config/themes.js';
 import type {ThemePreset} from '@/types/ui.js';
-import Gradient from 'ink-gradient';
-import BigText from 'ink-big-text';
 
-interface ThemeSelectorProps {
-	onThemeSelect: (theme: ThemePreset) => void;
-	onCancel: () => void;
-}
+type ThemeSelectorProps = {
+	readonly onThemeSelect: (theme: ThemePreset) => void;
+	readonly onCancel: () => void;
+};
 
-interface ThemeOption {
+type ThemeOption = {
 	label: string;
 	value: ThemePreset;
-}
+};
 
 export default function ThemeSelector({
 	onThemeSelect,

@@ -5,7 +5,7 @@ export function useInputState() {
 	const [hasLargeContent, setHasLargeContent] = useState(false);
 	const [originalInput, setOriginalInput] = useState('');
 	const [historyIndex, setHistoryIndex] = useState(-1);
-	const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+	const debounceTimerRef = useRef<NodeJS.Timeout | undefined>(null);
 
 	const [cachedLineCount, setCachedLineCount] = useState(1);
 
@@ -33,6 +33,7 @@ export function useInputState() {
 			clearTimeout(debounceTimerRef.current);
 			debounceTimerRef.current = null;
 		}
+
 		setInput('');
 		setHasLargeContent(false);
 		setOriginalInput('');

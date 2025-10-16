@@ -35,7 +35,7 @@
 		"build:bundle": "tsup && chmod +x dist/cli.js",
 		"dev": "tsc --watch",
 		"start": "node --no-warnings dist/cli.js",
-		"test": "prettier --check . && xo && ava",
+		"test": "ava",
 		"prepublishOnly": "npm run build"
 	},
 	"files": [

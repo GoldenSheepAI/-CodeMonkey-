@@ -1,11 +1,11 @@
-import React from 'react';
-import {CustomCommandLoader} from '@/custom-commands/loader.js';
-import {CustomCommandExecutor} from '@/custom-commands/executor.js';
+import type React from 'react';
+import {type CustomCommandLoader} from '@/custom-commands/loader.js';
+import {type CustomCommandExecutor} from '@/custom-commands/executor.js';
 
-export interface MessageSubmissionOptions {
+export type MessageSubmissionOptions = {
 	customCommandCache: Map<string, any>;
-	customCommandLoader: CustomCommandLoader | null;
-	customCommandExecutor: CustomCommandExecutor | null;
+	customCommandLoader: CustomCommandLoader | undefined;
+	customCommandExecutor: CustomCommandExecutor | undefined;
 	onClearMessages: () => Promise<void>;
 	onEnterModelSelectionMode: () => void;
 	onEnterProviderSelectionMode: () => void;
@@ -24,24 +24,24 @@ export interface MessageSubmissionOptions {
 	theme: string;
 	updateInfo: any;
 	getMessageTokens: (message: any) => number;
-}
+};
 
-export interface ThinkingStats {
+export type ThinkingStats = {
 	totalTokens: number;
 	totalCost: number;
 	elapsedTime: number;
 	isThinking: boolean;
-}
+};
 
-export interface ConversationContext {
+export type ConversationContext = {
 	currentTokenCount: number;
 	maxTokens: number;
 	tokenPercentage: number;
-}
+};
 
-export interface UseAppInitializationProps {
+export type UseAppInitializationProps = {
 	isInitialized: boolean;
-	client: any | null;
+	client: any | undefined;
 	currentProvider: string;
 	currentModel: string;
 	availableModels: any[];
@@ -49,5 +49,5 @@ export interface UseAppInitializationProps {
 	hasUpdate: boolean;
 	updateInfo: any;
 	isLoading: boolean;
-	initError: string | null;
-}
+	initError: string | undefined;
+};
